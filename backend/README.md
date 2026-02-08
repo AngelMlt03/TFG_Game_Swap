@@ -1,0 +1,28 @@
+# Backend – Game Swap
+
+Backend de la aplicación web de compra, venta e intercambio de videojuegos físicos.
+
+Desarrollado con Spring Boot siguiendo una arquitectura REST.
+
+## Tecnologías
+- Java 17
+- Spring Boot 3
+- Spring Data JPA (Hibernate)
+- Spring Security + JWT
+- PostgreSQL
+
+## Requisitos
+- Java 17+
+- Maven
+- Base de datos PostgreSQL
+
+## Configuración
+La aplicación utiliza variables de entorno para la conexión a la base de datos.
+
+Ejemplo de configuración (`application.properties`):
+
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/tfg
+spring.datasource.username=usuario
+spring.datasource.password=password
+jwt.secret=secret

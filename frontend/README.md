@@ -5,14 +5,11 @@ Aplicación frontend de la plataforma web para la compra, venta e intercambio de
 Desarrollada con Angular y conectada al backend mediante una API REST.
 
 ## Tecnologías
-- Angular 16+
+- Angular CLI: 19.2.19
+- Node 18.20.8
 - TypeScript
 - Angular Material
 - HTML / CSS
-
-## Requisitos
-- Node.js 18+
-- npm
 
 ## Instalación
 Desde la carpeta `frontend` ejecutar:

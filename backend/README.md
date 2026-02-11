@@ -5,16 +5,12 @@ Backend de la aplicación web de compra, venta e intercambio de videojuegos fís
 Desarrollado con Spring Boot siguiendo una arquitectura REST.
 
 ## Tecnologías
-- Java 17
+- Java 21.0.10 LTS
 - Spring Boot 3
+- Maven 3.9.12
 - Spring Data JPA (Hibernate)
 - Spring Security + JWT
 - PostgreSQL
-
-## Requisitos
-- Java 17+
-- Maven
-- Base de datos PostgreSQL
 
 ## Configuración
 La aplicación utiliza variables de entorno para la conexión a la base de datos.

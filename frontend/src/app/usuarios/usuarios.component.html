@@ -1,0 +1,7 @@
+<button (click)="crearUsuario()">Crear usuario</button>
+
+<ul>
+  <li *ngFor="let usuario of usuarios">
+    {{ usuario.nombre }} - {{ usuario.email }}
+  </li>
+</ul>

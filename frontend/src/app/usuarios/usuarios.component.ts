@@ -5,6 +5,7 @@ import { Usuario } from '../models/usuario.model';
 
 @Component({
   selector: 'app-usuarios',
+  standalone: true,
   imports: [CommonModule],
   templateUrl: './usuarios.component.html',
   styleUrl: './usuarios.component.css'

@@ -1,0 +1,29 @@
+name: CD - Main (Production)
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy-backend:
+    name: Build & Deploy Backend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Build backend
+        run: mvn clean package install -DskipTests
+        working-directory: backend
+
+      - name: Build Docker image
+        run: docker build -t tfg-backend .
+        working-directory: backend
+

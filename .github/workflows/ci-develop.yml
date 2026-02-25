@@ -41,14 +41,8 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Configure npm
-        run: |
-          npm config set registry https://registry.npmjs.org/
-          npm config set audit false
-          npm config set fund false
-
       - name: Install dependencies
-        run: npm install
+        run: npm ci
         working-directory: frontend
 
       - name: Build frontend

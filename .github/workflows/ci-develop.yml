@@ -101,6 +101,14 @@ jobs:
       - name: Build Backend Binaries
         run: cd backend && mvn clean compile
 
+      - name: Install Frontend Dependencies
+        run: cd frontend && npm ci
+
+      - name: Run Frontend Tests
+        run: |
+          cd frontend
+          npm test -- --watch=false --browsers=ChromeHeadless --code-coverage
+
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
         with:
@@ -110,6 +118,7 @@ jobs:
             -Dsonar.sources=backend/src/main/java,frontend/src/app
             -Dsonar.java.binaries=backend/target/classes
             -Dsonar.javascript.lcov.reportPaths=frontend/coverage/lcov.info
+            -Dsonar.coverageJacocoReportPaths=backend/target/site/jacoco/jacoco.xml
             -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.spec.ts,frontend/src/index.html
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

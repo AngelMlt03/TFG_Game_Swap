@@ -70,7 +70,7 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
 
       - name: Install Frontend
-        run: cd frontend && npm ci
+        run: npm ci
         working-directory: frontend
 
       - name: Run Backend + Frontend + Cypress
@@ -104,7 +104,7 @@ jobs:
           args: >
             -Dsonar.projectKey=AngelMlt03_TFG_Game_Swap
             -Dsonar.organization=angelmlt03
-            -Dsonar.sources=backend/src/main/java,frontend/src
+            -Dsonar.sources=backend/src/main/java,frontend/src/app
             -Dsonar.java.binaries=backend/target/classes
             -Dsonar.javascript.lcov.reportPaths=frontend/coverage/lcov.info
             -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.spec.ts,frontend/src/index.html

@@ -98,8 +98,10 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Build Backend Binaries
-        run: cd backend && mvn clean compile
+      - name: Build and Test Backend (Generate JaCoCo)
+        run: |
+          cd backend
+          mvn clean verify -Ptest jacoco:report
 
       - name: Install Frontend Dependencies
         run: cd frontend && npm ci

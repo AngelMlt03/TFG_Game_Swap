@@ -32,7 +32,7 @@
 
 		<sonar.organization>angelmlt03</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
-		<sonar.projectKey>angelmlt03_TFG_Game_Swap_Backend</sonar.projectKey>
+		<sonar.projectKey>AngelMlt03_TFG_Game_Swap</sonar.projectKey>
 		<sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 	</properties>
 	<dependencies>

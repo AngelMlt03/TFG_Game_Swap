@@ -29,7 +29,11 @@ jobs:
           SPRING_PROFILES_ACTIVE: dev
 
       - name: SonarCloud Scan (Backend)
-        run: mvn sonar:sonar -Dsonar.projectKey=angelmlt03_TFG_Game_Swap_Backend -Dsonar.organization=angelmlt03
+        run: >
+          mvn sonar:sonar 
+          -Dsonar.host.url=https://sonarcloud.io 
+          -Dsonar.projectKey=angelmlt03_TFG_Game_Swap_Backend 
+          -Dsonar.organization=angelmlt03
         working-directory: backend
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

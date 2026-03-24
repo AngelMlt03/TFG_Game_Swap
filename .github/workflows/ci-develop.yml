@@ -46,7 +46,7 @@ jobs:
       - name: Install and Test
         run: |
           npm ci
-          npm run test -- --watch=false --code-coverage --no-sandbox --browsers=ChromeHeadless
+          npm run test -- --watch=false --code-coverage --browsers=ChromeHeadless
         working-directory: frontend
 
   e2e:

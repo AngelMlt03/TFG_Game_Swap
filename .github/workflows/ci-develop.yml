@@ -117,7 +117,7 @@ jobs:
             -Dsonar.organization=angelmlt03
             -Dsonar.sources=backend/src/main/java,frontend/src/app
             -Dsonar.java.binaries=backend/target/classes
-            -Dsonar.javascript.lcov.reportPaths=frontend/coverage/lcov.info
+            -Dsonar.javascript.lcov.reportPaths=frontend/coverage/frontend/lcov.info
             -Dsonar.coverageJacocoReportPaths=backend/target/site/jacoco/jacoco.xml
             -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.spec.ts,frontend/src/index.html
         env:

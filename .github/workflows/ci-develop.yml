@@ -4,7 +4,7 @@ on:
   push:
     branches: [develop, main]
   pull_request:
-    branches: [develop]
+    branches: [develop, main]
 
 jobs:
   backend:
@@ -54,21 +54,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: [backend, frontend]
 
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_DB: jdbc:postgresql://postgres:5432/tfgdb
-          POSTGRES_USER: tfguser
-          POSTGRES_PASSWORD: tfgpass
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
       - uses: actions/checkout@v4
 
@@ -81,14 +66,22 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Install Frontend
         run: cd frontend && npm ci
+        working-directory: frontend
 
-      - name: Run E2E Tests
+      - name: Run Backend + Frontend + Cypress
         run: |
           cd frontend
-          npx start-server-and-test "cd ../backend && mvn spring-boot:run" http://localhost:8080 "npm start" http://localhost:4200 "npx cypress run"
+          npx start-server-and-test \
+            "cd ../backend && mvn spring-boot:run -Dspring-boot.run.arguments='--spring.datasource.url=jdbc:h2:mem:gameswap_db;DB_CLOSE_DELAY=-1;MODE=PostgreSQL --spring.datasource.driverClassName=org.h2.Driver --spring.datasource.username=sa --spring.datasource.password= --spring.jpa.database-platform=org.hibernate.dialect.H2Dialect --spring.flyway.enabled=true'" \
+            http://localhost:8080/actuator/health \
+            "npm start" \
+            http://localhost:4200 \
+            "npx cypress run"
 
   sonar:
     name: Unified Sonar Analysis
@@ -114,5 +107,6 @@ jobs:
             -Dsonar.sources=backend/src/main/java,frontend/src
             -Dsonar.java.binaries=backend/target/classes
             -Dsonar.javascript.lcov.reportPaths=frontend/coverage/lcov.info
+            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.spec.ts,frontend/src/index.html
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

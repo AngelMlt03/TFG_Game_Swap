@@ -78,7 +78,7 @@ jobs:
           cd frontend
           npx start-server-and-test \
             "cd ../backend && mvn spring-boot:run -Dspring-boot.run.arguments='--spring.datasource.url=jdbc:h2:mem:gameswap_db;DB_CLOSE_DELAY=-1;MODE=PostgreSQL --spring.datasource.driverClassName=org.h2.Driver --spring.datasource.username=sa --spring.datasource.password= --spring.jpa.database-platform=org.hibernate.dialect.H2Dialect --spring.flyway.enabled=true'" \
-            http://localhost:8080/actuator/health \
+            http://localhost:8080/ \
             "npm start" \
             http://localhost:4200 \
             "npx cypress run"
@@ -97,6 +97,9 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
+
+      - name: Build Backend Binaries
+        run: cd backend && mvn clean compile
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2

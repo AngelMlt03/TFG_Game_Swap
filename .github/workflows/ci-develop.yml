@@ -77,10 +77,10 @@ jobs:
         run: |
           cd frontend
           npx start-server-and-test \
-            "cd ../backend && mvn spring-boot:run -Dspring-boot.run.arguments='--spring.datasource.url=jdbc:h2:mem:gameswap_db;DB_CLOSE_DELAY=-1;MODE=PostgreSQL --spring.datasource.driverClassName=org.h2.Driver --spring.datasource.username=sa --spring.datasource.password= --spring.jpa.database-platform=org.hibernate.dialect.H2Dialect --spring.flyway.enabled=true'" \
-            http://localhost:8080/ \
+            "cd ../backend && mvn spring-boot:run -Dspring-boot.run.arguments='--spring.datasource.url=jdbc:h2:mem:gameswap_db;DB_CLOSE_DELAY=-1;MODE=PostgreSQL --spring.datasource.username=sa --spring.datasource.password= --spring.security.user.name=admin --spring.security.user.password=admin --spring.flyway.enabled=true'" \
+            "http://localhost:8080/api/usuarios" \
             "npm start" \
-            http://localhost:4200 \
+            "http://localhost:4200" \
             "npx cypress run"
 
   sonar:

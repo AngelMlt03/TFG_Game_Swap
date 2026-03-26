@@ -1,6 +1,5 @@
 package com.tfg.angel.gameswap.backend.business.controller;
 
-import com.tfg.angel.gameswap.backend.business.dto.UsuarioDTO;
 import com.tfg.angel.gameswap.backend.business.service.UsuarioService;
 import org.springframework.web.bind.annotation.*;
 

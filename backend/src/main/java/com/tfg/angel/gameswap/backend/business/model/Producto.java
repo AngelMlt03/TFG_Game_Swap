@@ -1,9 +1,16 @@
 package com.tfg.angel.gameswap.backend.business.model;
 
+import com.tfg.angel.gameswap.backend.business.model.enums.EstadoProducto;
 import jakarta.persistence.*;
+import lombok.*;
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Producto {
 
     @Id
@@ -14,19 +21,20 @@ public class Producto {
 
     private String nombre;
 
-    private String estado;
+    @Enumerated(EnumType.STRING)
+    private EstadoProducto estado;
 
     // Relaciones
 
-    @OneToMany(mappedBy = "producto")
+    @OneToMany(mappedBy = "producto", fetch = FetchType.LAZY)
     private List<CompraVenta> comprasVentas;
 
-    @OneToMany(mappedBy = "producto")
+    @OneToMany(mappedBy = "producto", fetch = FetchType.LAZY)
     private List<PostVenta> postsVenta;
 
-    @OneToMany(mappedBy = "producto")
+    @OneToMany(mappedBy = "producto", fetch = FetchType.LAZY)
     private List<PostIntercambio> postsIntercambio;
 
-    @OneToMany(mappedBy = "producto")
+    @OneToMany(mappedBy = "producto", fetch = FetchType.LAZY)
     private List<ProductoCarrito> productosCarrito;
 }

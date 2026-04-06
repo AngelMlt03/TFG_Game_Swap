@@ -16,38 +16,38 @@ public class ProductoController {
     private final ProductoService productoService;
 
     @PostMapping
-    public ProductoResponseDTO crear(@RequestBody ProductoRequestDTO dto) {
+    public ProductoResponseDTO create(@RequestBody ProductoRequestDTO dto) {
         return productoService.crearProducto(dto);
     }
 
     @GetMapping("/{id}")
-    public ProductoResponseDTO obtenerPorId(@PathVariable Long id) {
+    public ProductoResponseDTO findById(@PathVariable Long id) {
         return productoService.obtenerProductoPorId(id);
     }
 
     @GetMapping
-    public List<ProductoResponseDTO> listar() {
+    public List<ProductoResponseDTO> findAll() {
         return productoService.obtenerTodos();
     }
 
     @GetMapping("/buscar")
-    public List<ProductoResponseDTO> buscar(@RequestParam String nombre) {
+    public List<ProductoResponseDTO> findByName(@RequestParam String nombre) {
         return productoService.buscarPorNombre(nombre);
     }
 
     @GetMapping("/estado")
-    public List<ProductoResponseDTO> filtrarPorEstado(@RequestParam String estado) {
+    public List<ProductoResponseDTO> findByState(@RequestParam String estado) {
         return productoService.filtrarPorEstado(estado);
     }
 
     @PutMapping("/{id}")
-    public ProductoResponseDTO actualizar(@PathVariable Long id,
+    public ProductoResponseDTO update(@PathVariable Long id,
                                           @RequestBody ProductoRequestDTO dto) {
         return productoService.actualizarProducto(id, dto);
     }
 
     @DeleteMapping("/{id}")
-    public void eliminar(@PathVariable Long id) {
+    public void delete(@PathVariable Long id) {
         productoService.eliminarProducto(id);
     }
 }

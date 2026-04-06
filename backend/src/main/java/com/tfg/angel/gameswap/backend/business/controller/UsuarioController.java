@@ -16,27 +16,27 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
 
     @PostMapping
-    public UsuarioResponseDTO crear(@RequestBody UsuarioRequestDTO dto) {
+    public UsuarioResponseDTO create(@RequestBody UsuarioRequestDTO dto) {
         return usuarioService.crearUsuario(dto);
     }
 
     @GetMapping
-    public List<UsuarioResponseDTO> listar() {
+    public List<UsuarioResponseDTO> findAll() {
         return usuarioService.obtenerTodos();
     }
 
     @GetMapping("/{id}")
-    public UsuarioResponseDTO obtenerPorId(@PathVariable Long id) {
+    public UsuarioResponseDTO findById(@PathVariable Long id) {
         return usuarioService.obtenerUsuarioPorId(id);
     }
 
     @PutMapping("/{id}")
-    public UsuarioResponseDTO actualizar(@PathVariable Long id, @RequestBody UsuarioRequestDTO dto) {
+    public UsuarioResponseDTO update(@PathVariable Long id, @RequestBody UsuarioRequestDTO dto) {
         return usuarioService.actualizarUsuario(id, dto);
     }
 
     @DeleteMapping("/{id}")
-    public void eliminar(@PathVariable Long id) {
+    public void delete(@PathVariable Long id) {
         usuarioService.eliminarUsuario(id);
     }
 }

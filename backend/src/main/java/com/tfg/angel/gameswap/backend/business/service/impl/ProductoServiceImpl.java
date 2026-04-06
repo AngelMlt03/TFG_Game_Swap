@@ -7,6 +7,8 @@ import com.tfg.angel.gameswap.backend.business.model.Producto;
 import com.tfg.angel.gameswap.backend.business.model.enums.EstadoProducto;
 import com.tfg.angel.gameswap.backend.business.repository.ProductoRepository;
 import com.tfg.angel.gameswap.backend.business.service.ProductoService;
+import com.tfg.angel.gameswap.backend.exception.GSBadRequestException;
+import com.tfg.angel.gameswap.backend.exception.GSNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +21,7 @@ public class ProductoServiceImpl implements ProductoService {
     private final ProductoRepository productoRepository;
 
     @Override
-    public ProductoResponseDTO crearProducto(ProductoRequestDTO dto) {
+    public ProductoResponseDTO create(ProductoRequestDTO dto) {
 
         Producto producto = ProductoMapper.toEntity(dto);
         producto = productoRepository.save(producto);
@@ -28,15 +30,15 @@ public class ProductoServiceImpl implements ProductoService {
     }
 
     @Override
-    public ProductoResponseDTO obtenerProductoPorId(Long id) {
+    public ProductoResponseDTO findById(Long id) {
         Producto producto = productoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+                .orElseThrow(() -> new GSNotFoundException("Producto no encontrado"));
 
         return ProductoMapper.toDTO(producto);
     }
 
     @Override
-    public List<ProductoResponseDTO> obtenerTodos() {
+    public List<ProductoResponseDTO> findAll() {
         return productoRepository.findAll()
                 .stream()
                 .map(ProductoMapper::toDTO)
@@ -44,7 +46,7 @@ public class ProductoServiceImpl implements ProductoService {
     }
 
     @Override
-    public List<ProductoResponseDTO> buscarPorNombre(String nombre) {
+    public List<ProductoResponseDTO> findByName(String nombre) {
         return productoRepository.findByNombreContainingIgnoreCase(nombre)
                 .stream()
                 .map(ProductoMapper::toDTO)
@@ -52,14 +54,14 @@ public class ProductoServiceImpl implements ProductoService {
     }
 
     @Override
-    public List<ProductoResponseDTO> filtrarPorEstado(String estado) {
+    public List<ProductoResponseDTO> findByState(String estado) {
 
         EstadoProducto estadoEnum;
 
         try {
             estadoEnum = EstadoProducto.valueOf(estado.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Estado no válido");
+            throw new GSBadRequestException("Estado no válido");
         }
 
         return productoRepository.findByEstado(estadoEnum)
@@ -69,10 +71,10 @@ public class ProductoServiceImpl implements ProductoService {
     }
 
     @Override
-    public ProductoResponseDTO actualizarProducto(Long id, ProductoRequestDTO dto) {
+    public ProductoResponseDTO update(Long id, ProductoRequestDTO dto) {
 
         Producto producto = productoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+                .orElseThrow(() -> new GSNotFoundException("Producto no encontrado"));
 
         producto.setNombre(dto.getNombre());
         producto.setIdAPI(dto.getIdAPI());
@@ -84,10 +86,10 @@ public class ProductoServiceImpl implements ProductoService {
     }
 
     @Override
-    public void eliminarProducto(Long id) {
+    public void delete(Long id) {
 
         if (!productoRepository.existsById(id)) {
-            throw new RuntimeException("Producto no encontrado");
+            throw new GSNotFoundException("Producto no encontrado");
         }
 
         productoRepository.deleteById(id);

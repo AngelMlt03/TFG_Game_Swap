@@ -7,17 +7,17 @@ import java.util.List;
 
 public interface ProductoService {
 
-    ProductoResponseDTO crearProducto(ProductoRequestDTO dto);
+    ProductoResponseDTO create(ProductoRequestDTO dto);
 
-    ProductoResponseDTO obtenerProductoPorId(Long id);
+    ProductoResponseDTO findById(Long id);
 
-    List<ProductoResponseDTO> obtenerTodos();
+    List<ProductoResponseDTO> findAll();
 
-    List<ProductoResponseDTO> buscarPorNombre(String nombre);
+    List<ProductoResponseDTO> findByName(String nombre);
 
-    List<ProductoResponseDTO> filtrarPorEstado(String estado);
+    List<ProductoResponseDTO> findByState(String estado);
 
-    ProductoResponseDTO actualizarProducto(Long id, ProductoRequestDTO dto);
+    ProductoResponseDTO update(Long id, ProductoRequestDTO dto);
 
-    void eliminarProducto(Long id);
+    void delete(Long id);
 }

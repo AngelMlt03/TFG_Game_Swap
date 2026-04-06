@@ -6,6 +6,8 @@ import com.tfg.angel.gameswap.backend.business.mapper.UsuarioMapper;
 import com.tfg.angel.gameswap.backend.business.model.Usuario;
 import com.tfg.angel.gameswap.backend.business.repository.UsuarioRepository;
 import com.tfg.angel.gameswap.backend.business.service.UsuarioService;
+import com.tfg.angel.gameswap.backend.exception.GSBadRequestException;
+import com.tfg.angel.gameswap.backend.exception.GSNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,14 +20,14 @@ public class UsuarioServiceImpl implements UsuarioService {
     private final UsuarioRepository usuarioRepository;
 
     @Override
-    public UsuarioResponseDTO crearUsuario(UsuarioRequestDTO dto) {
+    public UsuarioResponseDTO create(UsuarioRequestDTO dto) {
 
         if (usuarioRepository.existsByCorreo(dto.getCorreo())) {
-            throw new RuntimeException("El correo ya está en uso");
+            throw new GSBadRequestException("El correo ya está en uso");
         }
 
         if (usuarioRepository.existsByNUsuario(dto.getNUsuario())) {
-            throw new RuntimeException("El nombre de usuario ya existe");
+            throw new GSBadRequestException("El nombre de usuario ya existe");
         }
 
         Usuario usuario = UsuarioMapper.toEntity(dto);
@@ -35,15 +37,15 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public UsuarioResponseDTO obtenerUsuarioPorId(Long id) {
+    public UsuarioResponseDTO findById(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new GSNotFoundException("Usuario no encontrado"));
 
         return UsuarioMapper.toDTO(usuario);
     }
 
     @Override
-    public List<UsuarioResponseDTO> obtenerTodos() {
+    public List<UsuarioResponseDTO> findAll() {
         return usuarioRepository.findAll()
                 .stream()
                 .map(UsuarioMapper::toDTO)
@@ -51,10 +53,10 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public UsuarioResponseDTO actualizarUsuario(Long id, UsuarioRequestDTO dto) {
+    public UsuarioResponseDTO update(Long id, UsuarioRequestDTO dto) {
 
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new GSNotFoundException("Usuario no encontrado"));
 
         usuario.setNombre(dto.getNombre());
         usuario.setNUsuario(dto.getNUsuario());
@@ -67,9 +69,9 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public void eliminarUsuario(Long id) {
+    public void delete(Long id) {
         if (!usuarioRepository.existsById(id)) {
-            throw new RuntimeException("Usuario no encontrado");
+            throw new GSNotFoundException("Usuario no encontrado");
         }
 
         usuarioRepository.deleteById(id);

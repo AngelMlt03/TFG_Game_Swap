@@ -7,13 +7,13 @@ import java.util.List;
 
 public interface UsuarioService {
 
-    UsuarioResponseDTO crearUsuario(UsuarioRequestDTO dto);
+    UsuarioResponseDTO create(UsuarioRequestDTO dto);
 
-    UsuarioResponseDTO obtenerUsuarioPorId(Long id);
+    UsuarioResponseDTO findById(Long id);
 
-    List<UsuarioResponseDTO> obtenerTodos();
+    List<UsuarioResponseDTO> findAll();
 
-    UsuarioResponseDTO actualizarUsuario(Long id, UsuarioRequestDTO dto);
+    UsuarioResponseDTO update(Long id, UsuarioRequestDTO dto);
 
-    void eliminarUsuario(Long id);
+    void delete(Long id);
 }

@@ -20,8 +20,8 @@ public class Usuario {
 
     private String nombre;
 
-    @Column(unique = true, nullable = false)
-    private String nUsuario;
+    @Column(name = "n_usuario", unique = true, nullable = false)
+    private String nombreUsuario;
 
     private LocalDate fechaNacimiento;
 

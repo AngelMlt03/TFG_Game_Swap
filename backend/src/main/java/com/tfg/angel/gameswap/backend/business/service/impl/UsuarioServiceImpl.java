@@ -26,7 +26,7 @@ public class UsuarioServiceImpl implements UsuarioService {
             throw new GSBadRequestException("El correo ya está en uso");
         }
 
-        if (usuarioRepository.existsByNUsuario(dto.getNUsuario())) {
+        if (usuarioRepository.existsByNombreUsuario(dto.getNUsuario())) {
             throw new GSBadRequestException("El nombre de usuario ya existe");
         }
 
@@ -59,7 +59,7 @@ public class UsuarioServiceImpl implements UsuarioService {
                 .orElseThrow(() -> new GSNotFoundException("Usuario no encontrado"));
 
         usuario.setNombre(dto.getNombre());
-        usuario.setNUsuario(dto.getNUsuario());
+        usuario.setNombreUsuario(dto.getNUsuario());
         usuario.setFechaNacimiento(dto.getFechaNacimiento());
         usuario.setCorreo(dto.getCorreo());
 

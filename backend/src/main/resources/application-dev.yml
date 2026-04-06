@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://postgres:5432/tfgdb
+    url: jdbc:postgresql://localhost:5432/tfgdb
     username: tfguser
     password: tfgpass
     driver-class-name: org.postgresql.Driver

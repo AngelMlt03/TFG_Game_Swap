@@ -17,6 +17,7 @@ public class Producto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "id_api")
     private Integer idAPI;
 
     private String nombre;

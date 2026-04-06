@@ -17,37 +17,37 @@ public class PostVentaController {
 
     @PostMapping
     public PostVentaResponseDTO create(@RequestBody PostVentaRequestDTO dto) {
-        return postVentaService.crearPost(dto);
+        return postVentaService.create(dto);
     }
 
     @GetMapping("/{id}")
     public PostVentaResponseDTO findById(@PathVariable Long id) {
-        return postVentaService.obtenerPorId(id);
+        return postVentaService.findById(id);
     }
 
     @GetMapping
     public List<PostVentaResponseDTO> findAll() {
-        return postVentaService.obtenerTodos();
+        return postVentaService.findAll();
     }
 
     @GetMapping("/vendedor/{id}")
     public List<PostVentaResponseDTO> findBySeller(@PathVariable Long id) {
-        return postVentaService.obtenerPorVendedor(id);
+        return postVentaService.findBySeller(id);
     }
 
     @GetMapping("/producto/{id}")
     public List<PostVentaResponseDTO> findByProduct(@PathVariable Long id) {
-        return postVentaService.obtenerPorProducto(id);
+        return postVentaService.findByProduct(id);
     }
 
     @PutMapping("/{id}")
     public PostVentaResponseDTO update(@PathVariable Long id,
                                            @RequestBody PostVentaRequestDTO dto) {
-        return postVentaService.actualizarPost(id, dto);
+        return postVentaService.update(id, dto);
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
-        postVentaService.eliminarPost(id);
+        postVentaService.delete(id);
     }
 }

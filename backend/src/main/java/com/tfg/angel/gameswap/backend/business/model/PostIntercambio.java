@@ -9,6 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name = "PostInterambio")
 public class PostIntercambio {
 
     @Id

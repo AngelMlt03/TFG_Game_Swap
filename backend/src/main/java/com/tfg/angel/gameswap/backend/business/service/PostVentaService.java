@@ -15,7 +15,7 @@ public interface PostVentaService {
 
     List<PostVentaResponseDTO> findBySeller(Long idVendedor);
 
-    List<PostVentaResponseDTO> findByproduct(Long idProducto);
+    List<PostVentaResponseDTO> findByProduct(Long idProducto);
 
     PostVentaResponseDTO update(Long id, PostVentaRequestDTO dto);
 

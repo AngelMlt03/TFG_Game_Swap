@@ -1,13 +1,13 @@
 package com.tfg.angel.gameswap.backend.business.service.impl;
 
-import com.tfg.angel.gameswap.backend.business.dto.request.CompraVentaRequestDTO;
 import com.tfg.angel.gameswap.backend.business.dto.response.CompraVentaResponseDTO;
 import com.tfg.angel.gameswap.backend.business.mapper.CompraVentaMapper;
 import com.tfg.angel.gameswap.backend.business.model.CompraVenta;
-import com.tfg.angel.gameswap.backend.business.model.Producto;
+import com.tfg.angel.gameswap.backend.business.model.PostVenta;
 import com.tfg.angel.gameswap.backend.business.model.Usuario;
+import com.tfg.angel.gameswap.backend.business.model.enums.EstadoPost;
 import com.tfg.angel.gameswap.backend.business.repository.CompraVentaRepository;
-import com.tfg.angel.gameswap.backend.business.repository.ProductoRepository;
+import com.tfg.angel.gameswap.backend.business.repository.PostVentaRepository;
 import com.tfg.angel.gameswap.backend.business.repository.UsuarioRepository;
 import com.tfg.angel.gameswap.backend.business.service.CompraVentaService;
 import com.tfg.angel.gameswap.backend.exception.GSBadRequestException;
@@ -23,37 +23,38 @@ import java.util.List;
 public class CompraVentaServiceImpl implements CompraVentaService {
 
     private final CompraVentaRepository compraVentaRepository;
+    private final PostVentaRepository postVentaRepository;
     private final UsuarioRepository usuarioRepository;
-    private final ProductoRepository productoRepository;
 
     @Override
-    public CompraVentaResponseDTO create(CompraVentaRequestDTO dto) {
+    public CompraVentaResponseDTO create(Long idPostVenta, Long idUsuario) {
 
-        Usuario comprador = usuarioRepository.findById(dto.getIdComprador())
-                .orElseThrow(() -> new GSNotFoundException("Comprador no encontrado"));
+        Usuario comprador = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new GSNotFoundException("Usuario no encontrado"));
 
-        Usuario vendedor = usuarioRepository.findById(dto.getIdVendedor())
-                .orElseThrow(() -> new GSNotFoundException("Vendedor no encontrado"));
+        PostVenta postVenta = postVentaRepository.findById(idPostVenta)
+                .orElseThrow(() -> new GSNotFoundException("PostVenta no encontrado"));
 
-        Producto producto = productoRepository.findById(dto.getIdProducto())
-                .orElseThrow(() -> new GSNotFoundException("Producto no encontrado"));
+        Usuario vendedor = postVenta.getVendedor();
 
         if (comprador.getId().equals(vendedor.getId())) {
-            throw new GSBadRequestException("El comprador y vendedor no pueden ser el mismo");
+            throw new GSBadRequestException("No puedes comprar tu propio producto");
         }
 
-        if (comprador.getSaldo() < dto.getPrecio()) {
+        if (comprador.getSaldo() < postVenta.getPrecio()) {
             throw new GSBadRequestException("Saldo insuficiente");
         }
 
-        comprador.setSaldo(comprador.getSaldo() - dto.getPrecio());
-        vendedor.setSaldo(vendedor.getSaldo() + dto.getPrecio());
+        comprador.setSaldo(comprador.getSaldo() - postVenta.getPrecio());
+        vendedor.setSaldo(vendedor.getSaldo() + postVenta.getPrecio());
+
+        postVenta.setEstado(EstadoPost.FINALIZADO);
+        postVentaRepository.save(postVenta);
 
         CompraVenta entity = CompraVenta.builder()
+                .postVenta(postVenta)
                 .comprador(comprador)
-                .vendedor(vendedor)
-                .producto(producto)
-                .precio(dto.getPrecio())
+                .precio(postVenta.getPrecio())
                 .fecha(LocalDate.now())
                 .build();
 
@@ -88,7 +89,7 @@ public class CompraVentaServiceImpl implements CompraVentaService {
 
     @Override
     public List<CompraVentaResponseDTO> findByVendedor(Long idVendedor) {
-        return compraVentaRepository.findByVendedorId(idVendedor)
+        return compraVentaRepository.findByPostVentaVendedorId(idVendedor)
                 .stream()
                 .map(CompraVentaMapper::toDTO)
                 .toList();

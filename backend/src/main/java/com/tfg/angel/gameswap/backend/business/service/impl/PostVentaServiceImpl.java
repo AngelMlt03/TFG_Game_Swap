@@ -6,6 +6,7 @@ import com.tfg.angel.gameswap.backend.business.mapper.PostVentaMapper;
 import com.tfg.angel.gameswap.backend.business.model.PostVenta;
 import com.tfg.angel.gameswap.backend.business.model.Producto;
 import com.tfg.angel.gameswap.backend.business.model.Usuario;
+import com.tfg.angel.gameswap.backend.business.model.enums.EstadoPost;
 import com.tfg.angel.gameswap.backend.business.repository.PostVentaRepository;
 import com.tfg.angel.gameswap.backend.business.repository.ProductoRepository;
 import com.tfg.angel.gameswap.backend.business.repository.UsuarioRepository;
@@ -71,6 +72,15 @@ public class PostVentaServiceImpl implements PostVentaService {
     @Override
     public List<PostVentaResponseDTO> findByProduct(Long idProducto) {
         return postVentaRepository.findByProductoId(idProducto)
+                .stream()
+                .map(PostVentaMapper::toDTO)
+                .toList();
+    }
+
+    @Override
+    public List<PostVentaResponseDTO> findByEstado(EstadoPost estado) {
+
+        return postVentaRepository.findByEstado(estado)
                 .stream()
                 .map(PostVentaMapper::toDTO)
                 .toList();

@@ -16,9 +16,9 @@ public class ProductoCarrito {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_producto")
-    private Producto producto;
+    @ManyToOne
+    @JoinColumn(name = "id_post_venta")
+    private PostVenta postVenta;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_carrito")

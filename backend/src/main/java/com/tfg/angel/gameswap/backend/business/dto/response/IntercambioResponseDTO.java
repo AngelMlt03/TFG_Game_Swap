@@ -13,14 +13,16 @@ public class IntercambioResponseDTO {
 
     private Long id;
 
-    private Long idProducto;
-    private String nombreProducto;
+    private Long idPostIntercambio;
 
-    private Long idCambio;
-    private String nombreCambio;
+    private Long idUsuarioPublicador;
+    private String nombreUsuarioPublicador;
 
-    private Long idUsuarioProducto;
-    private String nombreUsuarioProducto;
+    private Long idProductoOfrecido;
+    private String nombreProductoOfrecido;
+
+    private Long idProductoDeseado;
+    private String nombreProductoDeseado;
 
     private Long idUsuarioCambio;
     private String nombreUsuarioCambio;

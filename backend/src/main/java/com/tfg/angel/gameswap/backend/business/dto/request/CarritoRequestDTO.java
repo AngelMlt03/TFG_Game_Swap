@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CompraVentaRequestDTO {
+public class CarritoRequestDTO {
 
-    private Long idPostVenta;
+    private Long idUsuario;
 }

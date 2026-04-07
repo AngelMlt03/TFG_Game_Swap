@@ -1,5 +1,6 @@
 package com.tfg.angel.gameswap.backend.business.model;
 
+import com.tfg.angel.gameswap.backend.business.model.enums.EstadoPost;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,4 +26,7 @@ public class PostVenta {
     private Producto producto;
 
     private Double precio;
+
+    @Enumerated(EnumType.STRING)
+    private EstadoPost estado;
 }

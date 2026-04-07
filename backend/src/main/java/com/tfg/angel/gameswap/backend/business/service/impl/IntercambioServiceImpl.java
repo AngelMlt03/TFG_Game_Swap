@@ -2,6 +2,10 @@ package com.tfg.angel.gameswap.backend.business.service.impl;
 
 import com.tfg.angel.gameswap.backend.business.dto.request.IntercambioRequestDTO;
 import com.tfg.angel.gameswap.backend.business.dto.response.IntercambioResponseDTO;
+import com.tfg.angel.gameswap.backend.business.dto.response.PostIntercambioResponseDTO;
+import com.tfg.angel.gameswap.backend.business.model.PostIntercambio;
+import com.tfg.angel.gameswap.backend.business.model.enums.EstadoPost;
+import com.tfg.angel.gameswap.backend.business.repository.PostIntercambioRepository;
 import com.tfg.angel.gameswap.backend.exception.GSBadRequestException;
 import com.tfg.angel.gameswap.backend.exception.GSNotFoundException;
 import com.tfg.angel.gameswap.backend.business.mapper.IntercambioMapper;
@@ -23,39 +27,35 @@ import java.util.List;
 public class IntercambioServiceImpl implements IntercambioService {
 
     private final IntercambioRepository intercambioRepository;
-    private final ProductoRepository productoRepository;
+    private final PostIntercambioRepository postIntercambioRepository;
     private final UsuarioRepository usuarioRepository;
 
     @Override
-    public IntercambioResponseDTO create(IntercambioRequestDTO dto) {
+    public IntercambioResponseDTO create(Long idPostIntercambio, Long idUsuarioCambio) {
 
-        Producto producto = productoRepository.findById(dto.getIdProducto())
-                .orElseThrow(() -> new GSNotFoundException("Producto no encontrado"));
+        PostIntercambio post = postIntercambioRepository.findById(idPostIntercambio)
+                .orElseThrow(() -> new GSNotFoundException("PostIntercambio no encontrado"));
 
-        Producto cambio = productoRepository.findById(dto.getIdCambio())
-                .orElseThrow(() -> new GSNotFoundException("Producto de cambio no encontrado"));
+        Usuario usuarioCambio = usuarioRepository.findById(idUsuarioCambio)
+                .orElseThrow(() -> new GSNotFoundException("Usuario no encontrado"));
 
-        Usuario usuarioProducto = usuarioRepository.findById(dto.getIdUsuarioProducto())
-                .orElseThrow(() -> new GSNotFoundException("Usuario producto no encontrado"));
-
-        Usuario usuarioCambio = usuarioRepository.findById(dto.getIdUsuarioCambio())
-                .orElseThrow(() -> new GSNotFoundException("Usuario cambio no encontrado"));
-
-        if (usuarioProducto.getId().equals(usuarioCambio.getId())) {
-            throw new GSBadRequestException("Los usuarios no pueden ser el mismo");
+        if (post.getUsuario().getId().equals(usuarioCambio.getId())) {
+            throw new GSBadRequestException("No puedes intercambiar contigo mismo");
         }
 
-        Intercambio entity = Intercambio.builder()
-                .producto(producto)
-                .productoCambio(cambio)
-                .usuarioProducto(usuarioProducto)
+        post.setEstado(EstadoPost.FINALIZADO);
+        postIntercambioRepository.save(post);
+
+        Intercambio intercambio = Intercambio.builder()
+                .postIntercambio(post)
                 .usuarioCambio(usuarioCambio)
                 .fecha(LocalDate.now())
                 .build();
 
-        entity = intercambioRepository.save(entity);
+        post.setEstado(EstadoPost.FINALIZADO);
+        postIntercambioRepository.save(post);
 
-        return IntercambioMapper.toDTO(entity);
+        return IntercambioMapper.toDTO(intercambioRepository.save(intercambio));
     }
 
     @Override
@@ -76,7 +76,7 @@ public class IntercambioServiceImpl implements IntercambioService {
 
     @Override
     public List<IntercambioResponseDTO> findByUsuario(Long idUsuario) {
-        return intercambioRepository.findByUsuarioProductoId(idUsuario)
+        return intercambioRepository.findByPostIntercambioUsuarioId(idUsuario)
                 .stream()
                 .map(IntercambioMapper::toDTO)
                 .toList();

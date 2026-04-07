@@ -37,9 +37,6 @@ public class Usuario {
     @OneToMany(mappedBy = "comprador", fetch = FetchType.LAZY)
     private List<CompraVenta> compras;
 
-    @OneToMany(mappedBy = "vendedor", fetch = FetchType.LAZY)
-    private List<CompraVenta> ventas;
-
     @OneToMany(mappedBy = "reviewer", fetch = FetchType.LAZY)
     private List<Review> reviewsRealizadas;
 

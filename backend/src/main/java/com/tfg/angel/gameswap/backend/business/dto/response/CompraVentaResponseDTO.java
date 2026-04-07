@@ -22,6 +22,8 @@ public class CompraVentaResponseDTO {
     private Long idProducto;
     private String nombreProducto;
 
+    private Long idPostVenta;
     private Double precio;
+
     private LocalDate fecha;
 }

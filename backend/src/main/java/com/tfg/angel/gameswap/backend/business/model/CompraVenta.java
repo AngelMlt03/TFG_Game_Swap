@@ -18,19 +18,15 @@ public class CompraVenta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
+    @JoinColumn(name = "id_post_venta")
+    private PostVenta postVenta;
+
+    @ManyToOne
     @JoinColumn(name = "id_comprador")
     private Usuario comprador;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_vendedor")
-    private Usuario vendedor;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_producto")
-    private Producto producto;
-
     private Double precio;
 
-    private LocalDate fecha = LocalDate.now();
+    private LocalDate fecha;
 }

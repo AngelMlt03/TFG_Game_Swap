@@ -28,14 +28,9 @@ public class Producto {
     // Relaciones
 
     @OneToMany(mappedBy = "producto", fetch = FetchType.LAZY)
-    private List<CompraVenta> comprasVentas;
-
-    @OneToMany(mappedBy = "producto", fetch = FetchType.LAZY)
     private List<PostVenta> postsVenta;
 
     @OneToMany(mappedBy = "producto", fetch = FetchType.LAZY)
     private List<PostIntercambio> postsIntercambio;
 
-    @OneToMany(mappedBy = "producto", fetch = FetchType.LAZY)
-    private List<ProductoCarrito> productosCarrito;
 }

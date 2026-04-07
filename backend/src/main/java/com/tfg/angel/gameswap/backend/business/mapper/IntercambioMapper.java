@@ -6,17 +6,20 @@ import com.tfg.angel.gameswap.backend.business.model.Intercambio;
 public class IntercambioMapper {
 
     public static IntercambioResponseDTO toDTO(Intercambio entity) {
+
         return IntercambioResponseDTO.builder()
                 .id(entity.getId())
 
-                .idProducto(entity.getProducto().getId())
-                .nombreProducto(entity.getProducto().getNombre())
+                .idPostIntercambio(entity.getPostIntercambio().getId())
 
-                .idCambio(entity.getProductoCambio().getId())
-                .nombreCambio(entity.getProductoCambio().getNombre())
+                .idUsuarioPublicador(entity.getPostIntercambio().getUsuario().getId())
+                .nombreUsuarioPublicador(entity.getPostIntercambio().getUsuario().getNombre())
 
-                .idUsuarioProducto(entity.getUsuarioProducto().getId())
-                .nombreUsuarioProducto(entity.getUsuarioProducto().getNombre())
+                .idProductoOfrecido(entity.getPostIntercambio().getProducto().getId())
+                .nombreProductoOfrecido(entity.getPostIntercambio().getProducto().getNombre())
+
+                .idProductoDeseado(entity.getPostIntercambio().getProductoCambio().getId())
+                .nombreProductoDeseado(entity.getPostIntercambio().getProductoCambio().getNombre())
 
                 .idUsuarioCambio(entity.getUsuarioCambio().getId())
                 .nombreUsuarioCambio(entity.getUsuarioCambio().getNombre())

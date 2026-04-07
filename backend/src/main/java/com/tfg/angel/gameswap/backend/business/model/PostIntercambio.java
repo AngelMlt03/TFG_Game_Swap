@@ -1,5 +1,6 @@
 package com.tfg.angel.gameswap.backend.business.model;
 
+import com.tfg.angel.gameswap.backend.business.model.enums.EstadoPost;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,4 +28,7 @@ public class PostIntercambio {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_producto_cambio")
     private Producto productoCambio;
+
+    @Enumerated(EnumType.STRING)
+    private EstadoPost estado;
 }

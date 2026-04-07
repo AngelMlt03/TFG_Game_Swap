@@ -17,21 +17,13 @@ public class Intercambio {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_producto")
-    private Producto producto;
+    @ManyToOne
+    @JoinColumn(name = "id_post_intercambio")
+    private PostIntercambio postIntercambio;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_cambio")
-    private Producto productoCambio;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_usuario_producto")
-    private Usuario usuarioProducto;
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "id_usuario_cambio")
     private Usuario usuarioCambio;
 
-    private LocalDate fecha = LocalDate.now();
+    private LocalDate fecha;
 }

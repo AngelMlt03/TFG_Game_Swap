@@ -23,6 +23,6 @@ public class Carrito {
 
     private Double coste = 0.0;
 
-    @OneToMany(mappedBy = "carrito", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "carrito", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductoCarrito> productos;
 }

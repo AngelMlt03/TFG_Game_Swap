@@ -1,6 +1,5 @@
 package com.tfg.angel.gameswap.backend.business.controller;
 
-import com.tfg.angel.gameswap.backend.business.dto.request.IntercambioRequestDTO;
 import com.tfg.angel.gameswap.backend.business.dto.response.IntercambioResponseDTO;
 import com.tfg.angel.gameswap.backend.business.service.IntercambioService;
 import lombok.RequiredArgsConstructor;
@@ -15,9 +14,12 @@ public class IntercambioController {
 
     private final IntercambioService service;
 
-    @PostMapping
-    public IntercambioResponseDTO create(@RequestBody IntercambioRequestDTO dto) {
-        return service.create(dto);
+    @PostMapping("/{idPost}")
+    public IntercambioResponseDTO create(@PathVariable Long idPost) {
+
+        Long idUsuario = 1L;
+
+        return service.create(idPost, idUsuario);
     }
 
     @GetMapping("/{id}")

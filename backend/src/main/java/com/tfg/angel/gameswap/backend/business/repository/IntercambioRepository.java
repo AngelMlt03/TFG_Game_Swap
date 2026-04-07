@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface IntercambioRepository extends JpaRepository<Intercambio, Long> {
 
-    List<Intercambio> findByUsuarioProductoId(Long idUsuario);
+    List<Intercambio> findByPostIntercambioUsuarioId(Long idUsuario);
 
     List<Intercambio> findByUsuarioCambioId(Long idUsuario);
 }

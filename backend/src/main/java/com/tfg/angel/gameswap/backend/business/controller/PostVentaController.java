@@ -2,6 +2,7 @@ package com.tfg.angel.gameswap.backend.business.controller;
 
 import com.tfg.angel.gameswap.backend.business.dto.request.PostVentaRequestDTO;
 import com.tfg.angel.gameswap.backend.business.dto.response.PostVentaResponseDTO;
+import com.tfg.angel.gameswap.backend.business.model.enums.EstadoPost;
 import com.tfg.angel.gameswap.backend.business.service.PostVentaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +39,11 @@ public class PostVentaController {
     @GetMapping("/producto/{id}")
     public List<PostVentaResponseDTO> findByProduct(@PathVariable Long id) {
         return postVentaService.findByProduct(id);
+    }
+
+    @GetMapping("/activos")
+    public List<PostVentaResponseDTO> findActive() {
+        return postVentaService.findByEstado(EstadoPost.ACTIVO);
     }
 
     @PutMapping("/{id}")

@@ -9,7 +9,5 @@ public interface CompraVentaRepository extends JpaRepository<CompraVenta, Long> 
 
     List<CompraVenta> findByCompradorId(Long idComprador);
 
-    List<CompraVenta> findByVendedorId(Long idVendedor);
-
-    List<CompraVenta> findByProductoId(Long idProducto);
+    List<CompraVenta> findByPostVentaVendedorId(Long idVendedor);
 }

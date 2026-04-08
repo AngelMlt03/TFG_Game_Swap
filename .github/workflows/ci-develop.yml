@@ -121,6 +121,7 @@ jobs:
             -Dsonar.java.binaries=backend/target/classes
             -Dsonar.javascript.lcov.reportPaths=frontend/coverage/frontend/lcov.info
             -Dsonar.coverageJacocoReportPaths=backend/target/site/jacoco/jacoco.xml
+            -Dsonar.coverage.jacoco.xmlReportPaths=backend/target/site/jacoco/jacoco.xml
             -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.spec.ts,frontend/src/index.html
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

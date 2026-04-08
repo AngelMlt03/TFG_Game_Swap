@@ -20,6 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -142,4 +143,55 @@ class PostVentaServiceTest {
 
         verify(postVentaRepository).deleteById(100L);
     }
+
+    @Test
+    @DisplayName("Debe retornar la lista completa de posts")
+    void findAll_Success() {
+
+        when(postVentaRepository.findAll()).thenReturn(List.of(postVenta, postVenta));
+
+        List<PostVentaResponseDTO> result = postVentaService.findAll();
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        verify(postVentaRepository).findAll();
+    }
+
+    @Test
+    @DisplayName("Debe retornar posts filtrados por ID de vendedor")
+    void findBySeller_Success() {
+
+        when(postVentaRepository.findByVendedorId(1L)).thenReturn(List.of(postVenta));
+
+        List<PostVentaResponseDTO> result = postVentaService.findBySeller(1L);
+
+        assertFalse(result.isEmpty());
+        assertEquals(1, result.size());
+        verify(postVentaRepository).findByVendedorId(1L);
+    }
+
+    @Test
+    @DisplayName("Debe retornar posts filtrados por ID de producto")
+    void findByProduct_Success() {
+
+        when(postVentaRepository.findByProductoId(1L)).thenReturn(List.of(postVenta));
+
+        List<PostVentaResponseDTO> result = postVentaService.findByProduct(1L);
+
+        assertFalse(result.isEmpty());
+        verify(postVentaRepository).findByProductoId(1L);
+    }
+
+    @Test
+    @DisplayName("Debe retornar posts filtrados por estado (Enum)")
+    void findByEstado_Success() {
+
+        when(postVentaRepository.findByEstado(EstadoPost.ACTIVO)).thenReturn(List.of(postVenta));
+
+        List<PostVentaResponseDTO> result = postVentaService.findByEstado(EstadoPost.ACTIVO);
+
+        assertFalse(result.isEmpty());
+        verify(postVentaRepository).findByEstado(EstadoPost.ACTIVO);
+    }
+
 }

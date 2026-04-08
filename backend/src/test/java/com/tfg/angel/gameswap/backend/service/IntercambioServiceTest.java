@@ -15,6 +15,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,6 +36,7 @@ class IntercambioServiceTest {
     private IntercambioServiceImpl intercambioService;
 
     private PostIntercambio post;
+    private Intercambio intercambio;
     private Usuario usuarioProducto;
     private Usuario usuarioIntercambio;
 
@@ -56,6 +59,12 @@ class IntercambioServiceTest {
                 .producto(producto)
                 .productoCambio(producto)
                 .estado(EstadoPost.ACTIVO)
+                .build();
+
+        intercambio = Intercambio.builder()
+                .id(1L)
+                .postIntercambio(post)
+                .usuarioCambio(usuarioProducto)
                 .build();
     }
 
@@ -107,7 +116,6 @@ class IntercambioServiceTest {
     @DisplayName("Debe retornar un DTO cuando el ID existe")
     void findById_Success() {
 
-        Intercambio intercambio = Intercambio.builder().id(1L).postIntercambio(post).usuarioCambio(usuarioIntercambio).build();
         when(intercambioRepository.findById(1L)).thenReturn(Optional.of(intercambio));
 
         IntercambioResponseDTO result = intercambioService.findById(1L);
@@ -124,5 +132,45 @@ class IntercambioServiceTest {
 
         assertThrows(GSNotFoundException.class, () -> intercambioService.delete(1L));
         verify(intercambioRepository, never()).deleteById(anyLong());
+    }
+
+    @Test
+    @DisplayName("Debe retornar una lista de DTOs si existen intercambios")
+    void findAll_Success() {
+
+        when(intercambioRepository.findAll()).thenReturn(List.of(intercambio));
+
+        List<IntercambioResponseDTO> result = intercambioService.findAll();
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(intercambioRepository, times(1)).findAll();
+    }
+
+    @Test
+    @DisplayName("Debe retornar una lista vacía si no hay intercambios")
+    void findAll_Empty() {
+
+        when(intercambioRepository.findAll()).thenReturn(Collections.emptyList());
+
+        List<IntercambioResponseDTO> result = intercambioService.findAll();
+
+        assertTrue(result.isEmpty());
+        verify(intercambioRepository).findAll();
+    }
+
+    @Test
+    @DisplayName("Debe retornar los intercambios asociados al ID del usuario")
+    void findByUsuario_Success() {
+
+        Long idUsuario = 1L;
+        when(intercambioRepository.findByPostIntercambioUsuarioId(idUsuario)).thenReturn(List.of(intercambio));
+
+        List<IntercambioResponseDTO> result = intercambioService.findByUsuario(idUsuario);
+
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertEquals(1, result.size());
+        verify(intercambioRepository).findByPostIntercambioUsuarioId(idUsuario);
     }
 }

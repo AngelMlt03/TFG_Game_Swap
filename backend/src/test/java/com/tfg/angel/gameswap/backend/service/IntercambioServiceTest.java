@@ -1,8 +1,15 @@
 package com.tfg.angel.gameswap.backend.service;
 
+import com.tfg.angel.gameswap.backend.business.dto.response.IntercambioResponseDTO;
 import com.tfg.angel.gameswap.backend.business.model.*;
+import com.tfg.angel.gameswap.backend.business.model.enums.EstadoPost;
+import com.tfg.angel.gameswap.backend.business.model.enums.EstadoProducto;
 import com.tfg.angel.gameswap.backend.business.repository.*;
 import com.tfg.angel.gameswap.backend.business.service.impl.IntercambioServiceImpl;
+import com.tfg.angel.gameswap.backend.exception.GSBadRequestException;
+import com.tfg.angel.gameswap.backend.exception.GSNotFoundException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
@@ -16,9 +23,6 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class IntercambioServiceTest {
 
-    @InjectMocks
-    private IntercambioServiceImpl service;
-
     @Mock
     private IntercambioRepository intercambioRepository;
     @Mock
@@ -26,44 +30,99 @@ class IntercambioServiceTest {
     @Mock
     private UsuarioRepository usuarioRepository;
 
-    @Test
-    void create_ok() {
+    @InjectMocks
+    private IntercambioServiceImpl intercambioService;
 
-        Usuario u1 = Usuario.builder().id(1L).build();
-        Usuario u2 = Usuario.builder().id(2L).build();
+    private PostIntercambio post;
+    private Usuario usuarioProducto;
+    private Usuario usuarioIntercambio;
 
-        Producto producto = Producto.builder().id(1L).nombre("Juego 1").build();
-        Producto productoCambio = Producto.builder().id(1L).nombre("Juego 2").build();
+    @BeforeEach
+    void setUp() {
 
-        PostIntercambio post = PostIntercambio.builder()
+        usuarioProducto = Usuario.builder().id(1L).nombre("Angel").build();
+        usuarioIntercambio = Usuario.builder().id(2L).nombre("Juan").build();
+
+        Producto producto = Producto.builder()
                 .id(1L)
-                .usuario(u1)
-                .producto(producto)
-                .productoCambio(productoCambio)
+                .idAPI(1)
+                .nombre("Juego")
+                .estado(EstadoProducto.NUEVO)
                 .build();
 
-        when(postIntercambioRepository.findById(1L)).thenReturn(Optional.of(post));
-        when(usuarioRepository.findById(2L)).thenReturn(Optional.of(u2));
-        when(intercambioRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
-
-        var result = service.create(1L, 2L);
-
-        assertNotNull(result);
+        post = PostIntercambio.builder()
+                .id(10L)
+                .usuario(usuarioProducto)
+                .producto(producto)
+                .productoCambio(producto)
+                .estado(EstadoPost.ACTIVO)
+                .build();
     }
 
     @Test
-    void create_same_user_error() {
+    @DisplayName("Debe crear un intercambio correctamente cuando los datos son válidos")
+    void create_Success() {
 
-        Usuario u1 = Usuario.builder().id(1L).build();
+        when(postIntercambioRepository.findById(10L)).thenReturn(Optional.of(post));
+        when(usuarioRepository.findById(2L)).thenReturn(Optional.of(usuarioIntercambio));
 
-        PostIntercambio post = PostIntercambio.builder()
-                .id(1L)
-                .usuario(u1)
+        Intercambio intercambioGuardado = Intercambio.builder()
+                .id(100L)
+                .postIntercambio(post)
+                .usuarioCambio(usuarioIntercambio)
                 .build();
+        when(intercambioRepository.save(any(Intercambio.class))).thenReturn(intercambioGuardado);
 
-        when(postIntercambioRepository.findById(1L)).thenReturn(Optional.of(post));
-        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(u1));
+        IntercambioResponseDTO response = intercambioService.create(10L, 2L);
 
-        assertThrows(RuntimeException.class, () -> service.create(1L, 1L));
+        assertNotNull(response);
+        assertEquals(EstadoPost.FINALIZADO, post.getEstado());
+        verify(postIntercambioRepository, times(2)).save(post);
+        verify(intercambioRepository).save(any(Intercambio.class));
+    }
+
+    @Test
+    @DisplayName("Debe lanzar GSBadRequestException si el usuario intenta intercambiar con su propio post")
+    void create_ThrowsBadRequest_WhenSameUser() {
+
+        when(postIntercambioRepository.findById(10L)).thenReturn(Optional.of(post));
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuarioProducto));
+
+        assertThrows(GSBadRequestException.class, () -> {
+            intercambioService.create(10L, 1L);
+        });
+
+        verify(intercambioRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Debe lanzar GSNotFoundException si el post no existe")
+    void create_ThrowsNotFound_WhenPostMissing() {
+
+        when(postIntercambioRepository.findById(99L)).thenReturn(Optional.empty());
+        assertThrows(GSNotFoundException.class, () -> intercambioService.create(99L, 2L));
+    }
+
+    @Test
+    @DisplayName("Debe retornar un DTO cuando el ID existe")
+    void findById_Success() {
+
+        Intercambio intercambio = Intercambio.builder().id(1L).postIntercambio(post).usuarioCambio(usuarioIntercambio).build();
+        when(intercambioRepository.findById(1L)).thenReturn(Optional.of(intercambio));
+
+        IntercambioResponseDTO result = intercambioService.findById(1L);
+
+        assertNotNull(result);
+        verify(intercambioRepository).findById(1L);
+    }
+
+    @Test
+    @DisplayName("Debe lanzar excepción al intentar borrar un intercambio inexistente")
+    void delete_ThrowsNotFound() {
+
+        when(intercambioRepository.existsById(1L)).thenReturn(false);
+
+        assertThrows(GSNotFoundException.class, () -> intercambioService.delete(1L));
+        verify(intercambioRepository, never()).deleteById(anyLong());
     }
 }

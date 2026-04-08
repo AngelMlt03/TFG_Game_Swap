@@ -1,14 +1,19 @@
 package com.tfg.angel.gameswap.backend.business.service;
 
-import com.tfg.angel.gameswap.backend.business.dto.UsuarioDTO;
+import com.tfg.angel.gameswap.backend.business.dto.request.UsuarioRequestDTO;
+import com.tfg.angel.gameswap.backend.business.dto.response.UsuarioResponseDTO;
 
 import java.util.List;
 
 public interface UsuarioService {
 
-    List<UsuarioDTO> findAll();
+    UsuarioResponseDTO create(UsuarioRequestDTO dto);
 
-    UsuarioDTO findById(Long id);
+    UsuarioResponseDTO findById(Long id);
 
-    UsuarioDTO insert(UsuarioDTO usuarioDTO);
+    List<UsuarioResponseDTO> findAll();
+
+    UsuarioResponseDTO update(Long id, UsuarioRequestDTO dto);
+
+    void delete(Long id);
 }

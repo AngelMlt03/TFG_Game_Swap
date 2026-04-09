@@ -37,6 +37,8 @@ public class Usuario {
     @Column(name = "rol")
     private Rol rol;
 
+    private String password;
+
     // Relaciones
 
     @OneToMany(mappedBy = "comprador", fetch = FetchType.LAZY)

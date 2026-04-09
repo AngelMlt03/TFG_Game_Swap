@@ -1,4 +1,4 @@
-package com.tfg.angel.gameswap.backend.config;
+package com.tfg.angel.gameswap.backend.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,7 +35,7 @@ public class CorsConfig {
         UrlBasedCorsConfigurationSource source =
                 new UrlBasedCorsConfigurationSource();
 
-        source.registerCorsConfiguration("/api/**", config);
+        source.registerCorsConfiguration("/**", config);
 
         return new CorsFilter(source);
     }

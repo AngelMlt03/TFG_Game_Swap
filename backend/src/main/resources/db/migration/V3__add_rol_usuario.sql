@@ -1,4 +1,4 @@
--- V3: Se añade la columna rol_usuario a la tabla Usuario
+-- V3: Se añade la columna rol_usuario y password a la tabla Usuario
 
 ALTER TABLE Usuario
 ADD COLUMN rol VARCHAR(20) DEFAULT 'CLIENTE';
@@ -6,14 +6,17 @@ ADD COLUMN rol VARCHAR(20) DEFAULT 'CLIENTE';
 ALTER TABLE Usuario
 ADD CONSTRAINT chk_usuario_rol CHECK (rol IN ('ADMIN', 'CLIENTE'));
 
+ALTER TABLE Usuario
+ADD COLUMN password VARCHAR(255);
+-- '$2a$10$bKGDwSWcxsXf4tngOy3X3uHgp9xR4d4lpkcd2o15XVjIIWQ6bUeia'; -> "1234"
+
 -- Datos de prueba
 
-INSERT INTO usuario (id, correo, estrellas, fecha_nacimiento, nombre, n_usuario, saldo, rol)
+INSERT INTO usuario (id, correo, estrellas, fecha_nacimiento, nombre, n_usuario, saldo, rol, password)
 VALUES
-(1, 'victor@gmail.com', 2, CURRENT_DATE, 'Victor', 'Victor02', 90, 'CLIENTE'),
-(2, 'andres@gmail.com', 3, CURRENT_DATE, 'Andrés', 'Andrés03', 110, 'CLIENTE'),
-(3, 'admin@gmail.com', 5, CURRENT_DATE, 'Admin', 'Admin01', 9999, 'ADMIN');
-
+(1, 'victor@gmail.com', 2, CURRENT_DATE, 'Victor', 'Victor02', 90, 'CLIENTE', '$2a$10$bKGDwSWcxsXf4tngOy3X3uHgp9xR4d4lpkcd2o15XVjIIWQ6bUeia'),
+(2, 'andres@gmail.com', 3, CURRENT_DATE, 'Andrés', 'Andrés03', 110, 'CLIENTE', '$2a$10$bKGDwSWcxsXf4tngOy3X3uHgp9xR4d4lpkcd2o15XVjIIWQ6bUeia'),
+(3, 'admin@gmail.com', 5, CURRENT_DATE, 'Admin', 'Admin01', 9999, 'ADMIN', '$2a$10$bKGDwSWcxsXf4tngOy3X3uHgp9xR4d4lpkcd2o15XVjIIWQ6bUeia');
 
 INSERT INTO producto (id, estado, id_api, nombre)
 VALUES

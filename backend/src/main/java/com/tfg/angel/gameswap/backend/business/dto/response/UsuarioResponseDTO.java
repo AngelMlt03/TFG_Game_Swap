@@ -1,5 +1,6 @@
 package com.tfg.angel.gameswap.backend.business.dto.response;
 
+import com.tfg.angel.gameswap.backend.business.model.enums.Rol;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -18,4 +19,5 @@ public class UsuarioResponseDTO {
     private Double saldo;
     private String correo;
     private Double estrellas;
+    private Rol rol;
 }

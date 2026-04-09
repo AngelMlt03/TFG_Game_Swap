@@ -7,6 +7,7 @@ import com.tfg.angel.gameswap.backend.business.model.Producto;
 import com.tfg.angel.gameswap.backend.business.model.Usuario;
 import com.tfg.angel.gameswap.backend.business.model.enums.EstadoPost;
 import com.tfg.angel.gameswap.backend.business.model.enums.EstadoProducto;
+import com.tfg.angel.gameswap.backend.business.model.enums.Rol;
 import com.tfg.angel.gameswap.backend.business.repository.CompraVentaRepository;
 import com.tfg.angel.gameswap.backend.business.repository.PostVentaRepository;
 import com.tfg.angel.gameswap.backend.business.repository.UsuarioRepository;
@@ -58,12 +59,14 @@ class CompraVentaServiceTest {
         comprador = Usuario.builder()
                 .id(1L)
                 .nombre("Comprador")
+                .rol(Rol.CLIENTE)
                 .saldo(100.0)
                 .build();
 
         vendedor = Usuario.builder()
                 .id(2L)
                 .nombre("Vendedor")
+                .rol(Rol.CLIENTE)
                 .saldo(50.0)
                 .build();
 

@@ -3,6 +3,7 @@ package com.tfg.angel.gameswap.backend.service;
 import com.tfg.angel.gameswap.backend.business.dto.request.CarritoRequestDTO;
 import com.tfg.angel.gameswap.backend.business.dto.response.CarritoResponseDTO;
 import com.tfg.angel.gameswap.backend.business.model.*;
+import com.tfg.angel.gameswap.backend.business.model.enums.Rol;
 import com.tfg.angel.gameswap.backend.business.repository.*;
 import com.tfg.angel.gameswap.backend.business.service.impl.CarritoServiceImpl;
 import com.tfg.angel.gameswap.backend.exception.GSBadRequestException;
@@ -44,7 +45,7 @@ class CarritoServiceTest {
     @BeforeEach
     void setUp() {
 
-        usuario = Usuario.builder().id(1L).nombre("Angel").build();
+        usuario = Usuario.builder().id(1L).nombre("Angel").rol(Rol.CLIENTE).build();
 
         carrito = Carrito.builder()
                 .id(10L)

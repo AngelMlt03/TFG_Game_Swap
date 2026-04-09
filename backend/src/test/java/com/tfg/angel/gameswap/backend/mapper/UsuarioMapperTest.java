@@ -2,6 +2,7 @@ package com.tfg.angel.gameswap.backend.mapper;
 
 import com.tfg.angel.gameswap.backend.business.mapper.UsuarioMapper;
 import com.tfg.angel.gameswap.backend.business.model.Usuario;
+import com.tfg.angel.gameswap.backend.business.model.enums.Rol;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -20,6 +21,7 @@ class UsuarioMapperTest {
                 .fechaNacimiento(LocalDate.now())
                 .saldo(100.0)
                 .estrellas(5.0)
+                .rol(Rol.CLIENTE)
                 .build();
 
         var dto = UsuarioMapper.toDTO(usuario);
@@ -31,5 +33,6 @@ class UsuarioMapperTest {
         assertEquals("a@gmail.com", dto.getCorreo());
         assertEquals(100.0, dto.getSaldo());
         assertEquals(5.0, dto.getEstrellas());
+        assertEquals(Rol.CLIENTE, dto.getRol());
     }
 }

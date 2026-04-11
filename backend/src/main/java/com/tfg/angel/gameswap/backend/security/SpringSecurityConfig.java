@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.*;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.*;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -23,25 +24,30 @@ public class SpringSecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
 
-                        // públicas
+                        // Públicos
                         .requestMatchers(
-                                "/auth/**",
+                                "/auth/login",
+                                "/auth/logout",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/v3/api-docs.yaml"
                         ).permitAll()
 
-                        // admin
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        // Admin
+                        .requestMatchers("/auth/admin/**").hasRole("ADMIN")
 
-                        // cliente
-                        .requestMatchers("/cliente/**").hasAnyRole("CLIENTE", "ADMIN")
+                        // API - Usuarios logueados
+                        .requestMatchers("/api/**").authenticated()
 
-                        // resto protegido
+                        // Lo demás
                         .anyRequest().authenticated()
                 )
 
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+
+                .sessionManagement(sess ->
+                        sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
 
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .formLogin(form -> form.disable())

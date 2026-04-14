@@ -1,43 +1,16 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '../../../core/services/auth.service';
 import { Router } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
+  selector: 'app-register',
   standalone: true,
   imports: [FormsModule],
-  template: `
-    <div class="auth-container">
-      <h2>Registro</h2>
-
-      <form (ngSubmit)="register()">
-        <input [(ngModel)]="name" name="name" placeholder="Nombre" required>
-        <input [(ngModel)]="username" name="username" placeholder="Nombre de usuario" required>
-        <input [(ngModel)]="email" name="email" type="email" placeholder="Email" required>
-        <input [(ngModel)]="password" name="password" type="password" placeholder="Contraseña" required>
-
-        <button type="submit">Registrarse</button>
-      </form>
-
-      <p (click)="goLogin()">Ya tengo una cuenta</p>
-    </div>
-  `,
-  styles: [`
-    .auth-container {
-      max-width: 400px;
-      margin: auto;
-      padding: 2rem;
-    }
-
-    input, button {
-      width: 100%;
-      margin: 10px 0;
-      padding: 10px;
-    }
-  `]
+  templateUrl: './register.component.html',
+  styleUrls: ['./register.component.css']
 })
 export class RegisterComponent {
-
   name = '';
   username = '';
   email = '';

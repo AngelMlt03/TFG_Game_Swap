@@ -51,3 +51,7 @@ VALUES
 INSERT INTO productocarrito (id, id_carrito, id_post_venta)
 VALUES
 (1, 1, 2);
+
+-- Sincronizar la secuencia del ID con los datos insertados
+
+SELECT setval('usuario_id_seq', (SELECT MAX(id) FROM usuario));

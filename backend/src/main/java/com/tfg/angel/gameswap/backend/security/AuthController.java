@@ -1,6 +1,11 @@
 package com.tfg.angel.gameswap.backend.security;
 
+import com.tfg.angel.gameswap.backend.business.model.Usuario;
+import com.tfg.angel.gameswap.backend.business.model.enums.Rol;
 import com.tfg.angel.gameswap.backend.exception.GSBadRequestException;
+import com.tfg.angel.gameswap.backend.security.records.AuthRequest;
+import com.tfg.angel.gameswap.backend.security.records.AuthResponse;
+import com.tfg.angel.gameswap.backend.security.records.RegisterRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import com.tfg.angel.gameswap.backend.business.repository.UsuarioRepository;
@@ -27,6 +32,35 @@ public class AuthController {
         if (!passwordEncoder.matches(request.password(), usuario.getPassword())) {
             throw new GSBadRequestException("Constraseña incorrecta");
         }
+
+        String accessToken = jwtService.generateToken(
+                usuario.getNombreUsuario(),
+                usuario.getRol().name()
+        );
+
+        String refreshToken = jwtService.generateRefreshToken(usuario.getNombreUsuario());
+
+        return new AuthResponse(accessToken, refreshToken);
+    }
+
+    @PostMapping("/register")
+    public AuthResponse register(@RequestBody RegisterRequest request) {
+
+        if (usuarioRepository.existsByNombreUsuario(request.username())) {
+            throw new GSBadRequestException("El usuario ya existe");
+        }
+
+        var usuario = Usuario.builder()
+                .nombre(request.name())
+                .nombreUsuario(request.username())
+                .correo(request.correo())
+                .rol(Rol.CLIENTE)
+                .saldo(0.0)
+                .estrellas(0.0)
+                .password(passwordEncoder.encode(request.password()))
+                .build();
+
+        usuarioRepository.save(usuario);
 
         String accessToken = jwtService.generateToken(
                 usuario.getNombreUsuario(),

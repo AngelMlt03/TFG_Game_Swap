@@ -26,8 +26,7 @@ public class SpringSecurityConfig {
 
                         // Públicos
                         .requestMatchers(
-                                "/auth/login",
-                                "/auth/logout",
+                                "/auth/**",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/v3/api-docs.yaml"

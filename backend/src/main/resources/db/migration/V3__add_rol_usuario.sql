@@ -54,4 +54,4 @@ VALUES
 
 -- Sincronizar la secuencia del ID con los datos insertados
 
-ALTER SEQUENCE usuario_id_seq RESTART WITH 4;
+SELECT setval('usuario_id_seq', (SELECT MAX(id) FROM usuario));

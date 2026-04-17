@@ -12,7 +12,7 @@ import { NgIf } from '@angular/common';
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit {
 
   username = '';
   menuOpen = false;

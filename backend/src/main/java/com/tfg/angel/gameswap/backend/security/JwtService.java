@@ -10,14 +10,14 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-    private final String SECRET = "esto_es_una_clave_super_segura_123456";
-    private final long EXPIRATION = 1000 * 60 * 60; // 1 hora
-
     private Key getKey() {
+        String SECRET = "esto_es_una_clave_super_segura_123456";
         return Keys.hmacShaKeyFor(SECRET.getBytes());
     }
 
     public String generateToken(String username, String rol) {
+        // 1 hora
+        long EXPIRATION = 1000 * 60 * 60;
         return Jwts.builder()
                 .setSubject(username)
                 .claim("rol", rol)

@@ -53,5 +53,5 @@ VALUES
 (1, 1, 2);
 
 -- Sincronizar la secuencia del ID con los datos insertados
-
-ALTER SEQUENCE usuario_id_seq RESTART WITH 4;
+CREATE SEQUENCE IF NOT EXISTS "usuario_id_seq" START WITH 4;
+ALTER SEQUENCE "usuario_id_seq" RESTART WITH 4;

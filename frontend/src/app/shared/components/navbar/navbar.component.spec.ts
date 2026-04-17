@@ -1,8 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NavbarComponent } from './navbar.component';
 import { AuthService } from '../../../core/services/auth.service';
-import { Router } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
+import { TokenService } from '../../../core/services/token.service';
+import { ThemeService } from '../../../core/services/theme.service';
+import { Router, provideRouter } from '@angular/router';
+import { By } from '@angular/platform-browser';
 
 describe('NavbarComponent', () => {
   let component: NavbarComponent;
@@ -11,21 +13,36 @@ describe('NavbarComponent', () => {
   const authServiceMock = {
     logout: jasmine.createSpy('logout')
   };
-  const routerMock = {
-    navigate: jasmine.createSpy('navigate')
+
+  const tokenServiceMock = {
+    getUsername: jasmine.createSpy('getUsername').and.returnValue('Alex')
   };
+
+  const themeServiceMock = {
+    toggleTheme: jasmine.createSpy('toggleTheme'),
+    isDark: jasmine.createSpy('isDark').and.returnValue(false)
+  };
+
+  let router: Router;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NavbarComponent, RouterTestingModule],
+      
+      imports: [NavbarComponent],
       providers: [
+        provideRouter([]),
         { provide: AuthService, useValue: authServiceMock },
-        { provide: Router, useValue: routerMock }
+        { provide: TokenService, useValue: tokenServiceMock },
+        { provide: ThemeService, useValue: themeServiceMock }
       ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(NavbarComponent);
     component = fixture.componentInstance;
+    router = TestBed.inject(Router);
+    
+    spyOn(router, 'navigate'); 
+
     fixture.detectChanges();
   });
 
@@ -33,23 +50,49 @@ describe('NavbarComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('debería mostrar el logo "GameSwap"', () => {
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.logo')?.textContent).toContain('GameSwap');
+  it('debería alternar dropdownOpen al llamar a toggleDropdown()', () => {
+    expect(component.dropdownOpen).toBeFalse();
+    component.toggleDropdown();
+    expect(component.dropdownOpen).toBeTrue();
+    component.toggleDropdown();
+    expect(component.dropdownOpen).toBeFalse();
   });
 
-  it('debería llamar a auth.logout y navegar a login al pulsar Salir', () => {
+  it('debería llamar a theme.toggleTheme() al ejecutar toggleTheme()', () => {
+    component.toggleTheme();
+    expect(themeServiceMock.toggleTheme).toHaveBeenCalled();
+  });
+
+  it('debería cerrar sesión y navegar al login', () => {
     component.logout();
-    
     expect(authServiceMock.logout).toHaveBeenCalled();
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/login']);
+    expect(router.navigate).toHaveBeenCalledWith(['/login']);
   });
 
-  it('debería tener los enlaces de navegación correctos', () => {
-    const compiled = fixture.nativeElement as HTMLElement;
-    const links = compiled.querySelectorAll('a');
-    expect(links[0].getAttribute('routerLink')).toBe('/');
-    expect(links[1].getAttribute('routerLink')).toBe('/explorar');
-    expect(links[2].getAttribute('routerLink')).toBe('/perfil');
+  it('debería detectar el scroll de la ventana', () => {
+    
+    spyOnProperty(window, 'scrollY', 'get').and.returnValue(50);
+    window.dispatchEvent(new Event('scroll'));
+    fixture.detectChanges();
+    
+    expect(component.scrolled).toBeTrue();
   });
-});
+
+  it('debería mostrar el menú desplegable solo cuando dropdownOpen es true', () => {
+    
+    let menu = fixture.debugElement.query(By.css('.dropdown-menu'));
+    expect(menu).toBeNull();
+
+    component.dropdownOpen = true;
+    fixture.detectChanges();
+    
+    menu = fixture.debugElement.query(By.css('.dropdown-menu'));
+    expect(menu).not.toBeNull();
+  });
+
+  it('debería generar una letra de avatar válida incluso si el nombre es minúscula', () => {
+    tokenServiceMock.getUsername.and.returnValue('paco');
+    component.ngOnInit();
+    expect(component.avatarLetter).toBe('P');
+  });
+}); 

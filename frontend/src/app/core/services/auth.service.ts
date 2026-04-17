@@ -7,11 +7,11 @@ import { environment } from '../../../environments/environment';
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  private API = `${environment.authUrl}`;
+  private readonly API = `${environment.authUrl}`;
 
   constructor(
-    private http: HttpClient,
-    private tokenService: TokenService
+    private readonly http: HttpClient,
+    private readonly tokenService: TokenService
   ) {}
 
   login(data: any) {

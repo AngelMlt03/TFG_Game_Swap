@@ -1,4 +1,5 @@
-<nav class="navbar">
+<nav class="navbar" [class.scrolled]="scrolled">
+
   <div class="logo">GameSwap</div>
 
   <div class="menu">
@@ -8,7 +9,30 @@
   </div>
 
   <div class="user">
-    <span>Usuario</span>
-    <button (click)="logout()">Salir</button>
+
+    <div class="dropdown">
+
+      <div class="dropdown-toggle" (click)="toggleDropdown()">
+        <div class="avatar" [style.background]="avatarColor">
+          {{ avatarLetter }}
+        </div>
+        <span class="username">{{ username }}</span>
+      </div>
+
+      <div class="dropdown-menu" *ngIf="dropdownOpen">
+
+        <a routerLink="/perfil">Perfil</a>
+
+        <button (click)="toggleTheme()">
+          {{ theme.isDark() ? 'Modo oscuro 🌙' : 'Modo claro ☀️' }}
+        </button>
+
+        <button (click)="logout()">Cerrar sesión</button>
+
+      </div>
+
+    </div>
+
   </div>
+
 </nav>

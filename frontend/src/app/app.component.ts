@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { ThemeService } from './core/services/theme.service';
 
 @Component({
   standalone: true,
@@ -7,8 +8,16 @@ import { RouterOutlet } from '@angular/router';
   imports: [RouterOutlet],
   template: `
     <router-outlet></router-outlet>
-  `
+  `,
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+
+  constructor(private theme: ThemeService) {}
+
   title = 'GameSwap';
+
+  ngOnInit() {
+    this.theme.initTheme();
+  }
 }

@@ -20,4 +20,12 @@ export class TokenService {
   isLogged(): boolean {
     return !!this.getToken();
   }
+
+  getUsername(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
+
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.sub;
+  }
 }

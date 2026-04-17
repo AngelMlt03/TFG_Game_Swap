@@ -33,5 +33,12 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/auth/register/register.component')
         .then(m => m.RegisterComponent)
+  },
+
+  {
+    path: 'perfil',
+    loadComponent: () =>
+      import('./features/perfil/perfil.component')
+        .then(m => m.PerfilComponent)
   }
 ];

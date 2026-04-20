@@ -26,7 +26,7 @@ ALTER TABLE CompraVenta DROP COLUMN id_producto;
 
 -- añadir nueva FK
 ALTER TABLE CompraVenta
-ADD COLUMN id_post_venta INTEGER REFERENCES PostVenta(id);
+ADD COLUMN id_post_venta BIGINT REFERENCES PostVenta(id);
 
 
 -- 4. Intercambio -> cambiar estructura
@@ -38,7 +38,7 @@ ALTER TABLE Intercambio DROP COLUMN id_usuario_producto;
 
 -- añadir nuevas columnas
 ALTER TABLE Intercambio
-ADD COLUMN id_post_intercambio INTEGER REFERENCES PostIntercambio(id);
+ADD COLUMN id_post_intercambio BIGINT REFERENCES PostIntercambio(id);
 
 
 -- 5. ProductoCarrito -> cambiar producto por postVenta
@@ -46,4 +46,4 @@ ADD COLUMN id_post_intercambio INTEGER REFERENCES PostIntercambio(id);
 ALTER TABLE ProductoCarrito DROP COLUMN id_producto;
 
 ALTER TABLE ProductoCarrito
-ADD COLUMN id_post_venta INTEGER REFERENCES PostVenta(id);
+ADD COLUMN id_post_venta BIGINT REFERENCES PostVenta(id);

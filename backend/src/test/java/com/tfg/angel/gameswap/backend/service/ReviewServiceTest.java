@@ -4,6 +4,7 @@ import com.tfg.angel.gameswap.backend.business.dto.request.ReviewRequestDTO;
 import com.tfg.angel.gameswap.backend.business.dto.response.ReviewResponseDTO;
 import com.tfg.angel.gameswap.backend.business.model.Review;
 import com.tfg.angel.gameswap.backend.business.model.Usuario;
+import com.tfg.angel.gameswap.backend.business.model.enums.Rol;
 import com.tfg.angel.gameswap.backend.business.repository.ReviewRepository;
 import com.tfg.angel.gameswap.backend.business.repository.UsuarioRepository;
 import com.tfg.angel.gameswap.backend.business.service.impl.ReviewServiceImpl;
@@ -42,8 +43,8 @@ class ReviewServiceTest {
 
     @BeforeEach
     void setUp() {
-        reviewer = Usuario.builder().id(1L).nombre("Angel").build();
-        reviewed = Usuario.builder().id(2L).nombre("Juan").build();
+        reviewer = Usuario.builder().id(1L).nombre("Angel").rol(Rol.CLIENTE).build();
+        reviewed = Usuario.builder().id(2L).nombre("Juan").rol(Rol.CLIENTE).build();
 
         validDto = ReviewRequestDTO.builder()
                 .idReviewer(1L)

@@ -15,6 +15,7 @@ public class UsuarioMapper {
                 .correo(dto.getCorreo())
                 .saldo(0.0)
                 .estrellas(0.0)
+                .rol(dto.getRol())
                 .build();
     }
 
@@ -27,6 +28,7 @@ public class UsuarioMapper {
                 .saldo(usuario.getSaldo())
                 .correo(usuario.getCorreo())
                 .estrellas(usuario.getEstrellas())
+                .rol(usuario.getRol())
                 .build();
     }
 }

@@ -3,6 +3,7 @@ package com.tfg.angel.gameswap.backend.service;
 import com.tfg.angel.gameswap.backend.business.dto.request.UsuarioRequestDTO;
 import com.tfg.angel.gameswap.backend.business.dto.response.UsuarioResponseDTO;
 import com.tfg.angel.gameswap.backend.business.model.Usuario;
+import com.tfg.angel.gameswap.backend.business.model.enums.Rol;
 import com.tfg.angel.gameswap.backend.business.repository.UsuarioRepository;
 import com.tfg.angel.gameswap.backend.business.service.impl.UsuarioServiceImpl;
 import com.tfg.angel.gameswap.backend.exception.GSBadRequestException;
@@ -49,6 +50,7 @@ class UsuarioServiceTest {
                 .nombre("Angel")
                 .nombreUsuario("angel_dev")
                 .correo("angel@example.com")
+                .rol(Rol.CLIENTE)
                 .build();
     }
 

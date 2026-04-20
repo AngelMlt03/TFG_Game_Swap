@@ -26,9 +26,7 @@ public class CarritoController {
 
     @PostMapping("/add/{idPostVenta}")
     public CarritoResponseDTO addProduct(@PathVariable Long idPostVenta) {
-
-        Long idUsuario = 1L;
-        return service.addProduct(idPostVenta, idUsuario);
+        return service.addProduct(idPostVenta);
     }
 
     @PostMapping("/remove")

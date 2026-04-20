@@ -24,7 +24,7 @@ class CarritoControllerTest {
         controller.delete(1L);
 
         verify(service).findByUser(1L);
-        verify(service).addProduct(1L, 1L);
+        verify(service).addProduct(1L);
         verify(service).removeProduct(1L);
         verify(service).create(carritoRequestDTO);
         verify(service).delete(1L);

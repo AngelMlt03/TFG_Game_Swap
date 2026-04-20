@@ -9,7 +9,7 @@ public interface CarritoService {
 
     CarritoResponseDTO findByUser(Long idUsuario);
 
-    CarritoResponseDTO addProduct(Long idPostVenta, Long idUsuario);
+    CarritoResponseDTO addProduct(Long idPostVenta);
 
     CarritoResponseDTO removeProduct(Long idProductoCarrito);
 

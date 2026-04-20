@@ -6,6 +6,7 @@ import com.tfg.angel.gameswap.backend.business.model.PostIntercambio;
 import com.tfg.angel.gameswap.backend.business.model.Producto;
 import com.tfg.angel.gameswap.backend.business.model.Usuario;
 import com.tfg.angel.gameswap.backend.business.model.enums.EstadoProducto;
+import com.tfg.angel.gameswap.backend.business.model.enums.Rol;
 import com.tfg.angel.gameswap.backend.business.repository.PostIntercambioRepository;
 import com.tfg.angel.gameswap.backend.business.repository.ProductoRepository;
 import com.tfg.angel.gameswap.backend.business.repository.UsuarioRepository;
@@ -45,7 +46,7 @@ class PostIntercambioServiceTest {
 
     @BeforeEach
     void setUp() {
-        usuario = Usuario.builder().id(1L).nombre("Angel").build();
+        usuario = Usuario.builder().id(1L).nombre("Angel").rol(Rol.CLIENTE).build();
 
         producto = Producto.builder()
                 .id(1L)

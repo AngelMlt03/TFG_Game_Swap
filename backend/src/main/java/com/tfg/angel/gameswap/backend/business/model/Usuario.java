@@ -1,5 +1,6 @@
 package com.tfg.angel.gameswap.backend.business.model;
 
+import com.tfg.angel.gameswap.backend.business.model.enums.Rol;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,6 +32,12 @@ public class Usuario {
     private String correo;
 
     private Double estrellas = 0.0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "rol")
+    private Rol rol;
+
+    private String password;
 
     // Relaciones
 

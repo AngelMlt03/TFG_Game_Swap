@@ -1,0 +1,42 @@
+<div class="perfil-container">
+
+  <div>
+    <h2>Mi Perfil</h2>
+    <a routerLink="/">Volver</a>
+  </div>
+
+  <div class="card">
+
+    <div class="field">
+      <label for="nombreInput">Nombre</label>
+
+      <input *ngIf="editMode" id="nombreInput" [(ngModel)]="usuario.nombre">
+
+      <span *ngIf="!editMode">
+        {{ usuario.nombre }}
+      </span>
+    </div>
+
+    <div class="field">
+      <label for="emailInput">Email</label>
+
+      <input *ngIf="editMode" id="emailInput" [(ngModel)]="usuario.email">
+
+      <span *ngIf="!editMode">
+        {{ usuario.email }}
+      </span>
+    </div>
+
+    <div class="actions">
+      <button *ngIf="!editMode" (click)="toggleEdit()">
+        Editar
+      </button>
+
+      <button *ngIf="editMode" (click)="guardar()">
+        Guardar
+      </button>
+    </div>
+
+  </div>
+
+</div>

@@ -4,6 +4,7 @@ import com.tfg.angel.gameswap.backend.business.dto.response.IntercambioResponseD
 import com.tfg.angel.gameswap.backend.business.model.*;
 import com.tfg.angel.gameswap.backend.business.model.enums.EstadoPost;
 import com.tfg.angel.gameswap.backend.business.model.enums.EstadoProducto;
+import com.tfg.angel.gameswap.backend.business.model.enums.Rol;
 import com.tfg.angel.gameswap.backend.business.repository.*;
 import com.tfg.angel.gameswap.backend.business.service.impl.IntercambioServiceImpl;
 import com.tfg.angel.gameswap.backend.exception.GSBadRequestException;
@@ -43,8 +44,8 @@ class IntercambioServiceTest {
     @BeforeEach
     void setUp() {
 
-        usuarioProducto = Usuario.builder().id(1L).nombre("Angel").build();
-        usuarioIntercambio = Usuario.builder().id(2L).nombre("Juan").build();
+        usuarioProducto = Usuario.builder().id(1L).nombre("Angel").rol(Rol.CLIENTE).build();
+        usuarioIntercambio = Usuario.builder().id(2L).nombre("Juan").rol(Rol.CLIENTE).build();
 
         Producto producto = Producto.builder()
                 .id(1L)

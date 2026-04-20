@@ -9,6 +9,7 @@ import com.tfg.angel.gameswap.backend.business.repository.*;
 import com.tfg.angel.gameswap.backend.business.service.CarritoService;
 import com.tfg.angel.gameswap.backend.exception.GSBadRequestException;
 import com.tfg.angel.gameswap.backend.exception.GSNotFoundException;
+import com.tfg.angel.gameswap.backend.security.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -46,9 +47,14 @@ public class CarritoServiceImpl implements CarritoService {
     }
 
     @Override
-    public CarritoResponseDTO addProduct(Long idPostVenta, Long idUsuario) {
+    public CarritoResponseDTO addProduct(Long idPostVenta) {
 
-        Carrito carrito = carritoRepository.findByUsuarioId(idUsuario)
+        String username = SecurityUtils.getUsername();
+
+        Usuario usuario = usuarioRepository.findByNombreUsuario(username)
+                .orElseThrow(() -> new GSNotFoundException("Usuario no encontrado"));
+
+        Carrito carrito = carritoRepository.findByUsuarioId(usuario.getId())
                 .orElseThrow(() -> new GSNotFoundException("Carrito no encontrado"));
 
         PostVenta postVenta = postVentaRepository.findById(idPostVenta)

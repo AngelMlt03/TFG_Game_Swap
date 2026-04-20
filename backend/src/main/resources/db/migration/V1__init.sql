@@ -1,6 +1,6 @@
 -- 1. Tabla de Usuarios
 CREATE TABLE Usuario (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     nombre VARCHAR(255) NOT NULL,
     n_usuario VARCHAR(100) UNIQUE NOT NULL,
     fecha_nacimiento DATE,
@@ -11,7 +11,7 @@ CREATE TABLE Usuario (
 
 -- 2. Tabla de Productos (Maestra)
 CREATE TABLE Producto (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     id_API INTEGER NOT NULL,
     nombre VARCHAR(255) NOT NULL,
     estado VARCHAR(50) CHECK (estado IN ('NUEVO', 'USADO'))
@@ -19,7 +19,7 @@ CREATE TABLE Producto (
 
 -- 3. Historial: Compras / Ventas
 CREATE TABLE CompraVenta (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     id_comprador INTEGER REFERENCES Usuario(id),
     id_vendedor INTEGER REFERENCES Usuario(id),
     id_producto INTEGER REFERENCES Producto(id),
@@ -29,7 +29,7 @@ CREATE TABLE CompraVenta (
 
 -- 4. Historial: Intercambio
 CREATE TABLE Intercambio (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     id_producto INTEGER REFERENCES Producto(id),
     id_cambio INTEGER REFERENCES Producto(id),
     id_usuario_producto INTEGER REFERENCES Usuario(id),
@@ -39,7 +39,7 @@ CREATE TABLE Intercambio (
 
 -- 5. Posts: Post Ventas
 CREATE TABLE PostVenta (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     id_vendedor INTEGER REFERENCES Usuario(id),
     id_producto INTEGER REFERENCES Producto(id),
     precio DOUBLE PRECISION NOT NULL
@@ -47,7 +47,7 @@ CREATE TABLE PostVenta (
 
 -- 6. Posts: Post Intercambio
 CREATE TABLE PostIntercambio (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     id_usuario INTEGER REFERENCES Usuario(id),
     id_producto INTEGER REFERENCES Producto(id),
     id_producto_cambio INTEGER REFERENCES Producto(id)
@@ -55,7 +55,7 @@ CREATE TABLE PostIntercambio (
 
 -- 7. Review
 CREATE TABLE Review (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     id_reviewer INTEGER REFERENCES Usuario(id),
     id_reviewed INTEGER REFERENCES Usuario(id),
     contenido TEXT,
@@ -64,14 +64,14 @@ CREATE TABLE Review (
 
 -- 8. Carrito
 CREATE TABLE Carrito (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     id_usuario INTEGER REFERENCES Usuario(id),
     coste DOUBLE PRECISION DEFAULT 0.0
 );
 
 -- 9. Productos en el Carrito (Tabla intermedia)
 CREATE TABLE ProductoCarrito (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     id_producto INTEGER REFERENCES Producto(id),
     id_carrito INTEGER REFERENCES Carrito(id)
 );

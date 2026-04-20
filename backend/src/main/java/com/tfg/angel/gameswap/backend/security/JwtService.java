@@ -17,7 +17,7 @@ public class JwtService {
 
     public String generateToken(String username, String rol) {
         // 1 hora
-        long expiration = 1000 * 60 * 60;
+        long expiration = 1000L * 60 * 60;
         return Jwts.builder()
                 .setSubject(username)
                 .claim("rol", rol)

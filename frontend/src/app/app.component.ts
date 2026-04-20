@@ -13,7 +13,7 @@ import { ThemeService } from './core/services/theme.service';
 })
 export class AppComponent implements OnInit {
 
-  constructor(private theme: ThemeService) {}
+  constructor(private readonly theme: ThemeService) {}
 
   title = 'GameSwap';
 

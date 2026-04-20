@@ -14,7 +14,7 @@ export class LoginComponent {
   username = '';
   password = '';
 
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(private readonly auth: AuthService, private readonly router: Router) {}
 
   login() {
     this.auth.login({

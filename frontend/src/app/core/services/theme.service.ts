@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
 
-  private THEME_KEY = 'theme';
+  private readonly THEME_KEY = 'theme';
 
   initTheme() {
     const theme = localStorage.getItem(this.THEME_KEY) || 'light';

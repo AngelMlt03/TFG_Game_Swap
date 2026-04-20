@@ -12,7 +12,7 @@
 
     <div class="dropdown">
 
-      <div class="dropdown-toggle" (click)="toggleDropdown()" role="button">
+      <div class="dropdown-toggle" (click)="toggleDropdown()" role="button" tabindex="0" (keydown.enter)="toggleDropdown()">
         <div class="avatar" [style.background]="avatarColor">
           {{ avatarLetter }}
         </div>

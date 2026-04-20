@@ -23,9 +23,9 @@ export class NavbarComponent implements OnInit {
   avatarColor = '';
 
   constructor(
-    private auth: AuthService,
-    private router: Router,
-    private tokenService: TokenService,
+    private readonly auth: AuthService,
+    private readonly router: Router,
+    private readonly tokenService: TokenService,
     public theme: ThemeService
   ) {}
 
@@ -59,21 +59,22 @@ export class NavbarComponent implements OnInit {
   }
 
   getColorFromUsername(name: string): string {
-  const colors = [
-    '#4f46e5',
-    '#16a34a',
-    '#dc2626',
-    '#ea580c',
-    '#0891b2',
-    '#7c3aed'
-  ];
+    const colors = [
+      '#4f46e5',
+      '#16a34a',
+      '#dc2626',
+      '#ea580c',
+      '#0891b2',
+      '#7c3aed'
+    ];
 
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) {
-    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    let hash = 0;
+    for (const char of name) {
+      const codePoint = char.codePointAt(0) || 0;
+      hash = codePoint + ((hash << 5) - hash);
+    }
+
+    return colors[Math.abs(hash) % colors.length];
   }
-
-  return colors[Math.abs(hash) % colors.length];
-}
 
 }

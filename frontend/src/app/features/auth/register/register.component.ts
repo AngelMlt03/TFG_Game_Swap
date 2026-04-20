@@ -16,7 +16,7 @@ export class RegisterComponent {
   email = '';
   password = '';
 
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(private readonly auth: AuthService, private readonly router: Router) {}
 
   register() {
     this.auth.register({

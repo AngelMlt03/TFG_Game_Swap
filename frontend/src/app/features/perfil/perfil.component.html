@@ -8,10 +8,9 @@
   <div class="card">
 
     <div class="field">
-      <label>Nombre</label>
+      <label for="nombreInput">Nombre</label>
 
-      <input *ngIf="editMode"
-             [(ngModel)]="usuario.nombre">
+      <input *ngIf="editMode" id="nombreInput" [(ngModel)]="usuario.nombre">
 
       <span *ngIf="!editMode">
         {{ usuario.nombre }}
@@ -19,10 +18,9 @@
     </div>
 
     <div class="field">
-      <label>Email</label>
+      <label for="emailInput">Email</label>
 
-      <input *ngIf="editMode"
-             [(ngModel)]="usuario.email">
+      <input *ngIf="editMode" id="emailInput" [(ngModel)]="usuario.email">
 
       <span *ngIf="!editMode">
         {{ usuario.email }}

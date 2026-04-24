@@ -1,9 +1,11 @@
 package com.tfg.angel.gameswap.backend.business.controller;
 
+import com.tfg.angel.gameswap.backend.business.dto.request.ChangePasswordRequest;
 import com.tfg.angel.gameswap.backend.business.dto.request.UsuarioRequestDTO;
 import com.tfg.angel.gameswap.backend.business.dto.response.UsuarioResponseDTO;
 import com.tfg.angel.gameswap.backend.business.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,5 +40,15 @@ public class UsuarioController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         usuarioService.delete(id);
+    }
+
+    @GetMapping("/username/{username}")
+    public UsuarioResponseDTO findByUsername(@PathVariable String username) {
+        return usuarioService.findByUsername(username);
+    }
+
+    @PostMapping("/change-password")
+    public void changePassword(@RequestBody ChangePasswordRequest request, Authentication auth) {
+        usuarioService.changePassword(auth.getName(), request);
     }
 }

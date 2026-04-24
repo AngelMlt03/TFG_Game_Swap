@@ -1,13 +1,20 @@
 .perfil-container {
-  max-width: 500px;
+  max-width: 600px;
   margin: auto;
   padding: 1rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .card {
   background: var(--card);
   padding: 1.5rem;
-  border-radius: 10px;
+  border-radius: 12px;
+  margin-top: 1rem;
 }
 
 .field {
@@ -15,8 +22,8 @@
 }
 
 label {
-  display: block;
   font-weight: bold;
+  display: block;
   margin-bottom: 5px;
 }
 
@@ -30,4 +37,9 @@ input {
 .actions {
   display: flex;
   justify-content: flex-end;
+  gap: 10px;
+}
+
+.password-card {
+  margin-top: 20px;
 }

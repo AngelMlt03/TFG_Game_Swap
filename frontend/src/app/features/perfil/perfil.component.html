@@ -1,42 +1,71 @@
 <div class="perfil-container">
-
-  <div>
+  <div class="header">
     <h2>Mi Perfil</h2>
-    <a routerLink="/">Volver</a>
+    <a routerLink="/">X</a>
   </div>
 
-  <div class="card">
-
+  <div class="card" *ngIf="usuario; else cargando">
     <div class="field">
-      <label for="nombreInput">Nombre</label>
-
-      <input *ngIf="editMode" id="nombreInput" [(ngModel)]="usuario.nombre">
-
-      <span *ngIf="!editMode">
-        {{ usuario.nombre }}
-      </span>
+      <label>Nombre</label>
+      <input *ngIf="editMode" [(ngModel)]="usuario.nombre" />
+      <span *ngIf="!editMode">{{ usuario.nombre }}</span>
     </div>
 
     <div class="field">
-      <label for="emailInput">Email</label>
+      <label>Email</label>
+      <input *ngIf="editMode" [(ngModel)]="usuario.correo" />
+      <span *ngIf="!editMode">{{ usuario.correo }}</span>
+    </div>
 
-      <input *ngIf="editMode" id="emailInput" [(ngModel)]="usuario.email">
+    <div class="field">
+      <label>Nombre de usuario</label>
+      <span>{{ usuario.nombreUsuario }}</span>
+    </div>
 
-      <span *ngIf="!editMode">
-        {{ usuario.email }}
-      </span>
+    <div class="field">
+      <label>Fecha de nacimiento</label>
+      <input
+        *ngIf="editMode"
+        type="date"
+        [(ngModel)]="usuario.fechaNacimiento"
+      />
+      <span *ngIf="!editMode">{{ usuario.fechaNacimiento }}</span>
+    </div>
+
+    <div class="field">
+      <label>Saldo</label>
+      <span>{{ usuario.saldo }} €</span>
+    </div>
+
+    <div class="field" *ngIf="editPassword">
+      <label>Contraseña actual</label>
+      <input type="password" [(ngModel)]="currentPassword" />
+    </div>
+
+    <div class="field" *ngIf="editPassword">
+      <label>Nueva contraseña</label>
+      <input type="password" [(ngModel)]="newPassword" />
     </div>
 
     <div class="actions">
-      <button *ngIf="!editMode" (click)="toggleEdit()">
-        Editar
+
+      <button *ngIf="!editMode" [ngClass]="editPassword ? 'oculto' : ''" (click)="toggleEdit()">Editar</button>
+      <button *ngIf="editMode" (click)="guardar()">Guardar</button>
+
+      <button *ngIf="!editPassword" [ngClass]="editMode ? 'oculto' : ''" (click)="togglePassword()">
+        Cambiar contraseña
       </button>
 
-      <button *ngIf="editMode" (click)="guardar()">
-        Guardar
-      </button>
+      <button *ngIf="editPassword" (click)="guardarPassword()">Guardar</button>
+
+      <button *ngIf="editPassword" (click)="togglePassword()">Cancelar</button>
     </div>
 
-  </div>
 
+
+  </div>
 </div>
+
+<ng-template #cargando>
+  <p>Cargando perfil...</p>
+</ng-template>

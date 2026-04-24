@@ -1,27 +1,75 @@
 <nav class="navbar" [class.scrolled]="scrolled">
 
-  <div class="logo">GameSwap</div>
+  <div class="left">
 
-  <div class="menu">
-    <a routerLink="/">Inicio</a>
-    <a routerLink="/explorar">Explorar</a>
-    <a routerLink="/perfil">Perfil</a>
+    <button class="burger" (click)="toggleMenu()">☰</button>
+
+    <div class="logo">GameSwap</div>
+
+    <div class="side-menu" [class.open]="menuOpen">
+
+      <a routerLink="/" (click)="toggleMenu()">Inicio</a>
+
+      <a routerLink="/busqueda" (click)="toggleMenu()">Búsqueda por filtros</a>
+
+      <div class="divider"></div>
+
+      <button (click)="abrirModalVenta()" (click)="toggleMenu()">Publicar venta</button>
+
+      <button (click)="abrirModalIntercambio()" (click)="toggleMenu()">Publicar intercambio</button>
+
+    </div>
+
   </div>
 
-  <div class="user">
+  <div class="center">
+
+    <input
+      type="text"
+      placeholder="Buscar videojuegos..."
+      [(ngModel)]="search"
+      (keyup.enter)="buscar()"
+    />
+
+    <button (click)="buscar()">🔍</button>
+
+  </div>
+
+  <div class="right">
+
+    <div class="saldo-div">
+      <span class="saldo">Saldo: {{ saldo }}€</span>
+    </div>
 
     <div class="dropdown">
 
       <div class="dropdown-toggle" (click)="toggleDropdown()" role="button" tabindex="0" (keydown.enter)="toggleDropdown()">
+
         <div class="avatar" [style.background]="avatarColor">
           {{ avatarLetter }}
         </div>
+
         <span class="username">{{ username }}</span>
+
       </div>
 
-      <div class="dropdown-menu" *ngIf="dropdownOpen">
+      <div class="dropdown-menu" [class.open]="dropdownOpen">
 
         <a routerLink="/perfil">Perfil</a>
+
+        <a routerLink="/saldo">Añadir saldo</a>
+
+        <div class="divider"></div>
+
+        <button (click)="abrirModalCarrito()" (click)="toggleDropdown()">Carrito</button>
+
+        <a routerLink="/perfil#guardados">Guardados</a>
+
+        <a routerLink="/perfil#historial">Historial</a>
+
+        <a routerLink="/perfil#reviews">Reviews</a>
+
+        <div class="divider"></div>
 
         <button (click)="toggleTheme()">
           {{ theme.isDark() ? 'Modo oscuro 🌙' : 'Modo claro ☀️' }}
@@ -36,3 +84,16 @@
   </div>
 
 </nav>
+
+<app-modal [isOpen]="modalVenta" title="Publicar venta" (close)="cerrarModalVenta()">
+  <p>Aquí irá el formulario de venta</p>
+</app-modal>
+
+
+<app-modal [isOpen]="modalIntercambio" title="Publicar intercambio" (close)="cerrarModalIntercambio()">
+  <p>Aquí irá el formulario de intercambio</p>
+</app-modal>
+
+<app-modal [isOpen]="modalCarrito" title="Carrito" (close)="cerrarModalCarrito()">
+  <p>Aquí irá el contenido del carrito</p>
+</app-modal>

@@ -1,5 +1,6 @@
 package com.tfg.angel.gameswap.backend.business.service.impl;
 
+import com.tfg.angel.gameswap.backend.business.dto.request.ChangePasswordRequest;
 import com.tfg.angel.gameswap.backend.business.dto.request.UsuarioRequestDTO;
 import com.tfg.angel.gameswap.backend.business.dto.response.UsuarioResponseDTO;
 import com.tfg.angel.gameswap.backend.business.mapper.UsuarioMapper;
@@ -9,6 +10,7 @@ import com.tfg.angel.gameswap.backend.business.service.UsuarioService;
 import com.tfg.angel.gameswap.backend.exception.GSBadRequestException;
 import com.tfg.angel.gameswap.backend.exception.GSNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +20,7 @@ import java.util.List;
 public class UsuarioServiceImpl implements UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UsuarioResponseDTO create(UsuarioRequestDTO dto) {
@@ -26,7 +29,7 @@ public class UsuarioServiceImpl implements UsuarioService {
             throw new GSBadRequestException("El correo ya está en uso");
         }
 
-        if (usuarioRepository.existsByNombreUsuario(dto.getNUsuario())) {
+        if (usuarioRepository.existsByNombreUsuario(dto.getNombreUsuario())) {
             throw new GSBadRequestException("El nombre de usuario ya existe");
         }
 
@@ -40,6 +43,15 @@ public class UsuarioServiceImpl implements UsuarioService {
     public UsuarioResponseDTO findById(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new GSNotFoundException("Usuario no encontrado"));
+
+        return UsuarioMapper.toDTO(usuario);
+    }
+
+    @Override
+    public UsuarioResponseDTO findByUsername(String username) {
+        var usuario = usuarioRepository
+                .findByNombreUsuario(username)
+                .orElseThrow();
 
         return UsuarioMapper.toDTO(usuario);
     }
@@ -59,7 +71,7 @@ public class UsuarioServiceImpl implements UsuarioService {
                 .orElseThrow(() -> new GSNotFoundException("Usuario no encontrado"));
 
         usuario.setNombre(dto.getNombre());
-        usuario.setNombreUsuario(dto.getNUsuario());
+        usuario.setNombreUsuario(dto.getNombreUsuario());
         usuario.setFechaNacimiento(dto.getFechaNacimiento());
         usuario.setCorreo(dto.getCorreo());
 
@@ -75,5 +87,19 @@ public class UsuarioServiceImpl implements UsuarioService {
         }
 
         usuarioRepository.deleteById(id);
+    }
+
+    @Override
+    public void changePassword(String username, ChangePasswordRequest request) {
+
+        var usuario = usuarioRepository.findByNombreUsuario(username).orElseThrow();
+
+        if (!passwordEncoder.matches(request.currentPassword(), usuario.getPassword())) {
+            throw new GSBadRequestException("Contraseña actual incorrecta");
+        }
+
+        usuario.setPassword(passwordEncoder.encode(request.newPassword()));
+
+        usuarioRepository.save(usuario);
     }
 }

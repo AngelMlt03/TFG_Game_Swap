@@ -3,24 +3,28 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { TokenService } from '../../../core/services/token.service';
 import { ThemeService } from '../../../core/services/theme.service';
-import { NgIf } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ModalComponent } from '../modal/modal.component';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterLink, NgIf],
+  imports: [RouterLink, FormsModule, ModalComponent],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit {
 
-  username = '';
   menuOpen = false;
   dropdownOpen = false;
   scrolled = false;
 
+  username = '';
   avatarLetter = '';
   avatarColor = '';
+  saldo = 120;
+
+  search = '';
 
   constructor(
     private readonly auth: AuthService,
@@ -75,6 +79,56 @@ export class NavbarComponent implements OnInit {
     }
 
     return colors[Math.abs(hash) % colors.length];
+  }
+
+  buscar() {
+    if (!this.search.trim()) return;
+
+    this.router.navigate(['/busqueda'], {
+      queryParams: { nombre: this.search }
+    });
+  }
+
+  private toggleBodyScroll(isLocked: boolean) {
+    if (isLocked) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+  }
+
+  modalVenta = false;
+  modalIntercambio = false;
+  modalCarrito = false;
+
+  abrirModalVenta() {
+    this.modalVenta = true;
+    this.toggleBodyScroll(true);
+  }
+
+  abrirModalIntercambio() {
+    this.modalIntercambio = true;
+    this.toggleBodyScroll(true);
+  }
+
+  abrirModalCarrito() {
+    this.modalCarrito = true;
+    this.toggleBodyScroll(true);
+  }
+
+  cerrarModalVenta() {
+    this.modalVenta = false;
+    this.toggleBodyScroll(false);
+  }
+
+  cerrarModalIntercambio() {
+    this.modalIntercambio = false;
+    this.toggleBodyScroll(false);
+  }
+
+  cerrarModalCarrito() {
+    this.modalCarrito = false;
+    this.toggleBodyScroll(false);
   }
 
 }

@@ -40,7 +40,7 @@ class UsuarioServiceTest {
 
         usuarioDTO = UsuarioRequestDTO.builder()
                 .nombre("Angel")
-                .nUsuario("angel_dev")
+                .nombreUsuario("angel_dev")
                 .correo("angel@example.com")
                 .fechaNacimiento(LocalDate.of(2003, 9, 2))
                 .build();
@@ -59,7 +59,7 @@ class UsuarioServiceTest {
     void create_Success() {
 
         when(usuarioRepository.existsByCorreo(usuarioDTO.getCorreo())).thenReturn(false);
-        when(usuarioRepository.existsByNombreUsuario(usuarioDTO.getNUsuario())).thenReturn(false);
+        when(usuarioRepository.existsByNombreUsuario(usuarioDTO.getNombreUsuario())).thenReturn(false);
         when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuarioEntidad);
 
         UsuarioResponseDTO response = usuarioService.create(usuarioDTO);
@@ -88,7 +88,7 @@ class UsuarioServiceTest {
     void create_ThrowsException_WhenUsernameExists() {
 
         when(usuarioRepository.existsByCorreo(usuarioDTO.getCorreo())).thenReturn(false);
-        when(usuarioRepository.existsByNombreUsuario(usuarioDTO.getNUsuario())).thenReturn(true);
+        when(usuarioRepository.existsByNombreUsuario(usuarioDTO.getNombreUsuario())).thenReturn(true);
 
         assertThrows(GSBadRequestException.class, () -> usuarioService.create(usuarioDTO));
         verify(usuarioRepository, never()).save(any());

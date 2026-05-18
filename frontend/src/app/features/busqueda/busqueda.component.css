@@ -1,0 +1,125 @@
+.busqueda-container {
+  padding: 1rem;
+}
+
+/* FILTROS */
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.campo {
+  position: relative;
+}
+
+.clear {
+  position: absolute;
+  right: 10px;
+  top: 8px;
+  cursor: pointer;
+  color: red;
+  font-size: 14px;
+}
+
+input, select {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: var(--card);
+  color: var(--text);
+}
+
+/* AUTOCOMPLETE */
+.autocomplete {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: var(--card);
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  z-index: 10;
+}
+
+.autocomplete div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.autocomplete div:hover {
+  background: var(--hover);
+}
+
+.autocomplete img {
+  width: 30px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+/* RESULTADOS */
+.resultados {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+  gap: 1rem;
+  max-width: 1200px; 
+  margin: 0 auto;
+}
+
+.card {
+  text-align: center;
+  margin: auto;
+}
+
+.card-fit {
+  width: max-content;
+  padding: 10px;
+  border-radius: 10px;
+  background: var(--primary);
+  cursor: pointer;
+}
+
+.card-fit img {
+  height: 200px;
+  border-radius: 10px;
+  background: var(--primary);
+}
+
+.modal-img {
+  width: 100%;
+  max-width: 100px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+
+.loading-center {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+}
+
+.loading::after {
+  content: '';
+  width: 16px;
+  height: 16px;
+  border: 2px solid gray;
+  border-top: 2px solid black;
+  border-radius: 50%;
+  display: inline-block;
+  margin-left: 8px;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

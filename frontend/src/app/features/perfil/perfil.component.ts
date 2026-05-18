@@ -4,10 +4,13 @@ import { NgClass, NgIf } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { UsuarioService } from '../../core/services/usuario.service';
 import { Usuario } from '../../core/models/usuario.model';
+import { MisPublicacionesComponent } from "../../shared/components/misPublicaciones/mis-publicaciones.component";
+import { HistorialComponent } from "../../shared/components/historial/historial.component";
+import { GuardadosComponent } from "../../shared/components/guardados/guardados.component";
 
 @Component({
   standalone: true,
-  imports: [FormsModule, NgIf, NgClass, RouterLink],
+  imports: [FormsModule, NgIf, NgClass, RouterLink, MisPublicacionesComponent, HistorialComponent, GuardadosComponent],
   templateUrl: './perfil.component.html',
   styleUrls: ['./perfil.component.css']
 })
@@ -67,5 +70,11 @@ export class PerfilComponent implements OnInit {
           alert(err.error?.message || 'Error al cambiar contraseña');
         }
       });
+  }
+
+  activeTab: 'guardados' | 'misPublicaciones' | 'historial' | 'reviews' = 'guardados';
+
+  setTab(tab: 'guardados' | 'misPublicaciones' | 'historial' | 'reviews') {
+    this.activeTab = tab;
   }
 }

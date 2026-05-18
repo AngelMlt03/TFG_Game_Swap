@@ -1,0 +1,83 @@
+.mis-publicaciones {
+  padding: 20px;
+  color: var(--text);
+}
+
+h2 {
+  margin-top: 30px;
+}
+
+hr {
+  margin-bottom: 15px;
+  opacity: 0.3;
+}
+
+/* CARD BASE */
+.card {
+  display: flex;
+  align-items: center;
+  border: 1px solid #666;
+  border-radius: 16px;
+  padding: 15px;
+  margin-bottom: 15px;
+  background: #111;
+}
+
+/* IMAGEN */
+.card img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-right: 20px;
+}
+
+/* INFO */
+.info p {
+  margin: 3px 0;
+}
+
+.precio {
+  font-weight: bold;
+}
+
+/* INTERCAMBIO */
+.intercambio {
+  justify-content: space-between;
+}
+
+.intercambio .lado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 40%;
+}
+
+.swap {
+  font-size: 30px;
+}
+
+.acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.acciones button {
+  padding: 6px 14px;
+  border-radius: 10px;
+  border: 1px solid #888;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+}
+
+.acciones button:hover {
+  background: rgba(255,255,255,0.08);
+}
+
+.acciones .danger {
+  border-color: #ff5a5a;
+  color: #ff5a5a;
+}

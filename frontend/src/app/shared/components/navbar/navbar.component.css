@@ -149,8 +149,10 @@ button:hover {
   color: var(--text);
 }
 
-.logo {
+.logo a {
   font-weight: bold;
+  text-decoration: none;
+  color: var(--text);
 }
 
 /* SIDE MENU */
@@ -201,6 +203,7 @@ button:hover {
 
 /* CENTRO */
 .center {
+  justify-content: center;
   display: flex;
   align-items: center;
   width: 100%;
@@ -215,6 +218,56 @@ button:hover {
 
 .center button {
   border-radius: 0 8px 8px 0;
+}
+
+.search-container {
+  display: flex;
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+}
+
+.search-container input {
+  width: 100%;
+  padding: 8px 35px 8px 10px;
+  border-radius: 8px;
+}
+
+.clear {
+  position: absolute;
+  right: 50px;
+  top: 5px;
+  cursor: pointer;
+  color: red;
+}
+
+.autocomplete {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: var(--card);
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  z-index: 10;
+}
+
+.autocomplete div {
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.autocomplete div:hover {
+  background: var(--hover);
+}
+
+.autocomplete img {
+  width: 30px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
 }
 
 /* DERECHA */

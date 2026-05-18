@@ -1,0 +1,189 @@
+:host {
+  display: block;
+  color: #eaeaea;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* PREVIEW */
+
+.preview-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  border: 1px solid #444;
+  border-radius: 20px;
+
+  padding: 20px;
+  margin-bottom: 25px;
+
+  background-color: #1a1a1a;
+}
+
+.preview-card img {
+  width: 90px;
+  height: 90px;
+
+  object-fit: cover;
+
+  border-radius: 12px;
+  border: 1px solid #555;
+}
+
+.preview-card h4 {
+  margin: 0 0 6px 0;
+  font-size: 18px;
+}
+
+.preview-card p {
+  margin: 2px 0;
+  color: #bbb;
+  font-size: 14px;
+}
+
+.precio {
+  font-size: 18px;
+  font-weight: bold;
+  color: #4caf50;
+}
+
+/* INTERCAMBIO */
+
+.intercambio {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.lado {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  flex: 1;
+}
+
+.swap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 34px;
+  color: #999;
+
+  padding: 0 10px;
+}
+
+/* BOTONES */
+
+.acciones-top {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+button {
+  padding: 10px 16px;
+
+  border-radius: 10px;
+  border: 1px solid #888;
+
+  background: transparent;
+  color: #eaeaea;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  background-color: #2a2a2a;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* INFO */
+
+.info-block {
+  margin-bottom: 25px;
+}
+
+.detalle-linea {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 14px 0;
+
+  border-bottom: 1px solid #2d2d2d;
+}
+
+.label {
+  color: #999;
+  font-size: 14px;
+}
+
+/* DESCRIPCIÓN */
+
+#descripcion-block {
+  margin-top: 20px;
+}
+
+.descripcion-box {
+  width: 100%;
+
+  min-height: 100px;
+
+  padding: 16px;
+
+  border-radius: 12px;
+  border: 1px solid #666;
+
+  background-color: #111;
+  color: #ddd;
+
+  box-sizing: border-box;
+
+  white-space: pre-wrap;
+}
+
+.guardar-btn {
+  font-size: 22px;
+  min-width: 50px;
+}
+
+.guardar-btn.guardado {
+  color: gold;
+  border-color: gold;
+}
+
+/* SEPARADORES */
+
+.separador {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  margin-bottom: 15px;
+}
+
+.separador h3,
+.separador label {
+  font-size: 18px;
+  font-weight: bold;
+
+  white-space: nowrap;
+}
+
+.separador hr {
+  width: 100%;
+
+  border: none;
+  border-bottom: 1px solid #333;
+}

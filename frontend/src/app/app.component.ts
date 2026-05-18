@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ThemeService } from './core/services/theme.service';
+import { UsuarioService } from './core/services/usuario.service';
 
 @Component({
   standalone: true,
@@ -13,11 +14,17 @@ import { ThemeService } from './core/services/theme.service';
 })
 export class AppComponent implements OnInit {
 
-  constructor(private readonly theme: ThemeService) {}
+  constructor(
+    private readonly theme: ThemeService,
+    private usuarioService: UsuarioService
+  ) {}
 
   title = 'GameSwap';
 
   ngOnInit() {
     this.theme.initTheme();
+    this.usuarioService.getSaldoFromBackend().subscribe(saldo => {
+      this.usuarioService.setSaldo(saldo);
+    });
   }
 }

@@ -17,7 +17,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/home/home.component')
             .then(m => m.HomeComponent)
-      }
+      },
+      {
+        path: 'busqueda',
+        loadComponent: () =>
+          import('./features/busqueda/busqueda.component')
+            .then(m => m.BusquedaComponent)
+      },
     ]
   },
 

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { Usuario } from '../models/usuario.model';
 import { environment } from '../../../environments/environment';
 import { TokenService } from './token.service';
@@ -13,9 +13,24 @@ export class UsuarioService {
 
   private apiUrl = `${environment.apiUrl}/usuarios`;
 
+  private saldoSubject = new BehaviorSubject<number>(0);
+  saldo$ = this.saldoSubject.asObservable();
+
   constructor(private http: HttpClient,
     private tokenService: TokenService
   ) { }
+
+  setSaldo(saldo: number) {
+    this.saldoSubject.next(saldo);
+  }
+
+  getSaldo(): number {
+    return this.saldoSubject.value;
+  }
+
+  getSaldoFromBackend() {
+    return this.http.get<number>(`${this.apiUrl}/saldo`)
+  }
 
   getUsuarios(): Observable<Usuario[]> {
     return this.http.get<Usuario[]>(this.apiUrl);

@@ -69,3 +69,55 @@
 <ng-template #cargando>
   <p>Cargando perfil...</p>
 </ng-template>
+
+<div class="tabs-container">
+
+  <div class="tabs">
+
+    <button
+      [class.active]="activeTab === 'guardados'"
+      (click)="setTab('guardados')">
+      Guardados
+    </button>
+
+    <button
+      [class.active]="activeTab === 'misPublicaciones'"
+      (click)="setTab('misPublicaciones')">
+      Mis Publicaciones
+    </button>
+
+    <button
+      [class.active]="activeTab === 'historial'"
+      (click)="setTab('historial')">
+      Historial
+    </button>
+
+    <button
+      [class.active]="activeTab === 'reviews'"
+      (click)="setTab('reviews')">
+      Reviews
+    </button>
+
+  </div>
+
+  <div class="tab-content">
+
+    <div *ngIf="activeTab === 'guardados'">
+      <app-guardados></app-guardados>
+    </div>
+
+    <div *ngIf="activeTab === 'misPublicaciones'">
+      <app-mis-publicaciones></app-mis-publicaciones>
+    </div>
+
+    <div *ngIf="activeTab === 'historial'">
+      <app-historial></app-historial>
+    </div>
+
+    <div *ngIf="activeTab === 'reviews'">
+      <p>Aquí se mostrarán las reviews</p>
+    </div>
+
+  </div>
+
+</div>

@@ -1,5 +1,5 @@
 .perfil-container {
-  max-width: 600px;
+  max-width: 800px;
   margin: auto;
   padding: 1rem;
 }
@@ -42,4 +42,57 @@ input {
 
 .password-card {
   margin-top: 20px;
+}
+
+/* CONTENEDOR */
+.tabs-container {
+  margin-top: 2rem;
+  margin: auto;
+  max-width: 800px;
+}
+
+/* BOTONES TABS */
+.tabs {
+  display: flex;
+  gap: 10px;
+  border-bottom: 2px solid #ccc;
+  flex-wrap: wrap;
+}
+
+.tabs button {
+  padding: 10px 15px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text);
+  font-weight: 500;
+  border-bottom: 2px solid transparent;
+  transition: 0.2s;
+}
+
+/* TAB ACTIVO */
+.tabs button.active {
+  border-radius: 0;
+  border-bottom: 2px solid var(--primary);
+  color: var(--primary);
+}
+
+/* HOVER */
+.tabs button:hover {
+  opacity: 0.7;
+}
+
+/* CONTENIDO */
+.tab-content {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: var(--card);
+  border-radius: 10px;
+}
+
+/* 📱 MOBILE */
+@media (max-width: 768px) {
+  .tabs {
+    justify-content: center;
+  }
 }

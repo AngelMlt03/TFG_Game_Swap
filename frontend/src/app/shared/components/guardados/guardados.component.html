@@ -1,0 +1,65 @@
+<div class="guardados">
+
+  <!-- PUBLICACIONES -->
+
+  <h2>Publicaciones</h2>
+
+  <hr />
+
+  <div *ngIf="!publicaciones.length">
+    No tienes publicaciones guardadas
+  </div>
+
+  <div class="grid-cards">
+
+    <div
+      *ngFor="let p of publicaciones"
+      class="card-guardado"
+      (click)="abrirDetalle(p)"
+    >
+
+      <img [src]="getImagen(p.idApi)" />
+
+      <p>
+        {{ p.nombreProducto }}
+      </p>
+
+    </div>
+
+  </div>
+
+  <!-- INTERCAMBIOS -->
+
+  <h2>Intercambios</h2>
+
+  <hr />
+
+  <div *ngIf="!intercambios.length">
+    No tienes intercambios guardados
+  </div>
+
+  <div class="grid-cards">
+
+    <div
+      *ngFor="let i of intercambios"
+      class="card-guardado"
+      (click)="abrirDetalle(i)"
+    >
+
+      <img [src]="getImagen(i.idApiProdcuto)" />
+
+      <p>
+        {{ i.nombreProducto }}
+      </p>
+
+    </div>
+
+  </div>
+
+</div>
+
+<app-post-detalle
+  [isOpen]="modalOpen"
+  [post]="postSeleccionado"
+  (close)="cerrarModal()"
+></app-post-detalle>

@@ -1,15 +1,20 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
-import { TokenService } from '../../../core/services/token.service';
 import { ThemeService } from '../../../core/services/theme.service';
 import { FormsModule } from '@angular/forms';
 import { ModalComponent } from '../modal/modal.component';
+import { ModalVentaComponent } from '../modalVenta/modal-venta.component';
+import { UsuarioService } from '../../../core/services/usuario.service';
+import { IgdbService } from '../../../core/services/igdb.service';
+import { Usuario } from '../../../core/models/usuario.model';
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { ModalIntercambioComponent } from "../modalIntercambio/modal-intercambio.component";
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterLink, FormsModule, ModalComponent],
+  imports: [RouterLink, FormsModule, ModalComponent, ModalVentaComponent, NgIf, NgFor, AsyncPipe, ModalIntercambioComponent],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
@@ -19,25 +24,40 @@ export class NavbarComponent implements OnInit {
   dropdownOpen = false;
   scrolled = false;
 
-  username = '';
-  avatarLetter = '';
+  usuario!: Usuario;
   avatarColor = '';
-  saldo = 120;
+  saldo$;
 
   search = '';
+
+  sugerencias: any[] = [];
+  loading = false;
+  focused = false;
+
+  juegoSeleccionado: any = null;
 
   constructor(
     private readonly auth: AuthService,
     private readonly router: Router,
-    private readonly tokenService: TokenService,
-    public theme: ThemeService
-  ) {}
+    public theme: ThemeService,
+    private usuarioService: UsuarioService,
+    private igdbService: IgdbService
+  ) {
+    this.saldo$ = this.usuarioService.saldo$;
+  }
 
   ngOnInit() {
-    this.username = this.tokenService.getUsername() || 'Usuario';
-  
-    this.avatarLetter = this.username.charAt(0).toUpperCase();
-    this.avatarColor = this.getColorFromUsername(this.username);
+    this.cargarPerfil();
+    this.usuarioService.getSaldoFromBackend().subscribe(saldo => {
+      this.usuarioService.setSaldo(saldo);
+    });
+  }
+
+  cargarPerfil() {
+    this.usuarioService.getPerfil().subscribe({
+      next: (data) => this.usuario = data,
+      error: (err) => console.error(err)
+    });
   }
 
   logout() {
@@ -81,21 +101,13 @@ export class NavbarComponent implements OnInit {
     return colors[Math.abs(hash) % colors.length];
   }
 
-  buscar() {
-    if (!this.search.trim()) return;
-
-    this.router.navigate(['/busqueda'], {
-      queryParams: { nombre: this.search }
-    });
-  }
-
-  private toggleBodyScroll(isLocked: boolean) {
-    if (isLocked) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'auto';
-    }
-  }
+  //private toggleBodyScroll(isLocked: boolean) {
+  //  if (isLocked) {
+  //    document.body.style.overflow = 'hidden';
+  //  } else {
+  //    document.body.style.overflow = 'auto';
+  //  }
+  //}
 
   modalVenta = false;
   modalIntercambio = false;
@@ -103,32 +115,77 @@ export class NavbarComponent implements OnInit {
 
   abrirModalVenta() {
     this.modalVenta = true;
-    this.toggleBodyScroll(true);
+    // this.toggleBodyScroll(true);
   }
 
   abrirModalIntercambio() {
     this.modalIntercambio = true;
-    this.toggleBodyScroll(true);
+    // this.toggleBodyScroll(true);
   }
 
   abrirModalCarrito() {
     this.modalCarrito = true;
-    this.toggleBodyScroll(true);
+    // this.toggleBodyScroll(true);
   }
 
   cerrarModalVenta() {
     this.modalVenta = false;
-    this.toggleBodyScroll(false);
+    // this.toggleBodyScroll(false);
   }
 
   cerrarModalIntercambio() {
     this.modalIntercambio = false;
-    this.toggleBodyScroll(false);
+    // this.toggleBodyScroll(false);
   }
 
   cerrarModalCarrito() {
     this.modalCarrito = false;
-    this.toggleBodyScroll(false);
+    // this.toggleBodyScroll(false);
+  }
+
+  buscarAutocomplete() {
+    if (!this.search.trim()) {
+      this.sugerencias = [];
+      return;
+    }
+
+    this.loading = true;
+
+    this.igdbService.buscarJuegos(this.search)
+      .subscribe({
+        next: (res) => {
+          this.sugerencias = res;
+          this.loading = false;
+        },
+        error: () => this.loading = false
+      });
+  }
+
+  seleccionarJuego(j: any) {
+    this.search = j.nombre;
+    this.juegoSeleccionado = j;
+    this.sugerencias = [];
+    this.focused = false;
+  }
+
+  buscar() {
+    if (!this.search.trim()) return;
+
+    this.router.navigate(['/busqueda'], {
+      queryParams: {
+        nombre: this.search
+      }
+    });
+
+    this.focused = false;
+  }
+
+  onFocus() {
+    this.focused = true;
+  }
+
+  onBlur() {
+    setTimeout(() => this.focused = false, 150);
   }
 
 }

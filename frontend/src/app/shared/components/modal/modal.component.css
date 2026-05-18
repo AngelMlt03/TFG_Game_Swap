@@ -1,5 +1,6 @@
 .modal {
   position: fixed;
+  inset: 0;
   top: 0;
   left: 0;
   width: 100vw;
@@ -10,6 +11,8 @@
   justify-content: center;
   align-items: center;
 
+  padding: 2rem;
+
   animation: fadeIn 0.2s ease;
   z-index: 9999;
 }
@@ -17,11 +20,24 @@
 .modal-content {
   background: var(--card);
   padding: 20px;
-  border-radius: 10px;
-  min-width: 300px;
+  border-radius: 18px;
+
+  width: 80%;
+  max-width: 850px;
+  max-height: 85%;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
 
   animation: scaleIn 0.2s ease;
   z-index: 10000;
+}
+
+#title {
+  font-size: 24px;
+  text-align: center;
+  margin: 0 0 20px 0;
 }
 
 @keyframes fadeIn {
@@ -30,6 +46,6 @@
 }
 
 @keyframes scaleIn {
-  from { transform: scale(0.9); }
-  to { transform: scale(1); }
+  from { transform: scale(0.9);  opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }

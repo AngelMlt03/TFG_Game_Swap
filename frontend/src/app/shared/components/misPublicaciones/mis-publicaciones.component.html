@@ -1,0 +1,75 @@
+<div class="mis-publicaciones">
+
+  <!-- VENTAS -->
+  <h2>Publicaciones de venta</h2>
+  <hr />
+
+  <div *ngIf="!ventas.length">No tienes publicaciones de venta</div>
+
+  <div *ngFor="let v of ventas" class="card venta">
+    <img [src]="getImagen(v.idApi)" />
+
+    <div class="info">
+      <p>{{ v.nombreProducto }}</p>
+      <p>{{ v.plataforma }}</p>
+      <p>{{ v.estado }}</p>
+      <p class="precio">{{ v.precio }}€</p>
+    </div>
+
+    <div class="acciones">
+      <button (click)="editarVenta(v)"> Editar </button>
+      <button class="danger" (click)="eliminarVenta(v.id)"> Eliminar </button>
+    </div>
+  </div>
+
+  <!-- INTERCAMBIOS -->
+  <h2>Publicaciones de intercambio</h2>
+  <hr />
+
+  <div *ngIf="!intercambios.length">No tienes publicaciones de intercambio</div>
+
+  <div *ngFor="let i of intercambios" class="card intercambio">
+
+    <div class="lado">
+      <img [src]="getImagen(i.idApi)" />
+      <p>{{ i.nombreProducto }}</p>
+      <p>{{ i.plataforma }}</p>
+      <p>{{ i.estado }}</p>
+    </div>
+
+    <span class="swap">⇄</span>
+
+    <div class="lado">
+      <img [src]="getImagen(i.idApiIntercambio)" />
+      <p>{{ i.nombreProductoIntercambio }}</p>
+      <p>{{ i.plataformaIntercambio }}</p>
+      <p>{{ i.estadoIntercambio }}</p>
+    </div>
+
+    <div class="acciones">
+      <button (click)="editarIntercambio(i)">
+        Editar
+      </button>
+
+      <button class="danger" (click)="eliminarIntercambio(i.id)" >
+        Eliminar
+      </button>
+    </div>
+
+  </div>
+
+</div>
+
+<app-modal-venta
+  [isOpen]="modalEditarOpen"
+  [modoEdicion]="true"
+  [postEditar]="postEditar"
+  (close)="cerrarModalEditar(false)"
+></app-modal-venta>
+
+<app-modal-intercambio
+  [isOpen]="modalEditarIntercambioOpen"
+  [postEditar]="postEditarIntercambio"
+  [modoEdicion]="true"
+  (close)="cerrarModalEditarIntercambio($event)"
+></app-modal-intercambio>

@@ -36,8 +36,7 @@ public class PostIntercambioController {
     }
 
     @PutMapping("/{id}")
-    public PostIntercambioResponseDTO update(@PathVariable Long id,
-                                                 @RequestBody PostIntercambioRequestDTO dto) {
+    public PostIntercambioResponseDTO update(@PathVariable Long id, @RequestBody PostIntercambioRequestDTO dto) {
         return postIntercambioService.update(id, dto);
     }
 

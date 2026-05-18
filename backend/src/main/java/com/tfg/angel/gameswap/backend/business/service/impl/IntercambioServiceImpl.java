@@ -1,19 +1,13 @@
 package com.tfg.angel.gameswap.backend.business.service.impl;
 
-import com.tfg.angel.gameswap.backend.business.dto.request.IntercambioRequestDTO;
 import com.tfg.angel.gameswap.backend.business.dto.response.IntercambioResponseDTO;
-import com.tfg.angel.gameswap.backend.business.dto.response.PostIntercambioResponseDTO;
 import com.tfg.angel.gameswap.backend.business.model.PostIntercambio;
-import com.tfg.angel.gameswap.backend.business.model.enums.EstadoPost;
 import com.tfg.angel.gameswap.backend.business.repository.PostIntercambioRepository;
-import com.tfg.angel.gameswap.backend.exception.GSBadRequestException;
 import com.tfg.angel.gameswap.backend.exception.GSNotFoundException;
 import com.tfg.angel.gameswap.backend.business.mapper.IntercambioMapper;
 import com.tfg.angel.gameswap.backend.business.model.Intercambio;
-import com.tfg.angel.gameswap.backend.business.model.Producto;
 import com.tfg.angel.gameswap.backend.business.model.Usuario;
 import com.tfg.angel.gameswap.backend.business.repository.IntercambioRepository;
-import com.tfg.angel.gameswap.backend.business.repository.ProductoRepository;
 import com.tfg.angel.gameswap.backend.business.repository.UsuarioRepository;
 import com.tfg.angel.gameswap.backend.business.service.IntercambioService;
 import lombok.RequiredArgsConstructor;
@@ -39,21 +33,11 @@ public class IntercambioServiceImpl implements IntercambioService {
         Usuario usuarioCambio = usuarioRepository.findById(idUsuarioCambio)
                 .orElseThrow(() -> new GSNotFoundException("Usuario no encontrado"));
 
-        if (post.getUsuario().getId().equals(usuarioCambio.getId())) {
-            throw new GSBadRequestException("No puedes intercambiar contigo mismo");
-        }
-
-        post.setEstado(EstadoPost.FINALIZADO);
-        postIntercambioRepository.save(post);
-
         Intercambio intercambio = Intercambio.builder()
                 .postIntercambio(post)
                 .usuarioCambio(usuarioCambio)
                 .fecha(LocalDate.now())
                 .build();
-
-        post.setEstado(EstadoPost.FINALIZADO);
-        postIntercambioRepository.save(post);
 
         return IntercambioMapper.toDTO(intercambioRepository.save(intercambio));
     }

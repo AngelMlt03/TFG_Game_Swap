@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "PostVenta")
+@Table(name = "post_venta")
 public class PostVenta {
 
     @Id
@@ -25,8 +25,12 @@ public class PostVenta {
     @JoinColumn(name = "id_producto")
     private Producto producto;
 
+    private String plataforma;
+
     private Double precio;
 
     @Enumerated(EnumType.STRING)
     private EstadoPost estado;
+
+    private String descripcion;
 }

@@ -65,7 +65,7 @@ class UsuarioServiceTest {
         UsuarioResponseDTO response = usuarioService.create(usuarioDTO);
 
         assertNotNull(response);
-        assertEquals("angel_dev", response.getNUsuario());
+        assertEquals("angel_dev", response.getNombreUsuario());
         verify(usuarioRepository).save(any(Usuario.class));
     }
 

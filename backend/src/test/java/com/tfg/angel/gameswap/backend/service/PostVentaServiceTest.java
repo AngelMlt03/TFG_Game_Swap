@@ -58,8 +58,8 @@ class PostVentaServiceTest {
                 .build();
 
         requestDTO = PostVentaRequestDTO.builder()
-                .idVendedor(1L)
-                .idProducto(1L)
+                .idApi(1L)
+                .nombreProducto("Elden Ring")
                 .precio(50.0)
                 .build();
 

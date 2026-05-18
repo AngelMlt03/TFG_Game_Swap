@@ -6,11 +6,14 @@ import com.tfg.angel.gameswap.backend.business.mapper.PostIntercambioMapper;
 import com.tfg.angel.gameswap.backend.business.model.PostIntercambio;
 import com.tfg.angel.gameswap.backend.business.model.Producto;
 import com.tfg.angel.gameswap.backend.business.model.Usuario;
+import com.tfg.angel.gameswap.backend.business.model.enums.EstadoPost;
+import com.tfg.angel.gameswap.backend.business.model.enums.EstadoProducto;
 import com.tfg.angel.gameswap.backend.business.repository.PostIntercambioRepository;
 import com.tfg.angel.gameswap.backend.business.repository.ProductoRepository;
 import com.tfg.angel.gameswap.backend.business.repository.UsuarioRepository;
 import com.tfg.angel.gameswap.backend.business.service.PostIntercambioService;
 import com.tfg.angel.gameswap.backend.exception.GSNotFoundException;
+import com.tfg.angel.gameswap.backend.security.UsuarioDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,29 +25,59 @@ public class PostIntercambioServiceImpl implements PostIntercambioService {
 
     private final PostIntercambioRepository postIntercambioRepository;
     private final UsuarioRepository usuarioRepository;
+    private final UsuarioDetailsService usuarioDetailsService;
     private final ProductoRepository productoRepository;
 
     @Override
     public PostIntercambioResponseDTO create(PostIntercambioRequestDTO dto) {
 
-        Usuario usuario = usuarioRepository.findById(dto.getIdUsuario())
-                .orElseThrow(() -> new GSNotFoundException("Usuario no encontrado"));
+        Usuario usuario = usuarioDetailsService.obtenerUsuarioActual();
 
-        Producto producto = productoRepository.findById(dto.getIdProducto())
-                .orElseThrow(() -> new GSNotFoundException("Producto ofrecido no encontrado"));
+        // PRODUCTO PROPIO
 
-        Producto productoCambio = productoRepository.findById(dto.getIdProductoCambio())
-                .orElseThrow(() -> new GSNotFoundException("Producto deseado no encontrado"));
-
-        PostIntercambio post = PostIntercambio.builder()
-                .usuario(usuario)
-                .producto(producto)
-                .productoCambio(productoCambio)
+        Producto producto = Producto.builder()
+                .nombre(dto.getNombreProducto())
+                .idAPI(dto.getIdApi().intValue())
+                .estado( EstadoProducto.valueOf(dto.getEstadoProducto()) )
                 .build();
 
-        post = postIntercambioRepository.save(post);
+        productoRepository.save(producto);
+
+        // PRODUCTO BUSCADO
+
+        Producto productoCambio = Producto.builder()
+                .nombre(dto.getNombreProductoIntercambio())
+                .idAPI(dto.getIdApiIntercambio().intValue())
+                .estado( EstadoProducto.valueOf(dto.getEstadoProductoIntercambio()) )
+                .build();
+
+        productoRepository.save(productoCambio);
+
+        // POST
+
+        PostIntercambio post =
+                PostIntercambio.builder()
+                        .usuario(usuario)
+                        .producto(producto)
+                        .productoCambio(productoCambio)
+                        .plataforma(dto.getPlataforma())
+                        .plataformaCambio(dto.getPlataformaIntercambio())
+                        .descripcion(dto.getDescripcion())
+                        .estado(EstadoPost.ACTIVO)
+                        .build();
+
+        postIntercambioRepository.save(post);
 
         return PostIntercambioMapper.toDTO(post);
+    }
+
+    @Override
+    public List<PostIntercambioResponseDTO> findByUsuarioActivo() {
+        return postIntercambioRepository
+                .findByUsuarioIdAndEstado(usuarioDetailsService.obtenerUsuarioActual().getId(), EstadoPost.ACTIVO)
+                .stream()
+                .map(PostIntercambioMapper::toDTO)
+                .toList();
     }
 
     @Override
@@ -80,25 +113,43 @@ public class PostIntercambioServiceImpl implements PostIntercambioService {
     }
 
     @Override
+    public List<PostIntercambioResponseDTO> findByEstado(EstadoPost estado) {
+        return postIntercambioRepository.findByEstado(estado)
+                .stream()
+                .map(PostIntercambioMapper::toDTO)
+                .toList();
+    }
+
+    @Override
     public PostIntercambioResponseDTO update(Long id, PostIntercambioRequestDTO dto) {
 
         PostIntercambio post = postIntercambioRepository.findById(id)
                 .orElseThrow(() -> new GSNotFoundException("Post no encontrado"));
 
-        Usuario usuario = usuarioRepository.findById(dto.getIdUsuario())
-                .orElseThrow(() -> new GSNotFoundException("Usuario no encontrado"));
+        Producto producto = post.getProducto();
 
-        Producto producto = productoRepository.findById(dto.getIdProducto())
-                .orElseThrow(() -> new GSNotFoundException("Producto ofrecido no encontrado"));
+        producto.setNombre(dto.getNombreProducto());
+        producto.setIdAPI(dto.getIdApi().intValue());
+        producto.setEstado(
+                EstadoProducto.valueOf(dto.getEstadoProducto())
+        );
 
-        Producto productoCambio = productoRepository.findById(dto.getIdProductoCambio())
-                .orElseThrow(() -> new GSNotFoundException("Producto deseado no encontrado"));
+        Producto productoCambio = post.getProductoCambio();
 
-        post.setUsuario(usuario);
-        post.setProducto(producto);
-        post.setProductoCambio(productoCambio);
+        productoCambio.setNombre(dto.getNombreProductoIntercambio());
+        productoCambio.setIdAPI(dto.getIdApiIntercambio().intValue());
+        productoCambio.setEstado(
+                EstadoProducto.valueOf(dto.getEstadoProductoIntercambio())
+        );
 
-        post = postIntercambioRepository.save(post);
+        productoRepository.save(producto);
+        productoRepository.save(productoCambio);
+
+        post.setPlataforma(dto.getPlataforma());
+        post.setPlataformaCambio(dto.getPlataformaIntercambio());
+        post.setDescripcion(dto.getDescripcion());
+
+        postIntercambioRepository.save(post);
 
         return PostIntercambioMapper.toDTO(post);
     }

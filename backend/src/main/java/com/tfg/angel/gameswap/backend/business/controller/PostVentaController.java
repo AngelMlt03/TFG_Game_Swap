@@ -2,7 +2,10 @@ package com.tfg.angel.gameswap.backend.business.controller;
 
 import com.tfg.angel.gameswap.backend.business.dto.request.PostVentaRequestDTO;
 import com.tfg.angel.gameswap.backend.business.dto.response.PostVentaResponseDTO;
+import com.tfg.angel.gameswap.backend.business.model.Producto;
 import com.tfg.angel.gameswap.backend.business.model.enums.EstadoPost;
+import com.tfg.angel.gameswap.backend.business.model.enums.EstadoProducto;
+import com.tfg.angel.gameswap.backend.business.repository.ProductoRepository;
 import com.tfg.angel.gameswap.backend.business.service.PostVentaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -47,8 +50,7 @@ public class PostVentaController {
     }
 
     @PutMapping("/{id}")
-    public PostVentaResponseDTO update(@PathVariable Long id,
-                                           @RequestBody PostVentaRequestDTO dto) {
+    public PostVentaResponseDTO update(@PathVariable Long id, @RequestBody PostVentaRequestDTO dto) {
         return postVentaService.update(id, dto);
     }
 

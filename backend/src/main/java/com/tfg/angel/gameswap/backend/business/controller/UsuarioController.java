@@ -4,6 +4,7 @@ import com.tfg.angel.gameswap.backend.business.dto.request.ChangePasswordRequest
 import com.tfg.angel.gameswap.backend.business.dto.request.UsuarioRequestDTO;
 import com.tfg.angel.gameswap.backend.business.dto.response.UsuarioResponseDTO;
 import com.tfg.angel.gameswap.backend.business.service.UsuarioService;
+import com.tfg.angel.gameswap.backend.security.UsuarioDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,7 @@ import java.util.List;
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
+    private final UsuarioDetailsService usuarioDetailsService;
 
     @PostMapping
     public UsuarioResponseDTO create(@RequestBody UsuarioRequestDTO dto) {
@@ -50,5 +52,10 @@ public class UsuarioController {
     @PostMapping("/change-password")
     public void changePassword(@RequestBody ChangePasswordRequest request, Authentication auth) {
         usuarioService.changePassword(auth.getName(), request);
+    }
+
+    @GetMapping("/saldo")
+    public Double getSaldo() {
+        return usuarioDetailsService.obtenerUsuarioActual().getSaldo();
     }
 }

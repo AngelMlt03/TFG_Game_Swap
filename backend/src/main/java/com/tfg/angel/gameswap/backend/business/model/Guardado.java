@@ -4,23 +4,21 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+@Table(name = "guardados")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "Producto_Carrito")
-public class ProductoCarrito {
+public class Guardado {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "id_post_venta")
-    private PostVenta postVenta;
+    private Long idUsuario;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_carrito")
-    private Carrito carrito;
+    private Long idPost;
+
+    private String tipoPost;
 }

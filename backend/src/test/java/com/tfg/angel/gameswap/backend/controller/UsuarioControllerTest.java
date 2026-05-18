@@ -3,6 +3,7 @@ package com.tfg.angel.gameswap.backend.controller;
 import com.tfg.angel.gameswap.backend.business.controller.UsuarioController;
 import com.tfg.angel.gameswap.backend.business.dto.request.UsuarioRequestDTO;
 import com.tfg.angel.gameswap.backend.business.service.UsuarioService;
+import com.tfg.angel.gameswap.backend.security.UsuarioDetailsService;
 import org.junit.jupiter.api.Test;
 
 import static org.mockito.Mockito.*;
@@ -13,7 +14,8 @@ class UsuarioControllerTest {
     void testAllMethods() {
 
         UsuarioService service = mock(UsuarioService.class);
-        UsuarioController controller = new UsuarioController(service);
+        UsuarioDetailsService serviceDetails = mock(UsuarioDetailsService.class);
+        UsuarioController controller = new UsuarioController(service, serviceDetails);
 
         UsuarioRequestDTO usuarioRequestDTO = new UsuarioRequestDTO();
 

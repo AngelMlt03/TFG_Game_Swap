@@ -1,65 +1,64 @@
 <div class="guardados">
-
   <!-- PUBLICACIONES -->
 
-  <h2>Publicaciones</h2>
+  <div class="section-header" (click)="publicacionesOpen = !publicacionesOpen">
+    <h2>Publicaciones</h2>
+
+    <button class="collapse-btn" [class.open]="publicacionesOpen">❯</button>
+  </div>
 
   <hr />
 
-  <div *ngIf="!publicaciones.length">
-    No tienes publicaciones guardadas
-  </div>
+  <div class="section-content" [class.closed]="!publicacionesOpen">
+    <div *ngIf="!publicaciones.length">No tienes publicaciones guardadas</div>
 
-  <div class="grid-cards">
+    <div class="grid-cards">
+      <div
+        *ngFor="let p of publicaciones"
+        class="card-guardado"
+        (click)="abrirDetalle(p)"
+      >
+        <img [src]="getImagen(p.idApi)" />
 
-    <div
-      *ngFor="let p of publicaciones"
-      class="card-guardado"
-      (click)="abrirDetalle(p)"
-    >
-
-      <img [src]="getImagen(p.idApi)" />
-
-      <p>
-        {{ p.nombreProducto }}
-      </p>
-
+        <p>
+          {{ p.nombreProducto }}
+        </p>
+      </div>
     </div>
-
   </div>
 
   <!-- INTERCAMBIOS -->
 
-  <h2>Intercambios</h2>
+  <div class="section-header" (click)="intercambiosOpen = !intercambiosOpen">
+    <h2>Intercambios</h2>
+
+    <button class="collapse-btn" [class.open]="intercambiosOpen">❯</button>
+  </div>
 
   <hr />
 
-  <div *ngIf="!intercambios.length">
-    No tienes intercambios guardados
-  </div>
+  <div class="section-content" [class.closed]="!intercambiosOpen">
+    <div *ngIf="!intercambios.length">No tienes intercambios guardados</div>
 
-  <div class="grid-cards">
+    <div class="grid-cards">
+      <div
+        *ngFor="let i of intercambios"
+        class="card-guardado"
+        (click)="abrirDetalle(i)"
+      >
+        <img [src]="getImagen(i.idApiProducto)" />
 
-    <div
-      *ngFor="let i of intercambios"
-      class="card-guardado"
-      (click)="abrirDetalle(i)"
-    >
-
-      <img [src]="getImagen(i.idApiProdcuto)" />
-
-      <p>
-        {{ i.nombreProducto }}
-      </p>
-
+        <p>
+          {{ i.nombreProducto }}
+        </p>
+      </div>
     </div>
-
   </div>
-
 </div>
 
 <app-post-detalle
   [isOpen]="modalOpen"
   [post]="postSeleccionado"
   (close)="cerrarModal()"
+  (accionRealizada)="actualizarGuardados()"
 ></app-post-detalle>

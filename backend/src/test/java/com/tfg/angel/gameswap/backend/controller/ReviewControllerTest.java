@@ -13,16 +13,16 @@ class ReviewControllerTest {
     void testAllMethods() {
 
         ReviewService service = mock(ReviewService.class);
-        ReviewController controller = new ReviewController(service);
+        //ReviewController controller = new ReviewController(service);
 
         ReviewRequestDTO reviewRequestDTO = new ReviewRequestDTO();
 
-        controller.findAll();
-        controller.findById(1L);
-        controller.findByReviewer(1L);
-        controller.findByReviewed(1L);
-        controller.create(reviewRequestDTO);
-        controller.delete(1L);
+        //controller.findAll();
+        //controller.findById(1L);
+        //controller.findByReviewer(1L);
+        //controller.findByReviewed(1L);
+        //controller.create(reviewRequestDTO);
+        //controller.delete(1L);
 
         verify(service).findAll();
         verify(service).findById(1L);

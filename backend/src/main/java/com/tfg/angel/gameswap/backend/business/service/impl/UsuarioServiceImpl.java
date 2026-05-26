@@ -9,7 +9,9 @@ import com.tfg.angel.gameswap.backend.business.repository.UsuarioRepository;
 import com.tfg.angel.gameswap.backend.business.service.UsuarioService;
 import com.tfg.angel.gameswap.backend.exception.GSBadRequestException;
 import com.tfg.angel.gameswap.backend.exception.GSNotFoundException;
+import com.tfg.angel.gameswap.backend.security.UsuarioDetailsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UsuarioDetailsService usuarioDetailsService;
 
     @Override
     public UsuarioResponseDTO create(UsuarioRequestDTO dto) {
@@ -101,5 +104,16 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuario.setPassword(passwordEncoder.encode(request.newPassword()));
 
         usuarioRepository.save(usuario);
+    }
+
+    @Override
+    public ResponseEntity<Double> addSaldo(Double cantidad) {
+
+        Usuario usuario = usuarioDetailsService.obtenerUsuarioActual();
+
+        usuario.setSaldo( usuario.getSaldo() + cantidad );
+        usuarioRepository.save(usuario);
+
+        return ResponseEntity.ok( usuario.getSaldo() );
     }
 }

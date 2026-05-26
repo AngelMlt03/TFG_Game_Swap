@@ -3,23 +3,31 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { ThemeService } from '../../../core/services/theme.service';
 import { FormsModule } from '@angular/forms';
-import { ModalComponent } from '../modal/modal.component';
-import { ModalVentaComponent } from '../modalVenta/modal-venta.component';
+import { ModalVentaComponent } from '../modales/modalVenta/modal-venta.component';
+import { ModalCarritoComponent } from '../carrito/carrito-modal.component';
 import { UsuarioService } from '../../../core/services/usuario.service';
 import { IgdbService } from '../../../core/services/igdb.service';
 import { Usuario } from '../../../core/models/usuario.model';
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
-import { ModalIntercambioComponent } from "../modalIntercambio/modal-intercambio.component";
+import { ModalIntercambioComponent } from '../modales/modalIntercambio/modal-intercambio.component';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterLink, FormsModule, ModalComponent, ModalVentaComponent, NgIf, NgFor, AsyncPipe, ModalIntercambioComponent],
+  imports: [
+    RouterLink,
+    FormsModule,
+    ModalVentaComponent,
+    NgIf,
+    NgFor,
+    AsyncPipe,
+    ModalIntercambioComponent,
+    ModalCarritoComponent,
+  ],
   templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.css']
+  styleUrls: ['./navbar.component.css'],
 })
 export class NavbarComponent implements OnInit {
-
   menuOpen = false;
   dropdownOpen = false;
   scrolled = false;
@@ -41,22 +49,22 @@ export class NavbarComponent implements OnInit {
     private readonly router: Router,
     public theme: ThemeService,
     private usuarioService: UsuarioService,
-    private igdbService: IgdbService
+    private igdbService: IgdbService,
   ) {
     this.saldo$ = this.usuarioService.saldo$;
   }
 
   ngOnInit() {
     this.cargarPerfil();
-    this.usuarioService.getSaldoFromBackend().subscribe(saldo => {
+    this.usuarioService.getSaldoFromBackend().subscribe((saldo) => {
       this.usuarioService.setSaldo(saldo);
     });
   }
 
   cargarPerfil() {
     this.usuarioService.getPerfil().subscribe({
-      next: (data) => this.usuario = data,
-      error: (err) => console.error(err)
+      next: (data) => (this.usuario = data),
+      error: (err) => console.error(err),
     });
   }
 
@@ -82,6 +90,10 @@ export class NavbarComponent implements OnInit {
     this.scrolled = window.scrollY > 10;
   }
 
+  avatar() {
+    return `https:ui-avatars.com/api/?name=${this.usuario.nombre}&background=random`;
+  }
+
   getColorFromUsername(name: string): string {
     const colors = [
       '#4f46e5',
@@ -89,7 +101,7 @@ export class NavbarComponent implements OnInit {
       '#dc2626',
       '#ea580c',
       '#0891b2',
-      '#7c3aed'
+      '#7c3aed',
     ];
 
     let hash = 0;
@@ -101,13 +113,13 @@ export class NavbarComponent implements OnInit {
     return colors[Math.abs(hash) % colors.length];
   }
 
-  //private toggleBodyScroll(isLocked: boolean) {
-  //  if (isLocked) {
-  //    document.body.style.overflow = 'hidden';
-  //  } else {
-  //    document.body.style.overflow = 'auto';
-  //  }
-  //}
+  private toggleBodyScroll(isLocked: boolean) {
+    if (isLocked) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+  }
 
   modalVenta = false;
   modalIntercambio = false;
@@ -115,32 +127,32 @@ export class NavbarComponent implements OnInit {
 
   abrirModalVenta() {
     this.modalVenta = true;
-    // this.toggleBodyScroll(true);
+     this.toggleBodyScroll(true);
   }
 
   abrirModalIntercambio() {
     this.modalIntercambio = true;
-    // this.toggleBodyScroll(true);
+     this.toggleBodyScroll(true);
   }
 
   abrirModalCarrito() {
     this.modalCarrito = true;
-    // this.toggleBodyScroll(true);
+     this.toggleBodyScroll(true);
   }
 
   cerrarModalVenta() {
     this.modalVenta = false;
-    // this.toggleBodyScroll(false);
+     this.toggleBodyScroll(false);
   }
 
   cerrarModalIntercambio() {
     this.modalIntercambio = false;
-    // this.toggleBodyScroll(false);
+     this.toggleBodyScroll(false);
   }
 
   cerrarModalCarrito() {
     this.modalCarrito = false;
-    // this.toggleBodyScroll(false);
+     this.toggleBodyScroll(false);
   }
 
   buscarAutocomplete() {
@@ -151,14 +163,13 @@ export class NavbarComponent implements OnInit {
 
     this.loading = true;
 
-    this.igdbService.buscarJuegos(this.search)
-      .subscribe({
-        next: (res) => {
-          this.sugerencias = res;
-          this.loading = false;
-        },
-        error: () => this.loading = false
-      });
+    this.igdbService.buscarJuegos(this.search).subscribe({
+      next: (res) => {
+        this.sugerencias = res;
+        this.loading = false;
+      },
+      error: () => (this.loading = false),
+    });
   }
 
   seleccionarJuego(j: any) {
@@ -173,8 +184,8 @@ export class NavbarComponent implements OnInit {
 
     this.router.navigate(['/busqueda'], {
       queryParams: {
-        nombre: this.search
-      }
+        nombre: this.search,
+      },
     });
 
     this.focused = false;
@@ -185,7 +196,6 @@ export class NavbarComponent implements OnInit {
   }
 
   onBlur() {
-    setTimeout(() => this.focused = false, 150);
+    setTimeout(() => (this.focused = false), 150);
   }
-
 }

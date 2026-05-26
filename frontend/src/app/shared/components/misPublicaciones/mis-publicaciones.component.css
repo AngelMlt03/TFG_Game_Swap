@@ -1,83 +1,343 @@
-.mis-publicaciones {
-  padding: 20px;
+:host {
+  display: block;
   color: var(--text);
+  font-family: "Inter", "Segoe UI", sans-serif;
 }
 
-h2 {
-  margin-top: 30px;
+.mis-publicaciones {
+  width: 100%;
+}
+
+/* SECCIONES */
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 10px 6px;
+
+  margin-top: 10px;
+}
+
+.section-header h2 {
+  margin: 0;
+
+  font-size: 30px;
+  font-weight: 700;
+
+  color: var(--text);
+
+  letter-spacing: -0.5px;
 }
 
 hr {
-  margin-bottom: 15px;
-  opacity: 0.3;
+  border: none;
+  border-bottom: 1px solid var(--border);
+
+  margin: 12px 0 28px 0;
+}
+
+/* MENSAJE VACÍO */
+
+.section-content > div[ng-reflect-ng-if] {
+  color: var(--muted-text);
+  font-size: 15px;
+
+  padding: 10px 4px 30px 4px;
 }
 
 /* CARD BASE */
+
 .card {
+  position: relative;
+
   display: flex;
   align-items: center;
-  border: 1px solid #666;
-  border-radius: 16px;
-  padding: 15px;
-  margin-bottom: 15px;
-  background: #111;
+
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.03),
+    rgba(255, 255, 255, 0.015)
+  );
+
+  border: 1px solid var(--border);
+
+  border-radius: 22px;
+
+  padding: 18px;
+
+  margin-bottom: 20px;
+
+  overflow: hidden;
+
+  transition:
+    transform 0.28s ease,
+    border-color 0.28s ease,
+    box-shadow 0.28s ease,
+    background 0.28s ease;
+}
+
+/* EFECTO BRILLO */
+
+.card::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  background: radial-gradient(
+    circle at top left,
+    rgba(99, 102, 241, 0.18),
+    transparent 40%
+  );
+
+  opacity: 0;
+
+  transition: opacity 0.3s ease;
+
+  pointer-events: none;
+}
+
+.card:hover::before {
+  opacity: 1;
+}
+
+/* HOVER */
+
+.card:hover {
+  transform: translateY(-4px);
+
+  border-color: rgba(99, 102, 241, 0.45);
+
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0.02)
+  );
+
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.4),
+    0 0 18px rgba(99, 102, 241, 0.15);
 }
 
 /* IMAGEN */
+
 .card img {
-  width: 100px;
-  height: 100px;
+  width: 115px;
+  height: 115px;
+
   object-fit: cover;
-  border-radius: 12px;
-  margin-right: 20px;
+
+  border-radius: 18px;
+
+  margin-right: 22px;
+
+  flex-shrink: 0;
+
+  transition:
+    transform 0.3s ease,
+    filter 0.3s ease;
+}
+
+.card:hover img {
+  transform: scale(1.03);
+
+  filter: brightness(1.05);
 }
 
 /* INFO */
+
+.info {
+  flex: 1;
+}
+
 .info p {
-  margin: 3px 0;
+  margin: 5px 0;
+
+  color: var(--text);
+
+  font-size: 15px;
+}
+
+.info p:first-child {
+  font-size: 20px;
+  font-weight: 700;
+
+  margin-bottom: 10px;
 }
 
 .precio {
-  font-weight: bold;
+  font-size: 22px !important;
+  font-weight: 700;
+
+  color: #818cf8 !important;
+
+  margin-top: 14px !important;
 }
 
-/* INTERCAMBIO */
-.intercambio {
-  justify-content: space-between;
-}
-
-.intercambio .lado {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 40%;
-}
-
-.swap {
-  font-size: 30px;
-}
+/* ACCIONES */
 
 .acciones {
   display: flex;
+  gap: 12px;
+
+  align-items: center;
   justify-content: flex-end;
-  gap: 10px;
-  margin-top: 12px;
+
+  margin-left: auto;
 }
 
+/* BOTONES */
+
 .acciones button {
-  padding: 6px 14px;
-  border-radius: 10px;
-  border: 1px solid #888;
-  background: transparent;
-  color: white;
+  padding: 10px 18px;
+
+  border-radius: 14px;
+
+  border: 1px solid var(--border);
+
+  background: rgba(255, 255, 255, 0.03);
+
+  color: var(--text);
+
+  font-size: 14px;
+  font-weight: 600;
+
   cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .acciones button:hover {
-  background: rgba(255,255,255,0.08);
+  transform: translateY(-2px);
+
+  background: rgba(255, 255, 255, 0.06);
+
+  border-color: rgba(99, 102, 241, 0.45);
+
+  box-shadow: 0 0 14px rgba(99, 102, 241, 0.12);
 }
 
+/* BOTÓN PELIGRO */
+
 .acciones .danger {
-  border-color: #ff5a5a;
-  color: #ff5a5a;
+  border-color: rgba(239, 68, 68, 0.5);
+
+  color: #f87171;
+
+  background: rgba(239, 68, 68, 0.06);
+}
+
+.acciones .danger:hover {
+  background: rgba(239, 68, 68, 0.12);
+
+  border-color: rgba(239, 68, 68, 0.8);
+
+  box-shadow: 0 0 14px rgba(239, 68, 68, 0.18);
+}
+
+/* INTERCAMBIOS */
+
+.intercambio {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.intercambio .lado {
+  width: 36%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  text-align: center;
+}
+
+.intercambio .lado p {
+  margin: 5px 0;
+}
+
+.intercambio .lado p:nth-child(2) {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.swap {
+  font-size: 34px;
+  font-weight: bold;
+
+  color: #818cf8;
+
+  opacity: 0.9;
+}
+
+/* MOBILE */
+
+@media (max-width: 900px) {
+  .card {
+    flex-direction: column;
+    align-items: center;
+
+    text-align: center;
+
+    gap: 20px;
+  }
+
+  .card img {
+    margin-right: 0;
+  }
+
+  .acciones {
+    width: 100%;
+
+    justify-content: center;
+
+    flex-wrap: wrap;
+  }
+
+  .intercambio {
+    gap: 24px;
+  }
+
+  .intercambio .lado {
+    width: 100%;
+  }
+
+  .swap {
+    transform: rotate(90deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .section-header h2 {
+    font-size: 24px;
+  }
+
+  .card {
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .card img {
+    width: 95px;
+    height: 95px;
+  }
+
+  .info p:first-child {
+    font-size: 18px;
+  }
+
+  .precio {
+    font-size: 20px !important;
+  }
+
+  .acciones button {
+    width: 100%;
+  }
 }

@@ -18,5 +18,11 @@ public class ReviewResponseDTO {
     private String nombreReviewed;
 
     private String contenido;
+
     private Double estrellas;
+
+    private String tipoReview;
+
+    private Long idCompraVenta;
+    private Long idIntercambio;
 }

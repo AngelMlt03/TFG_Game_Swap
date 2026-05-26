@@ -4,6 +4,8 @@ import com.tfg.angel.gameswap.backend.business.dto.response.CompraVentaResponseD
 import com.tfg.angel.gameswap.backend.business.dto.response.IntercambioResponseDTO;
 import com.tfg.angel.gameswap.backend.business.mapper.CompraVentaMapper;
 import com.tfg.angel.gameswap.backend.business.mapper.IntercambioMapper;
+import com.tfg.angel.gameswap.backend.business.model.CompraVenta;
+import com.tfg.angel.gameswap.backend.business.model.Intercambio;
 import com.tfg.angel.gameswap.backend.business.model.Usuario;
 import com.tfg.angel.gameswap.backend.business.repository.CompraVentaRepository;
 import com.tfg.angel.gameswap.backend.business.repository.IntercambioRepository;
@@ -70,5 +72,21 @@ public class HistorialService {
                 )
                 .map(IntercambioMapper::toDTO)
                 .toList();
+    }
+
+    public CompraVentaResponseDTO getCompra(Long id) {
+
+        CompraVenta compra = compraVentaRepository.findById(id)
+                                .orElseThrow();
+
+        return CompraVentaMapper.toDTO(compra);
+    }
+
+    public IntercambioResponseDTO getIntercambio(Long id) {
+
+        Intercambio intercambio = intercambioRepository.findById(id)
+                                .orElseThrow();
+
+        return IntercambioMapper.toDTO(intercambio);
     }
 }

@@ -5,4 +5,5 @@ export interface Usuario {
   nombreUsuario: string;
   fechaNacimiento: string;
   saldo: number;
+  estrellas: number;
 }

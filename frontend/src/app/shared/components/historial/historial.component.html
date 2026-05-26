@@ -1,97 +1,97 @@
 <div class="mis-publicaciones">
-
   <!-- COMPRAS -->
 
-  <h2>Historial de compras</h2>
+  <div class="section-header" (click)="comprasOpen = !comprasOpen">
+    <h2>Historial de compras</h2>
+    <button class="collapse-btn" [class.open]="comprasOpen">❯</button>
+  </div>
   <hr />
 
-  <div *ngIf="!compras.length">
-    No tienes compras
-  </div>
+  <div class="section-content" [class.closed]="!comprasOpen">
+    <div *ngIf="!compras.length">No tienes compras</div>
 
-  <div *ngFor="let c of compras" class="card venta">
+    <div *ngFor="let c of compras" class="card venta">
+      <img [src]="getImagen(c.idApiProducto)" />
 
-    <img [src]="getImagen(c.idApiProducto)" />
+      <div class="info">
+        <p>{{ c.nombreProducto }}</p>
+        <p>{{ c.plataformaProducto }}</p>
+        <p class="precio">{{ c.precio }}€</p>
+      </div>
 
-    <div class="info">
-      <p>{{ c.nombreProducto }}</p>
-      <p>{{ c.plataformaProducto }}</p>
-      <p class="precio">{{ c.precio }}€</p>
+      <div class="acciones">
+        <button (click)="verDetalle(c, 'VENTA')">Ver detalles</button>
+
+        <button class="review-btn" (click)="abrirReview(c, 'VENTA')">
+          Escribir review
+        </button>
+      </div>
     </div>
-
-    <div class="acciones">
-      <button (click)="verDetalle(c, 'VENTA')">
-        Ver detalles
-      </button>
-    </div>
-
   </div>
 
   <!-- VENTAS -->
 
-  <h2>Historial de ventas</h2>
+  <div class="section-header" (click)="ventasOpen = !ventasOpen">
+    <h2>Historial de ventas</h2>
+    <button class="collapse-btn" [class.open]="ventasOpen">❯</button>
+  </div>
   <hr />
 
-  <div *ngIf="!ventas.length">
-    No tienes ventas
-  </div>
+  <div class="section-content" [class.closed]="!ventasOpen">
+    <div *ngIf="!ventas.length">No tienes ventas</div>
 
-  <div *ngFor="let v of ventas" class="card venta">
+    <div *ngFor="let v of ventas" class="card venta">
+      <img [src]="getImagen(v.idApiProducto)" />
 
-    <img [src]="getImagen(v.idApiProducto)" />
+      <div class="info">
+        <p>{{ v.nombreProducto }}</p>
+        <p>{{ v.plataformaProducto }}</p>
+        <p class="precio">{{ v.precio }}€</p>
+      </div>
 
-    <div class="info">
-      <p>{{ v.nombreProducto }}</p>
-      <p>{{ v.plataformaProducto }}</p>
-      <p class="precio">{{ v.precio }}€</p>
+      <div class="acciones">
+        <button (click)="verDetalle(v, 'VENTA')">Ver detalles</button>
+      </div>
     </div>
-
-    <div class="acciones">
-      <button (click)="verDetalle(v, 'VENTA')">
-        Ver detalles
-      </button>
-    </div>
-
   </div>
 
   <!-- INTERCAMBIOS -->
 
-  <h2>Historial de intercambios</h2>
+  <div class="section-header" (click)="intercambiosOpen = !intercambiosOpen">
+    <h2>Historial de intercambios</h2>
+    <button class="collapse-btn" [class.open]="intercambiosOpen">❯</button>
+  </div>
   <hr />
 
-  <div *ngIf="!intercambios.length">
-    No tienes intercambios
+  <div class="section-content" [class.closed]="!intercambiosOpen">
+    <div *ngIf="!intercambios.length">No tienes intercambios</div>
+
+    <div *ngFor="let i of intercambios" class="card intercambio">
+      <div class="lado">
+        <img [src]="getImagen(i.idApiProductoOfrecido)" />
+
+        <p>{{ i.nombreProductoOfrecido }}</p>
+        <p>{{ i.plataformaProductoOfrecido }}</p>
+      </div>
+
+      <span class="swap">⇄</span>
+
+      <div class="lado">
+        <img [src]="getImagen(i.idApiProductoDeseado)" />
+
+        <p>{{ i.nombreProductoDeseado }}</p>
+        <p>{{ i.plataformaProductoDeseado }}</p>
+      </div>
+
+      <div class="acciones">
+        <button (click)="verDetalle(i, 'INTERCAMBIO')">Ver detalles</button>
+
+        <button class="review-btn" (click)="abrirReview(i, 'INTERCAMBIO')">
+          Escribir review
+        </button>
+      </div>
+    </div>
   </div>
-
-  <div *ngFor="let i of intercambios"
-       class="card intercambio">
-
-    <div class="lado">
-      <img [src]="getImagen(i.idApiProductoOfrecido)" />
-
-      <p>{{ i.nombreProductoOfrecido }}</p>
-      <p>{{ i.plataformaProductoOfrecido }}</p>
-    </div>
-
-    <span class="swap">⇄</span>
-
-    <div class="lado">
-      <img [src]="getImagen(i.idApiProductoDeseado)" />
-
-      <p>{{ i.nombreProductoDeseado }}</p>
-      <p>{{ i.plataformaProductoDeseado }}</p>
-    </div>
-
-    <div class="acciones">
-      <button
-        (click)="verDetalle(i, 'INTERCAMBIO')"
-      >
-        Ver detalles
-      </button>
-    </div>
-
-  </div>
-
 </div>
 
 <app-modal-historial-detalle
@@ -99,3 +99,10 @@
   [post]="postDetalle"
   (close)="cerrarDetalle()"
 ></app-modal-historial-detalle>
+
+<app-modal-review
+  [isOpen]="modalReviewOpen"
+  [post]="postReview"
+  [tipo]="tipoReview"
+  (close)="cerrarReview()"
+></app-modal-review>

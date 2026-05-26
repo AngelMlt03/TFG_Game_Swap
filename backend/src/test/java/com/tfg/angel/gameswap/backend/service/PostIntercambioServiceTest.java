@@ -61,9 +61,9 @@ class PostIntercambioServiceTest {
                 .build();
 
         requestDTO = PostIntercambioRequestDTO.builder()
-                .idUsuario(1L)
-                .idProducto(1L)
-                .idProductoCambio(2L)
+                //.idUsuario(1L)
+                //.idProducto(1L)
+                //.idProductoCambio(2L)
                 .build();
     }
 

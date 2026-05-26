@@ -1,41 +1,52 @@
 package com.tfg.angel.gameswap.backend.business.controller;
 
-import com.tfg.angel.gameswap.backend.business.dto.request.CarritoRequestDTO;
-import com.tfg.angel.gameswap.backend.business.dto.request.ProductoCarritoRequestDTO;
-import com.tfg.angel.gameswap.backend.business.dto.response.CarritoResponseDTO;
+import com.tfg.angel.gameswap.backend.business.dto.response.ProductoCarritoResponseDTO;
 import com.tfg.angel.gameswap.backend.business.service.CarritoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/carritos")
+@RequestMapping("/api/carrito")
 @RequiredArgsConstructor
 public class CarritoController {
 
     private final CarritoService service;
 
     @PostMapping
-    public CarritoResponseDTO create(@RequestBody CarritoRequestDTO dto) {
-        return service.create(dto);
-    }
+    public void create() { service.create(); }
 
     @GetMapping("/usuario/{id}")
-    public CarritoResponseDTO findByUser(@PathVariable Long id) {
-        return service.findByUser(id);
+    public void findByUser(@PathVariable Long id) {
+        service.findByUser(id);
     }
 
-    @PostMapping("/add/{idPostVenta}")
-    public CarritoResponseDTO addProduct(@PathVariable Long idPostVenta) {
-        return service.addProduct(idPostVenta);
+    @GetMapping
+    public List<ProductoCarritoResponseDTO> getCarrito() {
+        return service.getCarrito();
     }
 
-    @PostMapping("/remove")
-    public CarritoResponseDTO removeProduct(@RequestBody ProductoCarritoRequestDTO dto) {
-        return service.removeProduct(dto.getIdProducto());
+    @PostMapping("/{idPostVenta}")
+    public void agregarProducto(@PathVariable Long idPostVenta) {
+        service.agregarProducto(idPostVenta);
     }
 
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        service.delete(id);
+    @DeleteMapping("/{idPostVenta}")
+    public void eliminarProducto(@PathVariable Long idPostVenta) {
+        service.eliminarProducto(idPostVenta);
     }
+
+    @GetMapping("/exists/{ventaId}")
+    public boolean existe(@PathVariable Long ventaId) {
+        return service.estaEnCarrito(ventaId);
+    }
+
+    @GetMapping("/precio")
+    public Double precioCarrito() {
+        return service.getPrecioCarrito();
+    }
+
+    @DeleteMapping("/vaciar")
+    public void vaciar() { service.vaciar(); }
 }

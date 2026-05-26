@@ -1,4 +1,62 @@
 <footer class="footer">
-  <p>©2026 GameSwap</p>
-  <p>Contacto: gameswap&#64;email.com</p>
+  <!-- Glow -->
+
+  <div class="footer-glow"></div>
+
+  <!-- CONTENT -->
+
+  <div class="footer-content">
+    <!-- LEFT -->
+
+    <div class="brand-side left-side">
+      <span class="brand-text"> Game </span>
+    </div>
+
+    <!-- CENTER -->
+
+    <div class="footer-center">
+      <!-- CONTACTO -->
+
+      <div class="footer-block">
+        <div class="icon-wrapper">✉</div>
+
+        <div class="footer-info">
+          <span class="footer-title"> Contacto </span>
+
+          <div class="footer-lines">
+            <span>correo&#64;email.com</span>
+            <span>+34 987654321</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-divider"></div>
+
+      <!-- INFO -->
+
+      <div class="footer-block">
+        <div class="icon-wrapper">ⓘ</div>
+
+        <div class="footer-info">
+          <span class="footer-title"> Info </span>
+
+          <div class="footer-links">
+            <button (click)="abrirGithub()">GitHub</button>
+
+            <button (click)="abrirSwagger()">Swagger API</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+
+    <div class="brand-side right-side">
+      <span class="brand-text"> Swap </span>
+    </div>
+  </div>
+
+  <!-- BOTTOM -->
+
+  <div class="footer-bottom">© GameSwap {{ year }}</div>
 </footer>

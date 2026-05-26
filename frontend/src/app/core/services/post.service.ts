@@ -4,16 +4,14 @@ import { environment } from '../../../environments/environment';
 import { map } from 'rxjs/internal/operators/map';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PostService {
-
   private apiUrl = `${environment.apiUrl}`;
 
   constructor(private http: HttpClient) {}
 
   buscarPosts(filtros: any) {
-
     let params = new HttpParams();
 
     if (filtros.videojuego) {
@@ -36,13 +34,16 @@ export class PostService {
   }
 
   comprar(postId: number) {
-    return this.http.post(`${this.apiUrl}/transaccion/comprar/${postId}`, {}).pipe(
-      map((response: any) => response.saldo)
-    );
+    return this.http
+      .post(`${this.apiUrl}/transaccion/comprar/${postId}`, {})
+      .pipe(map((response: any) => response.saldo));
   }
 
   intercambiar(postId: number) {
-    return this.http.post(`${this.apiUrl}/transaccion/intercambiar/${postId}`, {});
+    return this.http.post(
+      `${this.apiUrl}/transaccion/intercambiar/${postId}`,
+      {},
+    );
   }
 
   crearVenta(dto: any) {
@@ -90,16 +91,16 @@ export class PostService {
   }
 
   guardarPost(idPost: number, tipoPost: string) {
-    return this.http.post(`${this.apiUrl}/guardados`,
-      {
-        idPost,
-        tipoPost
-      }
-    );
+    return this.http.post(`${this.apiUrl}/guardados`, {
+      idPost,
+      tipoPost,
+    });
   }
 
   estaGuardado(idPost: number, tipoPost: string) {
-    return this.http.get<boolean>(`${this.apiUrl}/guardados/existe/${idPost}/${tipoPost}`);
+    return this.http.get<boolean>(
+      `${this.apiUrl}/guardados/existe/${idPost}/${tipoPost}`,
+    );
   }
 
   eliminarGuardado(idPost: number, tipoPost: string) {
@@ -112,5 +113,37 @@ export class PostService {
 
   getIntercambiosGuardados() {
     return this.http.get<any[]>(`${this.apiUrl}/guardados/intercambios`);
+  }
+
+  getCompraById(id: number) {
+    return this.http.get<any>(`${this.apiUrl}/reviews/compra/${id}`);
+  }
+
+  getIntercambioById(id: number) {
+    return this.http.get<any>(`${this.apiUrl}/reviews/intercambio/${id}`);
+  }
+
+  agregarCarrito(idVenta: number) {
+    return this.http.post(`${this.apiUrl}/carrito/${idVenta}`, {});
+  }
+
+  eliminarCarrito(idVenta: number) {
+    return this.http.delete(`${this.apiUrl}/carrito/${idVenta}`);
+  }
+
+  estaEnCarrito(idVenta: number) {
+    return this.http.get<boolean>(`${this.apiUrl}/carrito/exists/${idVenta}`);
+  }
+
+  obtenerCarrito() {
+    return this.http.get<any[]>(`${this.apiUrl}/carrito`);
+  }
+
+  vaciarCarrito() {
+    return this.http.delete(`${this.apiUrl}/carrito/vaciar`);
+  }
+
+  obtenerPrecioCarrito() {
+    return this.http.get<number>(`${this.apiUrl}/carrito/precio`);
   }
 }

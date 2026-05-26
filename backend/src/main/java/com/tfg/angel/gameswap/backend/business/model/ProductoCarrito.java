@@ -17,10 +17,10 @@ public class ProductoCarrito {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id_post_venta")
-    private PostVenta postVenta;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_carrito")
     private Carrito carrito;
+
+    @ManyToOne
+    @JoinColumn(name = "id_post_venta")
+    private PostVenta postVenta;
 }

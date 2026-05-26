@@ -6,6 +6,7 @@ import com.tfg.angel.gameswap.backend.business.model.Carrito;
 import java.util.stream.Collectors;
 
 public class CarritoMapper {
+    private CarritoMapper() { }
 
     public static CarritoResponseDTO toDTO(Carrito entity) {
         return CarritoResponseDTO.builder()

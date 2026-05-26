@@ -1,116 +1,139 @@
 <nav class="navbar" [class.scrolled]="scrolled">
-
   <div class="left">
+    <button class="burger" [class.open]="menuOpen" (click)="toggleMenu()">
+      ☰
+    </button>
 
-    <button class="burger" (click)="toggleMenu()">☰</button>
-
-    <div class="logo">
-      <a routerLink="/">GameSwap</a>
+    <div class="logo-container" routerLink="/">
+      <img src="GameSwapLogo.png" alt="Logo" class="logo" />
     </div>
 
     <div class="side-menu" [class.open]="menuOpen">
-
       <a routerLink="/" (click)="toggleMenu()">Inicio</a>
 
       <a routerLink="/busqueda" (click)="toggleMenu()">Búsqueda por filtros</a>
 
       <div class="divider"></div>
 
-      <button (click)="abrirModalVenta()" (click)="toggleMenu()">Publicar venta</button>
+      <button (click)="abrirModalVenta()" (click)="toggleMenu()">
+        Publicar venta
+      </button>
 
-      <button (click)="abrirModalIntercambio()" (click)="toggleMenu()">Publicar intercambio</button>
+      <button (click)="abrirModalIntercambio()" (click)="toggleMenu()">
+        Publicar intercambio
+      </button>
 
+      <div class="divider"></div>
+
+      <a [routerLink]="['/perfil']" [queryParams]="{ tab: 'guardados' }">
+        Guardados
+      </a>
+      <a [routerLink]="['/perfil']" [queryParams]="{ tab: 'misPublicaciones' }">
+        Mis publicaciones
+      </a>
+      <a [routerLink]="['/perfil']" [queryParams]="{ tab: 'historial' }">
+        Historial
+      </a>
+      <a [routerLink]="['/perfil']" [queryParams]="{ tab: 'reviews' }">
+        Reviews
+      </a>
     </div>
-
   </div>
 
   <div class="center">
-
     <div class="search-container">
+      <input
+        type="text"
+        placeholder="Buscar videojuegos..."
+        [(ngModel)]="search"
+        (input)="buscarAutocomplete()"
+        (focus)="onFocus()"
+        (blur)="onBlur()"
+        (keyup.enter)="buscar()"
+      />
 
-      <input type="text" placeholder="Buscar videojuegos..." [(ngModel)]="search"
-        (input)="buscarAutocomplete()" (focus)="onFocus()" (blur)="onBlur()" (keyup.enter)="buscar()" />
+      <span class="clear" *ngIf="search" (click)="search = ''">✖</span>
 
-      <span class="clear" *ngIf="search" (click)="search=''">✖</span>
+      <button (click)="buscar()">
+        <span>⌕</span>
+      </button>
 
-      <button (click)="buscar()">🔍</button>
+      <div *ngIf="focused">
+        <div class="autocomplete" *ngIf="loading" class="loading">
+          Buscando...
+        </div>
 
-      <div class="autocomplete" *ngIf="focused">
-
-        <div *ngIf="loading" class="loading">Buscando...</div>
-
-        <div *ngIf="!loading && sugerencias.length">
+        <div class="autocomplete" *ngIf="!loading && sugerencias.length">
           <div *ngFor="let j of sugerencias" (click)="seleccionarJuego(j)">
             <img *ngIf="j.imagen" [src]="j.imagen" />
             {{ j.nombre }}
           </div>
         </div>
 
-        <div *ngIf="!loading && !sugerencias.length && search">
+        <div
+          class="autocomplete"
+          *ngIf="!loading && !sugerencias.length && search"
+        >
           <div class="no-results">No se encontraron juegos</div>
         </div>
-
       </div>
-
     </div>
-
   </div>
 
   <div class="right">
-
     <div class="saldo-div">
       <span *ngIf="saldo$ | async as saldo"> Saldo: {{ saldo }}€ </span>
     </div>
 
     <div class="dropdown">
+      <div
+        class="dropdown-toggle"
+        (click)="toggleDropdown()"
+        role="button"
+        tabindex="0"
+        (keydown.enter)="toggleDropdown()"
+      >
+        <img class="avatar" [src]="avatar()" />
 
-      <div class="dropdown-toggle" (click)="toggleDropdown()" role="button" tabindex="0" (keydown.enter)="toggleDropdown()">
-
-        <div class="avatar" [style]="{ 'background-color': getColorFromUsername(usuario.nombre) }">
-          {{ usuario.nombre.charAt(0).toUpperCase() || 'U' }}
-        </div>
-
-        <span class="username">{{ usuario.nombre || 'Usuario' }}</span>
-        <span class="arrow">▼</span>
-
+        <span class="username">{{ usuario.nombre || "Usuario" }}</span>
+        <span class="arrow" [class.open]="dropdownOpen"> ❯ </span>
       </div>
 
       <div class="dropdown-menu" [class.open]="dropdownOpen">
+        <a routerLink="/perfil">Mi perfil</a>
 
-        <a routerLink="/perfil">Perfil</a>
+        <div class="divider"></div>
+
+        <button (click)="abrirModalCarrito()" (click)="toggleDropdown()">
+          Carrito
+        </button>
 
         <a routerLink="/saldo">Añadir saldo</a>
 
         <div class="divider"></div>
 
-        <button (click)="abrirModalCarrito()" (click)="toggleDropdown()">Carrito</button>
-
-        <a routerLink="/perfil#guardados">Guardados</a>
-
-        <a routerLink="/perfil#historial">Historial</a>
-
-        <a routerLink="/perfil#reviews">Reviews</a>
-
-        <div class="divider"></div>
-
         <button (click)="toggleTheme()">
-          {{ theme.isDark() ? 'Modo claro ☀️' : 'Modo oscuro 🌙' }}
+          {{ theme.isDark() ? "Modo claro ☀️" : "Modo oscuro 🌙" }}
         </button>
 
         <button (click)="logout()">Cerrar sesión</button>
-
       </div>
-
     </div>
-
   </div>
-
 </nav>
 
-<app-modal-venta [isOpen]="modalVenta" (close)="cerrarModalVenta()"></app-modal-venta>
+<app-modal-venta
+  [isOpen]="modalVenta"
+  (close)="cerrarModalVenta()"
+></app-modal-venta>
 
-<app-modal-intercambio [isOpen]="modalIntercambio" (close)="cerrarModalIntercambio()"></app-modal-intercambio>
+<app-modal-intercambio
+  [isOpen]="modalIntercambio"
+  (close)="cerrarModalIntercambio()"
+></app-modal-intercambio>
 
-<app-modal [isOpen]="modalCarrito" title="Carrito" (close)="cerrarModalCarrito()">
-  <p>Aquí irá el contenido del carrito</p>
-</app-modal>
+<app-carrito-modal
+  [isOpen]="modalCarrito"
+  title="Carrito"
+  (close)="cerrarModalCarrito()"
+></app-carrito-modal>

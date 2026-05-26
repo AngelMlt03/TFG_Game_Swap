@@ -15,7 +15,7 @@ public class PostIntercambioResponseDTO {
     private String nombreUsuario;
 
     private Long idProducto;
-    private Long idApiProdcuto;
+    private Long idApiProducto;
     private String nombreProducto;
     private String estado;
     private String plataforma;

@@ -21,7 +21,7 @@ export const routes: Routes = [
       {
         path: 'busqueda',
         loadComponent: () =>
-          import('./features/busqueda/busqueda.component')
+          import('./shared/components/busqueda/busqueda.component')
             .then(m => m.BusquedaComponent)
       },
     ]
@@ -44,7 +44,14 @@ export const routes: Routes = [
   {
     path: 'perfil',
     loadComponent: () =>
-      import('./features/perfil/perfil.component')
+      import('./shared/components/perfil/perfil.component')
         .then(m => m.PerfilComponent)
-  }
+  },
+
+  {
+  path: 'saldo',
+  loadComponent: () =>
+    import('./features/saldo/saldo.component')
+      .then(m => m.SaldoComponent)
+}
 ];

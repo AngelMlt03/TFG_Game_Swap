@@ -33,7 +33,7 @@ public class IntercambioMapper {
 
                 .fecha(i.getFecha())
 
-                .fecha(i.getFecha())
+                .descripcion(i.getPostIntercambio().getDescripcion())
                 .build();
     }
 }

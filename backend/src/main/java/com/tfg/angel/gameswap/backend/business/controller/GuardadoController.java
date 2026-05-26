@@ -1,16 +1,10 @@
 package com.tfg.angel.gameswap.backend.business.controller;
 
 import com.tfg.angel.gameswap.backend.business.dto.request.GuardadoRequestDTO;
-
 import com.tfg.angel.gameswap.backend.business.dto.response.PostIntercambioResponseDTO;
 import com.tfg.angel.gameswap.backend.business.dto.response.PostVentaResponseDTO;
-
 import com.tfg.angel.gameswap.backend.business.service.GuardadoService;
-
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

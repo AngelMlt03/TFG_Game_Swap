@@ -2,18 +2,19 @@ import { Component, OnInit } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
 import { PostService } from '../../../core/services//post.service';
 import { IgdbService } from '../../../core/services/igdb.service';
-import { ModalVentaComponent } from "../modalVenta/modal-venta.component";
-import { ModalIntercambioComponent } from "../modalIntercambio/modal-intercambio.component";
+import { ModalVentaComponent } from '../modales/modalVenta/modal-venta.component';
+import { ModalIntercambioComponent } from '../modales/modalIntercambio/modal-intercambio.component';
+import { AlertService } from '../../../core/services/alert.service';
+import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
 
 @Component({
   selector: 'app-mis-publicaciones',
   standalone: true,
   imports: [NgFor, NgIf, ModalVentaComponent, ModalIntercambioComponent],
   templateUrl: './mis-publicaciones.component.html',
-  styleUrls: ['./mis-publicaciones.component.css']
+  styleUrls: ['./mis-publicaciones.component.css'],
 })
 export class MisPublicacionesComponent implements OnInit {
-
   ventas: any[] = [];
   intercambios: any[] = [];
 
@@ -27,7 +28,9 @@ export class MisPublicacionesComponent implements OnInit {
 
   constructor(
     private postService: PostService,
-    private igdbService: IgdbService
+    private igdbService: IgdbService,
+    private alertService: AlertService,
+    private confirmDialogService: ConfirmDialogService,
   ) {}
 
   ngOnInit() {
@@ -36,17 +39,17 @@ export class MisPublicacionesComponent implements OnInit {
   }
 
   cargarVentas() {
-    this.postService.getMisVentas().subscribe(res => {
+    this.postService.getMisVentas().subscribe((res) => {
       this.ventas = res;
-      res.forEach(v => this.cargarImagen(v.idApi));
+      res.forEach((v) => this.cargarImagen(v.idApi));
     });
   }
 
   cargarIntercambios() {
-    this.postService.getMisIntercambios().subscribe(res => {
+    this.postService.getMisIntercambios().subscribe((res) => {
       this.intercambios = res;
 
-      res.forEach(i => {
+      res.forEach((i) => {
         this.cargarImagen(i.idApi);
         this.cargarImagen(i.idApiIntercambio);
       });
@@ -56,7 +59,7 @@ export class MisPublicacionesComponent implements OnInit {
   cargarImagen(idApi: number) {
     if (this.imagenes[idApi]) return;
 
-    this.igdbService.getCover(idApi).subscribe(url => {
+    this.igdbService.getCover(idApi).subscribe((url) => {
       this.imagenes[idApi] = url || 'assets/no-image.png';
     });
   }
@@ -66,32 +69,31 @@ export class MisPublicacionesComponent implements OnInit {
   }
 
   editarVenta(post: any) {
-
     post.imagen = this.getImagen(post.idApi);
     this.postEditar = post;
     this.modalEditarOpen = true;
   }
 
-  eliminarVenta(id: number) {
+  async eliminarVenta(id: number) {
+    const confirmado =
+      await this.confirmDialogService.confirmar('¿Eliminar venta?');
 
-    if (!confirm('¿Eliminar publicación?')) return;
+    if (!confirmado) return;
 
     this.postService.eliminarVenta(id).subscribe({
       next: () => {
-        this.ventas =
-          this.ventas.filter(p => p.id !== id);
+        this.ventas = this.ventas.filter((p) => p.id !== id);
 
-        alert('Publicación eliminada ✅');
+        this.alertService.success('Compra realizada');
       },
-      error: err => {
+      error: (err) => {
         console.error(err);
-        alert('Error al eliminar ❌');
-      }
+        this.alertService.error('Error al eliminar');
+      },
     });
   }
 
   editarIntercambio(post: any) {
-
     post.imagen = this.getImagen(post.idApi);
     post.imagenIntercambio = this.getImagen(post.idApiIntercambio);
 
@@ -99,26 +101,26 @@ export class MisPublicacionesComponent implements OnInit {
     this.modalEditarIntercambioOpen = true;
   }
 
-  eliminarIntercambio(id: number) {
+  async eliminarIntercambio(id: number) {
+    const confirmado = await this.confirmDialogService.confirmar(
+      '¿Eliminar intercambio?',
+    );
 
-    if (!confirm('¿Eliminar intercambio?')) return;
+    if (!confirmado) return;
 
-    this.postService
-      .eliminarIntercambio(id)
-      .subscribe({
-        next: () => {
-          this.intercambios = this.intercambios.filter(i => i.id !== id);
-          alert('Intercambio eliminado ✅');
-        },
-        error: err => {
-          console.error(err);
-          alert('Error al eliminar ❌');
-        }
-      });
+    this.postService.eliminarIntercambio(id).subscribe({
+      next: () => {
+        this.intercambios = this.intercambios.filter((i) => i.id !== id);
+        this.alertService.success('Intercambio eliminado');
+      },
+      error: (err) => {
+        console.error(err);
+        this.alertService.error('Error al eliminar');
+      },
+    });
   }
 
   cerrarModalEditar(actualizar: boolean) {
-
     this.modalEditarOpen = false;
     this.postEditar = null;
 
@@ -129,7 +131,6 @@ export class MisPublicacionesComponent implements OnInit {
   }
 
   cerrarModalEditarIntercambio(actualizar: boolean) {
-
     this.modalEditarIntercambioOpen = false;
     this.postEditarIntercambio = null;
 
@@ -137,4 +138,7 @@ export class MisPublicacionesComponent implements OnInit {
       this.cargarIntercambios();
     }
   }
+
+  intercambiosOpen = true;
+  ventasOpen = true;
 }

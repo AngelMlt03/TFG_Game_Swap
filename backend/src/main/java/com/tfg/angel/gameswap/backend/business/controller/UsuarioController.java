@@ -3,9 +3,11 @@ package com.tfg.angel.gameswap.backend.business.controller;
 import com.tfg.angel.gameswap.backend.business.dto.request.ChangePasswordRequest;
 import com.tfg.angel.gameswap.backend.business.dto.request.UsuarioRequestDTO;
 import com.tfg.angel.gameswap.backend.business.dto.response.UsuarioResponseDTO;
+import com.tfg.angel.gameswap.backend.business.model.Usuario;
 import com.tfg.angel.gameswap.backend.business.service.UsuarioService;
 import com.tfg.angel.gameswap.backend.security.UsuarioDetailsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,5 +59,10 @@ public class UsuarioController {
     @GetMapping("/saldo")
     public Double getSaldo() {
         return usuarioDetailsService.obtenerUsuarioActual().getSaldo();
+    }
+
+    @PostMapping("/saldo")
+    public ResponseEntity<Double> sumarSaldo(@RequestParam Double cantidad) {
+        return usuarioService.addSaldo(cantidad);
     }
 }

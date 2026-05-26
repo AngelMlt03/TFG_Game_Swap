@@ -3,6 +3,7 @@ package com.tfg.angel.gameswap.backend.business.service.impl;
 import com.tfg.angel.gameswap.backend.business.model.*;
 import com.tfg.angel.gameswap.backend.business.model.enums.EstadoPost;
 import com.tfg.angel.gameswap.backend.business.repository.*;
+import com.tfg.angel.gameswap.backend.business.service.CarritoService;
 import com.tfg.angel.gameswap.backend.exception.GSBadRequestException;
 import com.tfg.angel.gameswap.backend.exception.GSNotFoundException;
 import com.tfg.angel.gameswap.backend.security.UsuarioDetailsService;
@@ -21,8 +22,12 @@ public class TransaccionService {
     private final GuardadoRepository guardadoRepository;
     private final CompraVentaRepository compraVentaRepository;
     private final IntercambioRepository intercambioRepository;
+    private final ProductoCarritoRepository productoCarritoRepository;
+    private final CarritoRepository carritoRepository;
+
     private final UsuarioDetailsService usuarioDetailsService;
     private final UsuarioRepository usuarioRepository;
+    private final CarritoService carritoService;
 
     public Double comprar(Long idPostVenta) {
 
@@ -65,6 +70,13 @@ public class TransaccionService {
                 .build();
 
         compraVentaRepository.save(entity);
+
+        Carrito carrito = carritoRepository.findByUsuarioId(usuarioActual.getId())
+                .orElseThrow(() -> new GSNotFoundException("Carrito no encontrado"));
+
+        if (productoCarritoRepository.existsByCarritoIdAndPostVentaId(carrito.getId(), idPostVenta)) {
+            carritoService.eliminarProducto(idPostVenta);
+        }
 
         return usuarioActual.getSaldo();
     }

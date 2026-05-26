@@ -13,11 +13,11 @@ public class IgdbService {
 
     private final WebClient webClient = WebClient.builder().build();
 
-    //@Value("${IGDB_CLIENT_ID}")
-    private String clientId = "f8sdpojhgri88j6znw5bok254zkvgp";
+    @Value("${IGDB_CLIENT_ID}")
+    private String clientId;
 
-    //@Value("${IGDB_CLIENT_SECRET}")
-    private String clientSecret = "7ig74rk148dw6d2m5019eenyk39y1k";
+    @Value("${IGDB_CLIENT_SECRET}")
+    private String clientSecret;
 
     private String accessToken;
     private long expiresAt;

@@ -22,3 +22,26 @@ spring.datasource.url=jdbc:postgresql://localhost:5432/tfg
 spring.datasource.username=usuario
 spring.datasource.password=password
 jwt.secret=secret
+```
+
+También se debe configurar las credenciales necesarias para los servicios externos utilizados por la aplicación:
+```properties
+IGDB_CLIENT_ID
+IGDB_CLIENT_SECRET
+STRIPE_SECRET_KEY
+FRONTEND_URL
+```
+Posteriormente se compila el backend ejecutando:
+
+```bash
+$ mvn clean install
+```
+
+Y para iniciar el backend se ejecuta este comando:
+
+```bash
+$ mvn spring-boot
+```
+
+Por defecto, el backend desplegado estará disponible en http://localhost:8080.
+Las migraciones de base de datos se ejecutan automáticamente mediante Flyway durante el arranque de la aplicación, por lo que no es necesario hacer nada.

@@ -16,3 +16,12 @@ Desde la carpeta `frontend` ejecutar:
 
 ```bash
 npm install
+```
+
+Y posteriormente se inicia el proyecto Angular con este comando:
+
+```bash
+ng serve
+```
+
+Por defecto, el frontend desplegado estará disponible en http://localhost:4200.

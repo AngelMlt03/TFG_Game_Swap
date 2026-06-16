@@ -2,6 +2,7 @@ package com.tfg.angel.gameswap.backend.business.service.impl;
 
 import com.tfg.angel.gameswap.backend.business.dto.request.ReviewRequestDTO;
 import com.tfg.angel.gameswap.backend.business.dto.response.ReviewResponseDTO;
+import com.tfg.angel.gameswap.backend.business.dto.response.UsuarioResponseDTO;
 import com.tfg.angel.gameswap.backend.business.mapper.ReviewMapper;
 import com.tfg.angel.gameswap.backend.business.model.CompraVenta;
 import com.tfg.angel.gameswap.backend.business.model.Intercambio;
@@ -12,6 +13,7 @@ import com.tfg.angel.gameswap.backend.business.repository.IntercambioRepository;
 import com.tfg.angel.gameswap.backend.business.repository.ReviewRepository;
 import com.tfg.angel.gameswap.backend.business.repository.UsuarioRepository;
 import com.tfg.angel.gameswap.backend.business.service.ReviewService;
+import com.tfg.angel.gameswap.backend.business.service.UsuarioService;
 import com.tfg.angel.gameswap.backend.exception.GSBadRequestException;
 import com.tfg.angel.gameswap.backend.exception.GSNotFoundException;
 import com.tfg.angel.gameswap.backend.security.UsuarioDetailsService;
@@ -27,6 +29,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final UsuarioRepository usuarioRepository;
+    private final UsuarioService usuarioService;
     private final UsuarioDetailsService usuarioDetailsService;
 
     private final CompraVentaRepository compraVentaRepository;
@@ -106,9 +109,9 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public List<ReviewResponseDTO> getMisReviews() {
+    public List<ReviewResponseDTO> getReviewsRecibidasToUsuario(String nombreUsuario) {
 
-        Usuario usuario = usuarioDetailsService.obtenerUsuarioActual();
+        UsuarioResponseDTO usuario = usuarioService.findByUsername(nombreUsuario);
 
         return reviewRepository.findByReviewedId(usuario.getId())
                 .stream()

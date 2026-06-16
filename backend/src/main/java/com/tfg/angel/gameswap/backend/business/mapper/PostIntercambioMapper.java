@@ -2,7 +2,6 @@ package com.tfg.angel.gameswap.backend.business.mapper;
 
 import com.tfg.angel.gameswap.backend.business.dto.response.PostIntercambioResponseDTO;
 import com.tfg.angel.gameswap.backend.business.model.PostIntercambio;
-import com.tfg.angel.gameswap.backend.business.model.enums.EstadoPost;
 
 public class PostIntercambioMapper {
     private PostIntercambioMapper() { }
@@ -12,7 +11,7 @@ public class PostIntercambioMapper {
                 .id(post.getId())
 
                 .idUsuario(post.getUsuario().getId())
-                .nombreUsuario(post.getUsuario().getNombre())
+                .nombreUsuario(post.getUsuario().getNombreUsuario())
 
                 .idProducto(post.getProducto().getId())
                 .idApiProducto(post.getProducto().getIdAPI().longValue())

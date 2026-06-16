@@ -166,7 +166,8 @@
   gap: 6px;
 }
 
-.footer-lines span {
+.footer-lines span,
+.footer-lines a  {
   font-size: 15px;
   font-weight: 500;
 
@@ -175,7 +176,8 @@
 
 /* LINKS */
 
-.footer-links button {
+.footer-links button,
+.footer-lines a {
   border: none;
 
   background: transparent;
@@ -196,7 +198,8 @@
     transform 0.2s ease;
 }
 
-.footer-links button:hover {
+.footer-links button:hover,
+.footer-lines a:hover {
   color: #8b5cf6;
 
   transform: translateX(4px);

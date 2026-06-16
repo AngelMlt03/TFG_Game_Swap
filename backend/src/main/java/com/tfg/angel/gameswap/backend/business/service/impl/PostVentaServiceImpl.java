@@ -1,14 +1,16 @@
 package com.tfg.angel.gameswap.backend.business.service.impl;
 
+import com.tfg.angel.gameswap.backend.business.dto.request.PostIntercambioRequestDTO;
 import com.tfg.angel.gameswap.backend.business.dto.request.PostVentaRequestDTO;
-import com.tfg.angel.gameswap.backend.business.dto.response.PostBusquedaDTO;
 import com.tfg.angel.gameswap.backend.business.dto.response.PostVentaResponseDTO;
 import com.tfg.angel.gameswap.backend.business.mapper.PostVentaMapper;
+import com.tfg.angel.gameswap.backend.business.model.PostIntercambio;
 import com.tfg.angel.gameswap.backend.business.model.PostVenta;
 import com.tfg.angel.gameswap.backend.business.model.Producto;
 import com.tfg.angel.gameswap.backend.business.model.Usuario;
 import com.tfg.angel.gameswap.backend.business.model.enums.EstadoPost;
 import com.tfg.angel.gameswap.backend.business.model.enums.EstadoProducto;
+import com.tfg.angel.gameswap.backend.business.repository.PostIntercambioRepository;
 import com.tfg.angel.gameswap.backend.business.repository.PostVentaRepository;
 import com.tfg.angel.gameswap.backend.business.repository.ProductoRepository;
 import com.tfg.angel.gameswap.backend.business.service.PostVentaService;
@@ -24,6 +26,7 @@ import java.util.List;
 public class PostVentaServiceImpl implements PostVentaService {
 
     private final PostVentaRepository postVentaRepository;
+    private final PostIntercambioRepository postIntercambioRepository;
     private final ProductoRepository productoRepository;
     private final UsuarioDetailsService usuarioDetailsService;
 
@@ -105,9 +108,7 @@ public class PostVentaServiceImpl implements PostVentaService {
 
         producto.setNombre(dto.getNombreProducto());
         producto.setIdAPI(dto.getIdApi().intValue());
-        producto.setEstado(
-                EstadoProducto.valueOf(dto.getEstadoProducto())
-        );
+        producto.setEstado(EstadoProducto.valueOf(dto.getEstadoProducto()));
 
         productoRepository.save(producto);
 
@@ -121,6 +122,34 @@ public class PostVentaServiceImpl implements PostVentaService {
     }
 
     @Override
+    public void convertirVentaAIntercambio(Long idVenta, PostIntercambioRequestDTO dto) {
+
+        PostVenta venta = postVentaRepository.findById(idVenta).orElseThrow();
+
+        PostIntercambio intercambio = new PostIntercambio();
+
+        intercambio.setProducto(venta.getProducto());
+
+        Producto p = Producto.builder()
+                .nombre(dto.getNombreProducto())
+                .idAPI(dto.getIdApi().intValue())
+                .estado(EstadoProducto.valueOf(dto.getEstadoProducto()))
+                .build();
+
+        productoRepository.save(p);
+
+        intercambio.setProductoCambio(p);
+
+        intercambio.setDescripcion(dto.getDescripcion());
+
+        intercambio.setUsuario(venta.getVendedor());
+
+        postIntercambioRepository.save(intercambio);
+
+        postVentaRepository.delete(venta);
+    }
+
+    @Override
     public void delete(Long id) {
         if (!postVentaRepository.existsById(id)) {
             throw new GSNotFoundException("Post no encontrado");
@@ -128,4 +157,5 @@ public class PostVentaServiceImpl implements PostVentaService {
 
         postVentaRepository.deleteById(id);
     }
+
 }

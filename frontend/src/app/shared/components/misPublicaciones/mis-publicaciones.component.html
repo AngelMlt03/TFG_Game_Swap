@@ -23,9 +23,17 @@
       </div>
 
       <div class="acciones">
-        <button (click)="editarVenta(v)">Editar</button>
+        <button (click)="editarVenta(v)">
+          {{ esPerfilPublico ? "Ver" : "Editar" }}
+        </button>
 
-        <button class="danger" (click)="eliminarVenta(v.id)">Eliminar</button>
+        <button
+          class="danger"
+          *ngIf="!esPerfilPublico"
+          (click)="eliminarVenta(v.id)"
+        >
+          Eliminar
+        </button>
       </div>
     </div>
   </div>
@@ -65,9 +73,15 @@
       </div>
 
       <div class="acciones">
-        <button (click)="editarIntercambio(i)">Editar</button>
+        <button (click)="editarIntercambio(i)">
+          {{ esPerfilPublico ? "Ver" : "Editar" }}
+        </button>
 
-        <button class="danger" (click)="eliminarIntercambio(i.id)">
+        <button
+          class="danger"
+          *ngIf="!esPerfilPublico"
+          (click)="eliminarIntercambio(i.id)"
+        >
           Eliminar
         </button>
       </div>
@@ -76,15 +90,47 @@
 </div>
 
 <app-modal-venta
+  *ngIf="!esPerfilPublico"
   [isOpen]="modalEditarOpen"
   [modoEdicion]="true"
   [postEditar]="postEditar"
   (close)="cerrarModalEditar(false)"
+  (convertirAIntercambio)="abrirConversionIntercambio($event)"
+></app-modal-venta>
+
+<app-modal-venta
+  [isOpen]="modalConversionVentaOpen"
+  [modoEdicion]="true"
+  [postEditar]="postConversionVenta"
+  (close)="cerrarModalConversionVenta($event)"
 ></app-modal-venta>
 
 <app-modal-intercambio
+  *ngIf="!esPerfilPublico"
   [isOpen]="modalEditarIntercambioOpen"
   [postEditar]="postEditarIntercambio"
   [modoEdicion]="true"
   (close)="cerrarModalEditarIntercambio($event)"
+  (convertirAVenta)="abrirConversionVenta($event)"
 ></app-modal-intercambio>
+
+<app-modal-intercambio
+  [isOpen]="modalConversionIntercambioOpen"
+  [postEditar]="postConversionIntercambio"
+  [modoEdicion]="true"
+  (close)="cerrarModalConversionIntercambio($event)"
+></app-modal-intercambio>
+
+<app-post-detalle
+  *ngIf="esPerfilPublico"
+  [isOpen]="modalEditarOpen"
+  [post]="postEditar"
+  (close)="cerrarModalEditar(false)"
+></app-post-detalle>
+
+<app-post-detalle
+  *ngIf="esPerfilPublico"
+  [isOpen]="modalEditarIntercambioOpen"
+  [post]="postEditarIntercambio"
+  (close)="cerrarModalEditarIntercambio(false)"
+></app-post-detalle>

@@ -83,4 +83,16 @@ export class UsuarioService {
       {},
     );
   }
+
+  getPerfilPublico(nombreUsuario: string) {
+    return this.http.get<any>(`${this.apiUrl}/perfil/${nombreUsuario}`);
+  }
+
+  getVentas(nombreUsuario: string) {
+    return this.http.get<any[]>(`${this.apiUrl}/${nombreUsuario}/ventas`);
+  }
+
+  getIntercambios(nombreUsuario: string) {
+    return this.http.get<any[]>(`${this.apiUrl}/${nombreUsuario}/intercambios`);
+  }
 }

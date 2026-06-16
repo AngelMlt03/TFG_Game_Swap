@@ -1,0 +1,179 @@
+<div class="busqueda-container">
+  <div class="filtros">
+    <div class="campo">
+      <input
+        placeholder="Videojuego..."
+        [(ngModel)]="filtros.videojuego"
+        (input)="buscarJuego()"
+        (focus)="onFocusJuego()"
+        (blur)="onBlurJuego()"
+      />
+
+      <span
+        class="clear"
+        *ngIf="filtros.videojuego"
+        (click)="filtros.videojuego = ''"
+        >✖</span
+      >
+
+      <div *ngIf="focusedJuego">
+        <div class="autocomplete" *ngIf="loadingJuego">
+          <div class="loading">Buscando...</div>
+        </div>
+
+        <div
+          class="autocomplete"
+          *ngIf="!loadingJuego && sugerenciasJuego.length"
+        >
+          <div *ngFor="let j of sugerenciasJuego" (click)="seleccionarJuego(j)">
+            <img *ngIf="j.imagen" [src]="j.imagen" />
+            {{ j.nombre }}
+          </div>
+        </div>
+
+        <div
+          class="autocomplete"
+          *ngIf="
+            !loadingJuego &&
+            !sugerenciasJuego.length &&
+            !filtros.videojuego.length
+          "
+        >
+          <div class="no-results">No se encontraron juegos</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="campo">
+      <input
+        placeholder="Plataforma..."
+        [(ngModel)]="filtros.plataforma"
+        (input)="buscarPlataforma()"
+        (focus)="onFocusPlataforma()"
+        (blur)="onBlurPlataforma()"
+      />
+
+      <span
+        class="clear"
+        *ngIf="filtros.plataforma"
+        (click)="filtros.plataforma = ''"
+        >✖</span
+      >
+
+      <div *ngIf="focusedPlataforma">
+        <div class="autocomplete" *ngIf="loadingPlataforma">
+          <div class="loading">Buscando...</div>
+        </div>
+
+        <div class="autocomplete" *ngIf="sugerenciasPlataforma.length">
+          <div
+            *ngFor="let p of sugerenciasPlataforma"
+            (click)="seleccionarPlataforma(p)"
+          >
+            <img *ngIf="p.imagen" [src]="p.imagen" />
+            {{ p.nombre }}
+          </div>
+        </div>
+
+        <div
+          class="autocomplete"
+          *ngIf="
+            !loadingPlataforma &&
+            !sugerenciasPlataforma.length &&
+            !filtros.plataforma.length
+          "
+        >
+          <div class="no-results">No se encontraron plataformas</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIPO -->
+
+    <div class="campo">
+      <input
+        readonly
+        placeholder="Tipo..."
+        [value]="getTipoLabel(filtros.tipo)"
+        (focus)="focusedTipo = true; buscarTipos()"
+        (click)="focusedTipo = true; buscarTipos()"
+        (blur)="onBlurTipo()"
+      />
+
+      <span class="clear" *ngIf="filtros.tipo" (click)="filtros.tipo = ''">
+        ✖
+      </span>
+
+      <div *ngIf="focusedTipo">
+        <div class="autocomplete" *ngIf="sugerenciasTipo.length">
+          <div
+            *ngFor="let t of sugerenciasTipo"
+            (click)="seleccionarTipo(t.value)"
+          >
+            {{ t.label }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ESTADO -->
+
+    <div class="campo">
+      <input
+        readonly
+        placeholder="Estado..."
+        [value]="getEstadoLabel(filtros.estado)"
+        (focus)="focusedEstado = true; buscarEstados()"
+        (click)="focusedEstado = true; buscarEstados()"
+        (blur)="onBlurEstado()"
+      />
+
+      <span class="clear" *ngIf="filtros.estado" (click)="filtros.estado = ''">
+        ✖
+      </span>
+
+      <div *ngIf="focusedEstado">
+        <div class="autocomplete" *ngIf="sugerenciasEstado.length">
+          <div
+            *ngFor="let e of sugerenciasEstado"
+            (click)="seleccionarEstado(e.value)"
+          >
+            {{ e.label }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button (click)="buscar()">Buscar</button>
+  </div>
+
+  <div *ngIf="loading" class="loading" class="loading-center">Buscando...</div>
+  <div *ngIf="noResults" class="loading" class="loading-center">
+    No se encontraron resultados
+  </div>
+
+  <div *ngIf="!loading" class="resultados">
+    <div class="card" *ngFor="let juego of resultados">
+      <div class="card-fit" (click)="abrirDetalle(juego)">
+        <img [src]="getImagen(juego.idApi)" />
+
+        <p>{{ juego.nombreProducto }}</p>
+
+        <span *ngIf="juego.tipo === 'VENTA'" class="badge venta">
+          {{ juego.precio }}€
+        </span>
+
+        <span *ngIf="juego.tipo === 'INTERCAMBIO'" class="badge intercambio">
+          ⇄ Intercambio
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-post-detalle
+  [isOpen]="modalOpen"
+  [post]="postSeleccionado"
+  (close)="cerrarModal()"
+  (accionRealizada)="onAccionRealizada()"
+></app-post-detalle>

@@ -2,6 +2,8 @@ package com.tfg.angel.gameswap.backend.business.service;
 
 import com.tfg.angel.gameswap.backend.business.dto.request.ChangePasswordRequest;
 import com.tfg.angel.gameswap.backend.business.dto.request.UsuarioRequestDTO;
+import com.tfg.angel.gameswap.backend.business.dto.response.PerfilPublicoDTO;
+import com.tfg.angel.gameswap.backend.business.dto.response.PostBusquedaDTO;
 import com.tfg.angel.gameswap.backend.business.dto.response.UsuarioResponseDTO;
 import org.springframework.http.ResponseEntity;
 
@@ -24,4 +26,10 @@ public interface UsuarioService {
     void changePassword(String username, ChangePasswordRequest request);
 
     ResponseEntity<Double> addSaldo(Double cantidad);
+
+    PerfilPublicoDTO getPerfilPublico(String nombreUsuario);
+
+    List<PostBusquedaDTO> findVentasByUsuario(String usuario);
+
+    List<PostBusquedaDTO> findIntercambiosByUsuario(String usuario);
 }

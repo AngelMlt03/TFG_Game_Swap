@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { map } from 'rxjs/internal/operators/map';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -52,14 +53,6 @@ export class PostService {
 
   crearIntercambio(dto: any) {
     return this.http.post(`${this.apiUrl}/posts-intercambio`, dto);
-  }
-
-  getMisVentas() {
-    return this.http.get<any[]>(`${this.apiUrl}/busqueda/mis-ventas`);
-  }
-
-  getMisIntercambios() {
-    return this.http.get<any[]>(`${this.apiUrl}/busqueda/mis-intercambios`);
   }
 
   actualizarVenta(id: number, dto: any) {
@@ -145,5 +138,39 @@ export class PostService {
 
   obtenerPrecioCarrito() {
     return this.http.get<number>(`${this.apiUrl}/carrito/precio`);
+  }
+
+  convertirVentaAIntercambio(idVenta: number, dto: any) {
+    return this.http.post(
+      `${this.apiUrl}/posts-venta/${idVenta}/convertir`,
+      dto,
+    );
+  }
+
+  convertirIntercambioAVenta(idIntercambio: number, dto: any) {
+    return this.http.post(
+      `${this.apiUrl}/posts-intercambio/${idIntercambio}/convertir`,
+      dto,
+    );
+  }
+
+  existeIntercambioSugerido(tuJuego: string, juegoBuscado: string) {
+    return this.http.get<boolean>(
+      `${this.apiUrl}/posts-intercambio/intercambio-sugerido`,
+      {
+        params: {
+          tuJuego,
+          juegoBuscado,
+        },
+      },
+    );
+  }
+
+  private carritoActualizadoSubject = new Subject<void>();
+
+  carritoActualizado$ = this.carritoActualizadoSubject.asObservable();
+
+  notificarActualizacionCarrito() {
+    this.carritoActualizadoSubject.next();
   }
 }

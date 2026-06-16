@@ -2,10 +2,14 @@ package com.tfg.angel.gameswap.backend.business.service.impl;
 
 import com.tfg.angel.gameswap.backend.business.dto.request.ChangePasswordRequest;
 import com.tfg.angel.gameswap.backend.business.dto.request.UsuarioRequestDTO;
-import com.tfg.angel.gameswap.backend.business.dto.response.UsuarioResponseDTO;
+import com.tfg.angel.gameswap.backend.business.dto.response.*;
 import com.tfg.angel.gameswap.backend.business.mapper.UsuarioMapper;
 import com.tfg.angel.gameswap.backend.business.model.Usuario;
+import com.tfg.angel.gameswap.backend.business.model.enums.EstadoPost;
 import com.tfg.angel.gameswap.backend.business.repository.UsuarioRepository;
+import com.tfg.angel.gameswap.backend.business.service.PostIntercambioService;
+import com.tfg.angel.gameswap.backend.business.service.PostVentaService;
+import com.tfg.angel.gameswap.backend.business.service.ProductoService;
 import com.tfg.angel.gameswap.backend.business.service.UsuarioService;
 import com.tfg.angel.gameswap.backend.exception.GSBadRequestException;
 import com.tfg.angel.gameswap.backend.exception.GSNotFoundException;
@@ -15,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -22,6 +27,9 @@ import java.util.List;
 public class UsuarioServiceImpl implements UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final PostVentaService postVentaService;
+    private final PostIntercambioService postIntercambioService;
+    private final ProductoService productoService;
     private final PasswordEncoder passwordEncoder;
     private final UsuarioDetailsService usuarioDetailsService;
 
@@ -115,5 +123,96 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuarioRepository.save(usuario);
 
         return ResponseEntity.ok( usuario.getSaldo() );
+    }
+
+    @Override
+    public PerfilPublicoDTO getPerfilPublico(String nombreUsuario) {
+        Usuario usuario = usuarioRepository
+                .findByNombreUsuarioIgnoreCase(nombreUsuario)
+                .orElse(null);
+
+        assert usuario != null;
+        return PerfilPublicoDTO.builder()
+                .nombre(usuario.getNombre())
+                .nombreUsuario(usuario.getNombreUsuario())
+                .correo(usuario.getCorreo())
+                .estrellas(usuario.getEstrellas())
+                .build();
+    }
+
+    public List<PostBusquedaDTO> findVentasByUsuario(String usuario){
+
+        List<PostBusquedaDTO> resultado = new ArrayList<>();
+
+        UsuarioResponseDTO usuarioActual = findByUsername(usuario);
+
+        postVentaService.findByEstado(EstadoPost.ACTIVO)
+                .stream()
+                .filter(p -> p.getIdVendedor().equals(usuarioActual.getId()))
+                .forEach(p -> {
+                            ProductoResponseDTO producto = productoService.findById(p.getIdProducto());
+                            resultado.add( getPostVenta(p, producto) );
+                        }
+                );
+
+        return resultado;
+    }
+
+    public List<PostBusquedaDTO> findIntercambiosByUsuario(String usuario){
+
+        List<PostBusquedaDTO> resultado = new ArrayList<>();
+
+        UsuarioResponseDTO usuarioActual = findByUsername(usuario);
+
+        postIntercambioService.findByEstado(EstadoPost.ACTIVO)
+                .stream()
+                .filter(p -> p.getIdUsuario().equals(usuarioActual.getId()))
+                .forEach(p -> {
+                            ProductoResponseDTO producto = productoService.findById(p.getIdProducto());
+                            ProductoResponseDTO productoIntercambio = productoService.findById(p.getIdProductoCambio());
+                            resultado.add( getIntercambio(p, producto, productoIntercambio) );
+                        }
+                );
+
+        return resultado;
+    }
+
+    private static PostBusquedaDTO getPostVenta(PostVentaResponseDTO p, ProductoResponseDTO producto) {
+        return PostBusquedaDTO.builder()
+                .id(p.getId())
+                .tipo("VENTA")
+
+                .idApi(producto.getIdAPI().longValue())
+                .nombreProducto(p.getNombreProducto())
+                .plataforma(p.getPlataforma())
+                .estado(String.valueOf(producto.getEstado()))
+
+                .precio(p.getPrecio())
+
+                .nombreUsuario(p.getNombreUsuario())
+                .descripcion(p.getDescripcion())
+
+                .build();
+    }
+
+    private static PostBusquedaDTO getIntercambio(PostIntercambioResponseDTO p, ProductoResponseDTO producto, ProductoResponseDTO productoIntercambio) {
+        return PostBusquedaDTO.builder()
+                .id(p.getId())
+                .tipo("INTERCAMBIO")
+
+                .idApi(producto.getIdAPI().longValue())
+                .nombreProducto(p.getNombreProducto())
+                .plataforma(p.getPlataforma())
+                .estado(String.valueOf(producto.getEstado()))
+
+                .idApiIntercambio(productoIntercambio.getIdAPI().longValue())
+                .nombreProductoIntercambio(p.getNombreProductoCambio())
+                .plataformaIntercambio(p.getPlataformaCambio())
+                .estadoIntercambio(String.valueOf(productoIntercambio.getEstado()))
+
+                .nombreUsuario(p.getNombreUsuario())
+                .descripcion(p.getDescripcion())
+
+                .build();
     }
 }

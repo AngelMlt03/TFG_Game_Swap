@@ -8,7 +8,7 @@ export class ThemeService {
   private readonly THEME_KEY = 'theme';
 
   initTheme() {
-    const theme = localStorage.getItem(this.THEME_KEY) || 'light';
+    const theme = localStorage.getItem(this.THEME_KEY) || 'dark';
     document.body.className = theme;
   }
 

@@ -1,0 +1,151 @@
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: rgba(0, 0, 0, 0.55);
+
+  backdrop-filter: blur(6px);
+
+  z-index: 999999;
+
+  animation: fadeIn 0.2s ease;
+}
+
+.confirm-box {
+  position: relative;
+
+  width: 90%;
+  max-width: 430px;
+
+  padding: 30px;
+
+  border-radius: 24px;
+
+  background: linear-gradient(
+    145deg,
+    rgba(20, 20, 20, 0.98),
+    rgba(10, 10, 10, 1)
+  );
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+
+  animation: scaleIn 0.2s ease;
+}
+
+.mensaje {
+  font-size: 18px;
+  font-weight: 500;
+
+  text-align: center;
+
+  line-height: 1.5;
+
+  margin-bottom: 30px;
+
+  color: white;
+}
+
+.acciones {
+  display: flex;
+  justify-content: center;
+
+  gap: 14px;
+}
+
+.acciones button {
+  min-width: 130px;
+
+  padding: 12px 18px;
+
+  border-radius: 14px;
+
+  border: none;
+
+  cursor: pointer;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  transition: 0.2s ease;
+}
+
+.confirmar {
+  background: linear-gradient(145deg, #22c55e, #15803d);
+
+  color: white;
+}
+
+.confirmar:hover {
+  transform: translateY(-2px);
+
+  box-shadow: 0 10px 30px rgba(34, 197, 94, 0.35);
+}
+
+.cancelar {
+  background: linear-gradient(145deg, #ef4444, #991b1b);
+
+  color: white;
+}
+
+.cancelar:hover {
+  transform: translateY(-2px);
+
+  box-shadow: 0 10px 30px rgba(239, 68, 68, 0.35);
+}
+
+.cerrar-btn {
+  position: absolute;
+
+  padding: 0;
+  top: 14px;
+  right: 14px;
+
+  width: 34px;
+  height: 34px;
+
+  border-radius: 10px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  background: rgba(255, 255, 255, 0.04);
+
+  color: white;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.cerrar-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+
+  transform: scale(1.05);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

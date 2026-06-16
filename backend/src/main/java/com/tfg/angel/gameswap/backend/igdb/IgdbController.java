@@ -18,11 +18,6 @@ public class IgdbController {
         return igdbService.searchGames(query, franchiseId);
     }
 
-    @GetMapping("/franchises")
-    public String searchFranchises(@RequestParam String query) {
-        return igdbService.searchFranchises(query);
-    }
-
     @GetMapping("/platforms")
     public String searchPlatforms(@RequestParam String query) {
         return igdbService.searchPlatforms(query);
@@ -31,5 +26,10 @@ public class IgdbController {
     @GetMapping("/cover")
     public String getCover(@RequestParam Long id) {
         return igdbService.getGameCover(id);
+    }
+
+    @GetMapping("/game-details")
+    public String getGameDetails(@RequestParam Long id) {
+        return igdbService.getGameDetails(id);
     }
 }

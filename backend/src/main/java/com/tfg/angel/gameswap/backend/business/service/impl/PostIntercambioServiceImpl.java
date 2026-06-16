@@ -1,16 +1,18 @@
 package com.tfg.angel.gameswap.backend.business.service.impl;
 
 import com.tfg.angel.gameswap.backend.business.dto.request.PostIntercambioRequestDTO;
+import com.tfg.angel.gameswap.backend.business.dto.request.PostVentaRequestDTO;
 import com.tfg.angel.gameswap.backend.business.dto.response.PostIntercambioResponseDTO;
 import com.tfg.angel.gameswap.backend.business.mapper.PostIntercambioMapper;
 import com.tfg.angel.gameswap.backend.business.model.PostIntercambio;
+import com.tfg.angel.gameswap.backend.business.model.PostVenta;
 import com.tfg.angel.gameswap.backend.business.model.Producto;
 import com.tfg.angel.gameswap.backend.business.model.Usuario;
 import com.tfg.angel.gameswap.backend.business.model.enums.EstadoPost;
 import com.tfg.angel.gameswap.backend.business.model.enums.EstadoProducto;
 import com.tfg.angel.gameswap.backend.business.repository.PostIntercambioRepository;
+import com.tfg.angel.gameswap.backend.business.repository.PostVentaRepository;
 import com.tfg.angel.gameswap.backend.business.repository.ProductoRepository;
-import com.tfg.angel.gameswap.backend.business.repository.UsuarioRepository;
 import com.tfg.angel.gameswap.backend.business.service.PostIntercambioService;
 import com.tfg.angel.gameswap.backend.exception.GSNotFoundException;
 import com.tfg.angel.gameswap.backend.security.UsuarioDetailsService;
@@ -24,7 +26,7 @@ import java.util.List;
 public class PostIntercambioServiceImpl implements PostIntercambioService {
 
     private final PostIntercambioRepository postIntercambioRepository;
-    private final UsuarioRepository usuarioRepository;
+    private final PostVentaRepository postVentaRepository;
     private final UsuarioDetailsService usuarioDetailsService;
     private final ProductoRepository productoRepository;
 
@@ -155,11 +157,34 @@ public class PostIntercambioServiceImpl implements PostIntercambioService {
     }
 
     @Override
+    public void convertirIntercambioAVenta(Long idIntercambio, PostVentaRequestDTO dto) {
+        PostIntercambio intercambio = postIntercambioRepository
+                            .findById(idIntercambio)
+                            .orElseThrow();
+
+        PostVenta venta = new PostVenta();
+
+        venta.setVendedor(intercambio.getUsuario());
+        venta.setProducto(intercambio.getProducto());
+        venta.setPrecio(dto.getPrecio());
+        venta.setDescripcion(dto.getDescripcion());
+
+        postVentaRepository.save(venta);
+
+        postIntercambioRepository.delete(intercambio);
+    }
+
+    @Override
     public void delete(Long id) {
         if (!postIntercambioRepository.existsById(id)) {
             throw new GSNotFoundException("Post no encontrado");
         }
 
         postIntercambioRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean existeIntercambioInverso(String tuJuego, String juegoBuscado) {
+        return postIntercambioRepository.existeIntercambioInverso(tuJuego, juegoBuscado);
     }
 }

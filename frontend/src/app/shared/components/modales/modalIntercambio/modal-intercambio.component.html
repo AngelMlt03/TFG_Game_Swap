@@ -1,0 +1,421 @@
+<app-modal
+  [isOpen]="isOpen"
+  [title]="modoEdicion ? 'Editar intercambio' : 'Publicar intercambio'"
+  (close)="close.emit(false)"
+>
+  <!-- PREVIEW -->
+
+  <div class="preview-card intercambio">
+    <!-- IZQUIERDA -->
+
+    <div class="lado">
+      <img *ngIf="imagen && nombreJuego && !focusedJuego" [src]="imagen" />
+
+      <div class="info">
+        <h4>{{ nombreJuego || "Nombre del videojuego" }}</h4>
+        <p>{{ plataforma || "Plataforma" }}</p>
+        <p>{{ estado || "Estado" }}</p>
+      </div>
+    </div>
+
+    <!-- FLECHA -->
+
+    <div class="swap">⇄</div>
+
+    <!-- DERECHA -->
+
+    <div class="lado">
+      <img
+        *ngIf="
+          imagenIntercambio &&
+          nombreJuegoIntercambio &&
+          !focusedJuegoIntercambio
+        "
+        [src]="imagenIntercambio"
+      />
+
+      <div class="info">
+        <h4>{{ nombreJuegoIntercambio || "Nombre del intercambio" }}</h4>
+        <p>{{ plataformaIntercambio || "Plataforma" }}</p>
+        <p>{{ estadoIntercambio || "Estado" }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="intercambio-sugerido"
+    *ngIf="mostrarAvisoIntercambio && nombreJuegoIntercambio && nombreJuego"
+  >
+    <div class="icono">🎮</div>
+
+    <div>
+      <strong>Intercambio encontrado</strong>
+
+      <p>
+        Ya existe una publicación activa que ofrece
+        <b>{{ nombreJuegoIntercambio }}</b>
+        y busca
+        <b>{{ nombreJuego }}</b
+        >. Puedes revisar esa publicación antes de crear una nueva.
+      </p>
+    </div>
+  </div>
+
+  <!-- BOTONES -->
+
+  <div class="acciones-top">
+    <button [disabled]="!formularioValido()" (click)="publicar()">
+      {{ modoEdicion ? "Guardar cambios" : "Publicar" }}
+    </button>
+
+    <button (click)="close.emit(false)">Cancelar</button>
+  </div>
+
+  <div class="bloque">
+    <div class="bloque-header" (click)="mostrarTuJuego = !mostrarTuJuego">
+      <h3>Tu videojuego</h3>
+
+      <span class="flecha" [class.rotada]="mostrarTuJuego"> ▼ </span>
+    </div>
+
+    <div
+      class="bloque-content"
+      *ngIf="mostrarTuJuego"
+      [class.closed]="!tuVideojuegoOpen"
+    >
+      <div class="campo-formulario">
+        <label>Videojuego</label>
+
+        <div class="campo-busqueda">
+          <input
+            type="text"
+            placeholder="Buscar videojuego..."
+            [(ngModel)]="nombreJuego"
+            (input)="buscarJuego()"
+            (focus)="focusedJuego = true"
+            (blur)="onBlurJuego()"
+            (ngModelChange)="comprobarIntercambioExistente()"
+            [readonly]="modoConversion"
+          />
+
+          <span
+            class="clear"
+            *ngIf="nombreJuego && !modoConversion"
+            (click)="limpiarJuego()"
+          >
+            ✖
+          </span>
+
+          <div *ngIf="focusedJuego">
+            <div class="autocomplete loading" *ngIf="loadingJuego">
+              Buscando...
+            </div>
+
+            <div
+              class="autocomplete"
+              *ngIf="!loadingJuego && resultadosBusqueda.length"
+            >
+              <div
+                *ngFor="let j of resultadosBusqueda"
+                (click)="seleccionarJuego(j)"
+              >
+                <img *ngIf="j.imagen" [src]="j.imagen" />
+                {{ j.nombre }}
+              </div>
+            </div>
+
+            <div
+              class="autocomplete no-results"
+              *ngIf="!loadingJuego && !resultadosBusqueda.length && nombreJuego"
+            >
+              <div class="no-results">No se encontraron juegos</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="campo-formulario">
+        <label>Plataforma</label>
+
+        <div class="campo-busqueda">
+          <input
+            type="text"
+            placeholder="Buscar plataforma..."
+            [(ngModel)]="plataforma"
+            (input)="buscarPlataforma()"
+            (focus)="focusedPlataforma = true"
+            (blur)="onBlurPlataforma()"
+            [readonly]="modoConversion"
+          />
+
+          <span
+            class="clear"
+            *ngIf="plataforma && !modoConversion"
+            (click)="plataforma = ''"
+          >
+            ✖
+          </span>
+
+          <div *ngIf="focusedPlataforma">
+            <div class="autocomplete loading" *ngIf="loadingPlataforma">
+              Buscando...
+            </div>
+
+            <div
+              class="autocomplete"
+              *ngIf="!loadingPlataforma && sugerenciasPlataforma.length"
+            >
+              <div
+                *ngFor="let p of sugerenciasPlataforma"
+                (click)="seleccionarPlataforma(p)"
+              >
+                <img *ngIf="p.imagen" [src]="p.imagen" />
+                {{ p.nombre }}
+              </div>
+            </div>
+
+            <div
+              class="autocomplete no-results"
+              *ngIf="
+                !loadingPlataforma &&
+                !sugerenciasPlataforma.length &&
+                plataforma
+              "
+            >
+              <div class="no-results">No se encontraron plataformas</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="campo-formulario">
+        <label>Estado</label>
+
+        <div class="campo-busqueda">
+          <input
+            placeholder="Seleccionar estado..."
+            [value]="getEstadoLabel(estado)"
+            readonly
+            (focus)="focusedEstado = true"
+            (blur)="onBlurEstado()"
+          />
+
+          <span
+            class="clear"
+            *ngIf="estado && !modoConversion"
+            (click)="estado = ''"
+          >
+            ✖
+          </span>
+
+          <div class="autocomplete" *ngIf="focusedEstado && !modoConversion">
+            <div
+              *ngFor="let e of sugerenciasEstado"
+              (click)="seleccionarEstado(e)"
+            >
+              {{ e.label }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bloque">
+    <div
+      class="bloque-header"
+      (click)="mostrarJuegoBuscado = !mostrarJuegoBuscado"
+    >
+      <h3>Juego que buscas</h3>
+
+      <span class="flecha" [class.rotada]="mostrarJuegoBuscado"> ▼ </span>
+    </div>
+
+    <div
+      class="bloque-content"
+      *ngIf="mostrarJuegoBuscado"
+      [class.closed]="!juegoBuscadoOpen"
+    >
+      <div class="campo-formulario">
+        <label>Videojuego</label>
+
+        <div class="campo-busqueda">
+          <input
+            type="text"
+            placeholder="Buscar intercambio..."
+            [(ngModel)]="nombreJuegoIntercambio"
+            (input)="buscarJuegoIntercambio()"
+            (focus)="focusedJuegoIntercambio = true"
+            (blur)="onBlurJuegoIntercambio()"
+            (ngModelChange)="comprobarIntercambioExistente()"
+          />
+
+          <span
+            class="clear"
+            *ngIf="nombreJuegoIntercambio"
+            (click)="limpiarJuegoIntercambio()"
+          >
+            ✖
+          </span>
+
+          <div *ngIf="focusedJuegoIntercambio">
+            <div
+              class="autocomplete loading"
+              *ngIf="loadingJuegoIntercambio"
+            >
+              Buscando...
+            </div>
+
+            <div
+              class="autocomplete"
+              *ngIf="
+                !loadingJuegoIntercambio && resultadosBusquedaIntercambio.length
+              "
+            >
+              <div
+                *ngFor="let j of resultadosBusquedaIntercambio"
+                (click)="seleccionarJuegoIntercambio(j)"
+              >
+                <img *ngIf="j.imagen" [src]="j.imagen" />
+                {{ j.nombre }}
+              </div>
+            </div>
+
+            <div
+              class="autocomplete no-results"
+              *ngIf="
+                !loadingJuegoIntercambio &&
+                !resultadosBusquedaIntercambio.length &&
+                nombreJuegoIntercambio
+              "
+            >
+              <div class="no-results">No se encontraron juegos</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="campo-formulario">
+        <label>Plataforma</label>
+
+        <div class="campo-busqueda">
+          <input
+            type="text"
+            placeholder="Buscar plataforma..."
+            [(ngModel)]="plataformaIntercambio"
+            (input)="buscarPlataformaIntercambio()"
+            (focus)="focusedPlataformaIntercambio = true"
+            (blur)="onBlurPlataformaIntercambio()"
+          />
+
+          <span
+            class="clear"
+            *ngIf="plataformaIntercambio"
+            (click)="plataformaIntercambio = ''"
+          >
+            ✖
+          </span>
+
+          <div *ngIf="focusedPlataformaIntercambio">
+            <div
+              class="autocomplete loading"
+              *ngIf="loadingPlataformaIntercambio"
+            >
+              Buscando...
+            </div>
+
+            <div
+              class="autocomplete"
+              *ngIf="
+                !loadingPlataformaIntercambio &&
+                sugerenciasPlataformaIntercambio.length
+              "
+            >
+              <div
+                *ngFor="let p of sugerenciasPlataformaIntercambio"
+                (click)="seleccionarPlataformaIntercambio(p)"
+              >
+                <img *ngIf="p.imagen" [src]="p.imagen" />
+                {{ p.nombre }}
+              </div>
+            </div>
+
+            <div
+              class="autocomplete no-results"
+              *ngIf="
+                !loadingPlataformaIntercambio &&
+                !sugerenciasPlataformaIntercambio.length &&
+                plataformaIntercambio
+              "
+            >
+              <div class="no-results">No se encontraron plataformas</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="campo-formulario">
+        <label>Estado</label>
+
+        <div class="campo-busqueda">
+          <input
+            placeholder="Seleccionar estado..."
+            [value]="getEstadoIntercambioLabel(estadoIntercambio)"
+            readonly
+            (focus)="focusedEstadoIntercambio = true"
+            (blur)="onBlurEstadoIntercambio()"
+          />
+
+          <span
+            class="clear"
+            *ngIf="estadoIntercambio"
+            (click)="estadoIntercambio = ''"
+          >
+            ✖
+          </span>
+
+          <div class="autocomplete" *ngIf="focusedEstadoIntercambio">
+            <div
+              *ngFor="let e of sugerenciasEstadoIntercambio"
+              (click)="seleccionarEstadoIntercambio(e)"
+            >
+              {{ e.label }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bloque">
+    <div
+      class="bloque-header"
+      (click)="mostrarDescripcion = !mostrarDescripcion"
+    >
+      <h3>Descripción</h3>
+
+      <span class="flecha" [class.rotada]="mostrarDescripcion"> ▼ </span>
+    </div>
+
+    <div
+      class="bloque-content descripcion-content"
+      *ngIf="mostrarDescripcion"
+      [class.closed]="!DescripcionOpen"
+    >
+      <textarea id="descripcion" [(ngModel)]="descripcion"> </textarea>
+    </div>
+  </div>
+
+  <div class="acciones-conversion" *ngIf="modoEdicion && !modoConversion">
+    <button class="convertir-btn" (click)="cambiarAVenta()">
+      Cambiar a venta
+    </button>
+  </div>
+</app-modal>
+
+<app-modal-direccion
+  *ngIf="mostrarModalDireccion"
+  (confirmar)="confirmarPublicar()"
+  (cancelar)="cancelarPublicar()"
+>
+</app-modal-direccion>

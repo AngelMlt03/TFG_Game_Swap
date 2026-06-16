@@ -114,11 +114,13 @@ body {
 /* BOTONES */
 /* ========================= */
 
-button {
+button, a.button {
 
   cursor: pointer;
 
   border: none;
+  text-decoration: none;
+  font-size: 14px;
 
   padding: 10px 16px;
 
@@ -139,19 +141,19 @@ button {
     box-shadow 0.2s ease;
 }
 
-button:hover {
+button:hover, a.button {
 
   transform: translateY(-1px);
 
   opacity: 0.95;
 }
 
-button:active {
+button:active, a.button:active {
 
   transform: scale(0.98);
 }
 
-button.danger {
+button.danger, a.button.danger {
 
   background:
     transparent;

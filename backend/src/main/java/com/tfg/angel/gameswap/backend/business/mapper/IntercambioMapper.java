@@ -14,10 +14,10 @@ public class IntercambioMapper {
                 .idPostIntercambio(i.getPostIntercambio().getId())
 
                 .idUsuarioPublicador(i.getPostIntercambio().getUsuario().getId())
-                .nombreUsuarioPublicador(i.getPostIntercambio().getUsuario().getNombre())
+                .nombreUsuarioPublicador(i.getPostIntercambio().getUsuario().getNombreUsuario())
 
                 .idUsuarioCambio(i.getUsuarioCambio().getId())
-                .nombreUsuarioCambio(i.getUsuarioCambio().getNombre())
+                .nombreUsuarioCambio(i.getUsuarioCambio().getNombreUsuario())
 
                 .idProductoOfrecido(i.getPostIntercambio().getProducto().getId())
                 .idApiProductoOfrecido(i.getPostIntercambio().getProducto().getIdAPI().longValue())

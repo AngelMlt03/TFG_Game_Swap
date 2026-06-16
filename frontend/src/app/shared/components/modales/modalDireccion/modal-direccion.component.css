@@ -1,0 +1,97 @@
+.direccion-container {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 450px;
+  padding: 10px;
+}
+
+.direccion-container h2 {
+  margin: 0;
+  text-align: center;
+  color: #ffffff;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.form-group input {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #444;
+  background: #1f1f1f;
+  color: white;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+  border-color: var(--primary);
+}
+
+.error {
+  color: #ff4d4f;
+  font-size: 13px;
+  margin-top: 2px;
+}
+
+.acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.btn-cancelar {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: #555;
+  color: white;
+  transition: 0.2s;
+}
+
+.btn-cancelar:hover {
+  background-color: #666;
+}
+
+.btn-confirmar {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: var(--primary);
+  color: white;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.btn-confirmar:hover {
+  background-color: var(--primary-hover);
+}
+
+@media (max-width: 600px) {
+  .direccion-container {
+    min-width: auto;
+    width: 100%;
+  }
+
+  .acciones {
+    flex-direction: column;
+  }
+
+  .btn-cancelar,
+  .btn-confirmar {
+    width: 100%;
+  }
+}

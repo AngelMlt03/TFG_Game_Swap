@@ -2,8 +2,9 @@ package com.tfg.angel.gameswap.backend.business.controller;
 
 import com.tfg.angel.gameswap.backend.business.dto.request.ChangePasswordRequest;
 import com.tfg.angel.gameswap.backend.business.dto.request.UsuarioRequestDTO;
+import com.tfg.angel.gameswap.backend.business.dto.response.PerfilPublicoDTO;
+import com.tfg.angel.gameswap.backend.business.dto.response.PostBusquedaDTO;
 import com.tfg.angel.gameswap.backend.business.dto.response.UsuarioResponseDTO;
-import com.tfg.angel.gameswap.backend.business.model.Usuario;
 import com.tfg.angel.gameswap.backend.business.service.UsuarioService;
 import com.tfg.angel.gameswap.backend.security.UsuarioDetailsService;
 import lombok.RequiredArgsConstructor;
@@ -64,5 +65,20 @@ public class UsuarioController {
     @PostMapping("/saldo")
     public ResponseEntity<Double> sumarSaldo(@RequestParam Double cantidad) {
         return usuarioService.addSaldo(cantidad);
+    }
+
+    @GetMapping("/perfil/{nombreUsuario}")
+    public PerfilPublicoDTO getPerfilPublico(@PathVariable String nombreUsuario) {
+        return usuarioService.getPerfilPublico(nombreUsuario);
+    }
+
+    @GetMapping("/{nombreUsuario}/ventas")
+    public List<PostBusquedaDTO> misVentas(@PathVariable String nombreUsuario) {
+        return usuarioService.findVentasByUsuario(nombreUsuario);
+    }
+
+    @GetMapping("/{nombreUsuario}/intercambios")
+    public List<PostBusquedaDTO> misIntercambios(@PathVariable String nombreUsuario) {
+        return usuarioService.findIntercambiosByUsuario(nombreUsuario);
     }
 }

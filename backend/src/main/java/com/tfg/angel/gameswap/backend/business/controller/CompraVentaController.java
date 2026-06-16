@@ -16,9 +16,7 @@ public class CompraVentaController {
 
     @PostMapping("/{idPostVenta}")
     public CompraVentaResponseDTO create(@PathVariable Long idPostVenta) {
-
         Long idUsuario = 1L;
-
         return service.create(idPostVenta, idUsuario);
     }
 

@@ -1,11 +1,9 @@
 package com.tfg.angel.gameswap.backend.business.controller;
 
+import com.tfg.angel.gameswap.backend.business.dto.request.PostIntercambioRequestDTO;
 import com.tfg.angel.gameswap.backend.business.dto.request.PostVentaRequestDTO;
 import com.tfg.angel.gameswap.backend.business.dto.response.PostVentaResponseDTO;
-import com.tfg.angel.gameswap.backend.business.model.Producto;
 import com.tfg.angel.gameswap.backend.business.model.enums.EstadoPost;
-import com.tfg.angel.gameswap.backend.business.model.enums.EstadoProducto;
-import com.tfg.angel.gameswap.backend.business.repository.ProductoRepository;
 import com.tfg.angel.gameswap.backend.business.service.PostVentaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -57,5 +55,10 @@ public class PostVentaController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         postVentaService.delete(id);
+    }
+
+    @PostMapping("/{idVenta}/convertir")
+    public void convertirVentaAIntercambio(@PathVariable Long idVenta, @RequestBody PostIntercambioRequestDTO dto) {
+        postVentaService.convertirVentaAIntercambio(idVenta, dto);
     }
 }

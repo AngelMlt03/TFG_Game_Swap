@@ -1,9 +1,6 @@
 package com.tfg.angel.gameswap.backend.business.service.impl;
 
-import com.tfg.angel.gameswap.backend.business.dto.response.PostBusquedaDTO;
-import com.tfg.angel.gameswap.backend.business.dto.response.PostIntercambioResponseDTO;
-import com.tfg.angel.gameswap.backend.business.dto.response.PostVentaResponseDTO;
-import com.tfg.angel.gameswap.backend.business.dto.response.ProductoResponseDTO;
+import com.tfg.angel.gameswap.backend.business.dto.response.*;
 import com.tfg.angel.gameswap.backend.business.model.Usuario;
 import com.tfg.angel.gameswap.backend.business.model.enums.EstadoPost;
 import com.tfg.angel.gameswap.backend.business.service.PostIntercambioService;
@@ -25,7 +22,7 @@ public class BusquedaService {
     private final ProductoService productoService;
     private final UsuarioDetailsService usuarioDetailsService;
 
-    public List<PostBusquedaDTO> buscar(String nombre, String tipo, String plataforma) {
+    public List<PostBusquedaDTO> buscar(String nombre, String tipo, String plataforma, String estado) {
 
         List<PostBusquedaDTO> resultado = new ArrayList<>();
 
@@ -40,12 +37,11 @@ public class BusquedaService {
                             p.getNombreProducto().toLowerCase().contains(nombre.toLowerCase()))
                     .filter(p -> plataforma == null ||
                             p.getPlataforma().toLowerCase().contains(plataforma.toLowerCase()))
+                    .filter(p -> estado == null ||
+                            productoService.findById(p.getIdProducto()).getEstado().toString().toLowerCase().contains(estado.toLowerCase()))
                     .forEach(p -> {
                         ProductoResponseDTO producto = productoService.findById(p.getIdProducto());
-                        resultado.add(
-                                getPostVenta(p, producto));
-                    }
-                    );
+                        resultado.add(getPostVenta(p, producto));});
         }
 
         if (tipo == null || tipo.equalsIgnoreCase("INTERCAMBIO")) {
@@ -56,53 +52,18 @@ public class BusquedaService {
                     .filter(p -> nombre == null ||
                             p.getNombreProducto().toLowerCase().contains(nombre.toLowerCase()))
                     .filter(p -> plataforma == null ||
-                            p.getPlataforma().toLowerCase().contains(plataforma.toLowerCase()) ||
-                            p.getPlataformaCambio().toLowerCase().contains(plataforma.toLowerCase()))
+                            p.getPlataforma().toLowerCase().contains(plataforma.toLowerCase()))
+                    .filter(p -> estado == null || productoService
+                                    .findById(p.getIdProducto())
+                                    .getEstado()
+                                    .name()
+                                    .equalsIgnoreCase(estado))
                     .forEach(p -> {
                         ProductoResponseDTO producto = productoService.findById(p.getIdProducto());
                         ProductoResponseDTO productoIntercambio = productoService.findById(p.getIdProductoCambio());
-                        resultado.add(
-                                getIntercambio(p, producto, productoIntercambio));
-                        }
+                        resultado.add(getIntercambio(p, producto, productoIntercambio));}
                     );
         }
-
-        return resultado;
-    }
-
-    public List<PostBusquedaDTO> findVentasByUsuarioActivo(){
-
-        List<PostBusquedaDTO> resultado = new ArrayList<>();
-
-        Usuario usuarioActual = usuarioDetailsService.obtenerUsuarioActual();
-
-        postVentaService.findByEstado(EstadoPost.ACTIVO)
-                .stream()
-                .filter(p -> p.getIdVendedor().equals(usuarioActual.getId()))
-                .forEach(p -> {
-                            ProductoResponseDTO producto = productoService.findById(p.getIdProducto());
-                            resultado.add( getPostVenta(p, producto) );
-                        }
-                );
-
-        return resultado;
-    }
-
-    public List<PostBusquedaDTO> findIntercambiosByUsuarioActivo(){
-
-        List<PostBusquedaDTO> resultado = new ArrayList<>();
-
-        Usuario usuarioActual = usuarioDetailsService.obtenerUsuarioActual();
-
-        postIntercambioService.findByEstado(EstadoPost.ACTIVO)
-                .stream()
-                .filter(p -> p.getIdUsuario().equals(usuarioActual.getId()))
-                .forEach(p -> {
-                            ProductoResponseDTO producto = productoService.findById(p.getIdProducto());
-                            ProductoResponseDTO productoIntercambio = productoService.findById(p.getIdProductoCambio());
-                            resultado.add( getIntercambio(p, producto, productoIntercambio) );
-                        }
-                );
 
         return resultado;
     }
@@ -119,7 +80,7 @@ public class BusquedaService {
 
                 .precio(p.getPrecio())
 
-                .nombreUsuario(p.getNombreVendedor())
+                .nombreUsuario(p.getNombreUsuario())
                 .descripcion(p.getDescripcion())
 
                 .build();

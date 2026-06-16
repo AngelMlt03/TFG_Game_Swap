@@ -44,9 +44,9 @@ public class ReviewController {
         return service.findByReviewer(id);
     }
 
-    @GetMapping("/mis-reviews")
-    public List<ReviewResponseDTO> getMisReviews() {
-        return service.getMisReviews();
+    @GetMapping("/reviews/{usuario}")
+    public List<ReviewResponseDTO> getMisReviews(@PathVariable String usuario) {
+        return service.getReviewsRecibidasToUsuario(usuario);
     }
 
     @GetMapping("/enviadas")

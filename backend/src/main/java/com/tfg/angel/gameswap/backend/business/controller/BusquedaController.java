@@ -3,10 +3,7 @@ package com.tfg.angel.gameswap.backend.business.controller;
 import com.tfg.angel.gameswap.backend.business.dto.response.PostBusquedaDTO;
 import com.tfg.angel.gameswap.backend.business.service.impl.BusquedaService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,17 +18,9 @@ public class BusquedaController {
     public List<PostBusquedaDTO> buscar(
             @RequestParam(required = false) String nombre,
             @RequestParam(required = false) String tipo,
-            @RequestParam(required = false) String plataforma) {
-        return busquedaService.buscar(nombre, tipo, plataforma);
+            @RequestParam(required = false) String plataforma,
+            @RequestParam(required = false) String estado) {
+        return busquedaService.buscar(nombre, tipo, plataforma, estado);
     }
 
-    @GetMapping("/mis-ventas")
-    public List<PostBusquedaDTO> misVentas() {
-        return busquedaService.findVentasByUsuarioActivo();
-    }
-
-    @GetMapping("/mis-intercambios")
-    public List<PostBusquedaDTO> misIntercambios() {
-        return busquedaService.findIntercambiosByUsuarioActivo();
-    }
 }

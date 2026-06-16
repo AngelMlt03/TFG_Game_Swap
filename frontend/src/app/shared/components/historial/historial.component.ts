@@ -68,12 +68,12 @@ export class HistorialComponent implements OnInit {
     if (this.imagenes[idApi]) return;
 
     this.igdbService.getCover(idApi).subscribe((url) => {
-      this.imagenes[idApi] = url || 'assets/no-image.png';
+      this.imagenes[idApi] = url || 'no-image.png';
     });
   }
 
   getImagen(idApi: number) {
-    return this.imagenes[idApi] || 'assets/no-image.png';
+    return this.imagenes[idApi] || 'no-image.png';
   }
 
   verDetalle(post: any, tipo: string) {

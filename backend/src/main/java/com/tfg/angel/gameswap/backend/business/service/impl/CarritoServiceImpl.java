@@ -20,7 +20,6 @@ import java.util.List;
 public class CarritoServiceImpl implements CarritoService {
 
     private final CarritoRepository carritoRepository;
-    private final UsuarioRepository usuarioRepository;
     private final PostVentaRepository postVentaRepository;
     private final ProductoCarritoRepository productoCarritoRepository;
 

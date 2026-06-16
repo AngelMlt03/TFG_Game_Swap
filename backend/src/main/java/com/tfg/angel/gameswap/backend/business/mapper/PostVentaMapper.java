@@ -10,7 +10,7 @@ public class PostVentaMapper {
         return PostVentaResponseDTO.builder()
                 .id(post.getId())
                 .idVendedor(post.getVendedor().getId())
-                .nombreVendedor(post.getVendedor().getNombre())
+                .nombreUsuario(post.getVendedor().getNombreUsuario())
                 .plataforma(post.getPlataforma())
                 .idProducto(post.getProducto().getId())
                 .idApi(post.getProducto().getIdAPI().longValue())

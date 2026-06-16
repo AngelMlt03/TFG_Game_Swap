@@ -1,0 +1,164 @@
+<app-modal [isOpen]="isOpen" title="Escribir review" (close)="close.emit()">
+  <ng-container *ngIf="post">
+    <!-- PREVIEW -->
+
+    <div class="preview-card" [class.intercambio]="tipo === 'INTERCAMBIO'">
+      <!-- VENTA -->
+
+      <ng-container *ngIf="tipo === 'VENTA'">
+        <div class="preview-info">
+          <img [src]="post.imagen" />
+
+          <div class="info">
+            <h4>
+              {{ post.nombreProducto }}
+            </h4>
+
+            <p>
+              {{ post.plataformaProducto }}
+            </p>
+
+            <p>
+              {{ post.estadoProducto }}
+            </p>
+
+            <p class="precio">{{ post.precio }}€</p>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- INTERCAMBIO -->
+
+      <ng-container *ngIf="tipo === 'INTERCAMBIO'">
+        <div class="lado">
+          <img [src]="post.imagen" />
+
+          <div class="info">
+            <h4>
+              {{ post.nombreProductoOfrecido }}
+            </h4>
+
+            <p>
+              {{ post.plataformaProductoOfrecido }}
+            </p>
+
+            <p>
+              {{ post.estadoProductoOfrecido }}
+            </p>
+          </div>
+        </div>
+
+        <div class="swap">⇄</div>
+
+        <div class="lado">
+          <img [src]="post.imagenIntercambio" />
+
+          <div class="info">
+            <h4>
+              {{ post.nombreProductoDeseado }}
+            </h4>
+
+            <p>
+              {{ post.plataformaProductoDeseado }}
+            </p>
+
+            <p>
+              {{ post.estadoProductoDeseado }}
+            </p>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <div class="bloque">
+      <div class="bloque-header" (click)="usuarioOpen = !usuarioOpen">
+        <h3>Review para</h3>
+
+        <span class="flecha" [class.rotada]="usuarioOpen"> ▼ </span>
+      </div>
+
+      <div class="section-content" [class.closed]="!usuarioOpen">
+        <div class="bloque-content">
+          <div class="usuario-review">
+            <img
+              [src]="
+                'https://ui-avatars.com/api/?name=' +
+                getNombreUsuario() +
+                '&background=1c1c1c&color=ffffff'
+              "
+            />
+
+            <div class="usuario-info">
+              <span class="usuario-nombre">
+                {{ getNombreUsuario() }}
+              </span>
+
+              <span class="usuario-sub"> Usuario de GameSwap </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bloque">
+      <div class="bloque-header" (click)="contenidoOpen = !contenidoOpen">
+        <h3>Contenido</h3>
+
+        <span class="flecha" [class.rotada]="contenidoOpen"> ▼ </span>
+      </div>
+
+      <div class="section-content" [class.closed]="!contenidoOpen">
+        <div class="bloque-content">
+          <textarea
+            [(ngModel)]="contenido"
+            placeholder="Escribe tu review..."
+          ></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="bloque">
+      <div class="bloque-header" (click)="puntuacionOpen = !puntuacionOpen">
+        <h3>Puntuación</h3>
+
+        <span class="flecha" [class.rotada]="puntuacionOpen"> ▼ </span>
+      </div>
+
+      <div class="section-content" [class.closed]="!puntuacionOpen">
+        <div class="bloque-content">
+          <div class="estrellas-wrapper">
+            <button
+              type="button"
+              class="estrella-btn"
+              *ngFor="let star of [1, 2, 3, 4, 5]"
+              (click)="estrellas = star"
+              [class.active]="star <= estrellas"
+            >
+              <span>★</span>
+            </button>
+          </div>
+
+          <div class="valoracion-texto">
+            <span *ngIf="estrellas === 1"> Muy mala </span>
+
+            <span *ngIf="estrellas === 2"> Mejorable </span>
+
+            <span *ngIf="estrellas === 3"> Buena </span>
+
+            <span *ngIf="estrellas === 4"> Muy buena </span>
+
+            <span *ngIf="estrellas === 5"> Excelente </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="acciones-bottom">
+      <button class="primary-btn" [disabled]="loading" (click)="enviar()">
+        {{ loading ? "Enviando..." : "Enviar review" }}
+      </button>
+
+      <button class="danger" (click)="close.emit()">Cancelar</button>
+    </div>
+  </ng-container>
+</app-modal>

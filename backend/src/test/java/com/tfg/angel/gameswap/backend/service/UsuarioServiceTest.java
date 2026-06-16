@@ -1,10 +1,14 @@
 package com.tfg.angel.gameswap.backend.service;
 
 import com.tfg.angel.gameswap.backend.business.dto.request.UsuarioRequestDTO;
-import com.tfg.angel.gameswap.backend.business.dto.response.UsuarioResponseDTO;
+import com.tfg.angel.gameswap.backend.business.dto.response.*;
 import com.tfg.angel.gameswap.backend.business.model.Usuario;
+import com.tfg.angel.gameswap.backend.business.model.enums.EstadoPost;
+import com.tfg.angel.gameswap.backend.business.model.enums.EstadoProducto;
 import com.tfg.angel.gameswap.backend.business.model.enums.Rol;
 import com.tfg.angel.gameswap.backend.business.repository.UsuarioRepository;
+import com.tfg.angel.gameswap.backend.business.service.PostIntercambioService;
+import com.tfg.angel.gameswap.backend.business.service.ProductoService;
 import com.tfg.angel.gameswap.backend.business.service.impl.UsuarioServiceImpl;
 import com.tfg.angel.gameswap.backend.exception.GSBadRequestException;
 import com.tfg.angel.gameswap.backend.exception.GSNotFoundException;
@@ -17,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,6 +39,8 @@ class UsuarioServiceTest {
 
     private UsuarioRequestDTO usuarioDTO;
     private Usuario usuarioEntidad;
+    private PostIntercambioService postIntercambioService;
+    private ProductoService productoService;
 
     @BeforeEach
     void setUp() {
@@ -137,4 +144,118 @@ class UsuarioServiceTest {
         assertThrows(GSNotFoundException.class, () -> usuarioService.delete(1L));
         verify(usuarioRepository, never()).deleteById(anyLong());
     }
+
+    private Usuario usuario() {
+        return Usuario.builder()
+                .id(1L)
+                .nombre("Angel")
+                .nombreUsuario("angel")
+                .correo("angel@test.com")
+                .password("encoded")
+                .saldo(100.0)
+                .estrellas(4.5)
+                .build();
+    }
+
+    private UsuarioRequestDTO usuarioDTO() {
+        UsuarioRequestDTO dto = new UsuarioRequestDTO();
+
+        dto.setNombre("Angel");
+        dto.setNombreUsuario("angel");
+        dto.setCorreo("angel@test.com");
+
+        return dto;
+    }
+
+    @Test
+    void create_ok() {
+
+        when(usuarioRepository.existsByCorreo(anyString()))
+                .thenReturn(false);
+
+        when(usuarioRepository.existsByNombreUsuario(anyString()))
+                .thenReturn(false);
+
+        when(usuarioRepository.save(any()))
+                .thenAnswer(i -> i.getArgument(0));
+
+        UsuarioResponseDTO result =
+                usuarioService.create(usuarioDTO());
+
+        assertNotNull(result);
+    }
+
+    @Test
+    void findById_ok() {
+
+        when(usuarioRepository.findById(1L))
+                .thenReturn(Optional.of(usuario()));
+
+        assertNotNull(usuarioService.findById(1L));
+    }
+
+    @Test
+    void findById_notFound() {
+
+        when(usuarioRepository.findById(1L))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                GSNotFoundException.class,
+                () -> usuarioService.findById(1L)
+        );
+    }
+
+    @Test
+    void findByUsername_ok() {
+
+        when(usuarioRepository.findByNombreUsuario("angel"))
+                .thenReturn(Optional.of(usuario()));
+
+        assertNotNull(
+                usuarioService.findByUsername("angel")
+        );
+    }
+
+    @Test
+    void findAll_ok() {
+
+        when(usuarioRepository.findAll())
+                .thenReturn(List.of(usuario()));
+
+        assertEquals(
+                1,
+                usuarioService.findAll().size()
+        );
+    }
+
+    @Test
+    void update_ok() {
+
+        Usuario entity = usuario();
+
+        when(usuarioRepository.findById(1L))
+                .thenReturn(Optional.of(entity));
+
+        when(usuarioRepository.save(any()))
+                .thenAnswer(i -> i.getArgument(0));
+
+        UsuarioResponseDTO result =
+                usuarioService.update(1L, usuarioDTO());
+
+        assertNotNull(result);
+    }
+
+    @Test
+    void delete_notFound() {
+
+        when(usuarioRepository.existsById(1L))
+                .thenReturn(false);
+
+        assertThrows(
+                GSNotFoundException.class,
+                () -> usuarioService.delete(1L)
+        );
+    }
+
 }

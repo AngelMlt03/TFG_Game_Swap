@@ -18,7 +18,7 @@ public interface ReviewService {
 
     List<ReviewResponseDTO> findByReviewer(Long idReviewer);
 
-    List<ReviewResponseDTO> getMisReviews();
+    List<ReviewResponseDTO> getReviewsRecibidasToUsuario(String usuario);
 
     List<ReviewResponseDTO> getReviewsEnviadas();
 

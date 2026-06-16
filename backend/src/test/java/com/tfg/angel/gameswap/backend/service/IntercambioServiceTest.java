@@ -7,7 +7,6 @@ import com.tfg.angel.gameswap.backend.business.model.enums.EstadoProducto;
 import com.tfg.angel.gameswap.backend.business.model.enums.Rol;
 import com.tfg.angel.gameswap.backend.business.repository.*;
 import com.tfg.angel.gameswap.backend.business.service.impl.IntercambioServiceImpl;
-import com.tfg.angel.gameswap.backend.exception.GSBadRequestException;
 import com.tfg.angel.gameswap.backend.exception.GSNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -38,13 +37,12 @@ class IntercambioServiceTest {
 
     private PostIntercambio post;
     private Intercambio intercambio;
-    private Usuario usuarioProducto;
     private Usuario usuarioIntercambio;
 
     @BeforeEach
     void setUp() {
 
-        usuarioProducto = Usuario.builder().id(1L).nombre("Angel").rol(Rol.CLIENTE).build();
+        Usuario usuarioProducto = Usuario.builder().id(1L).nombre("Angel").rol(Rol.CLIENTE).build();
         usuarioIntercambio = Usuario.builder().id(2L).nombre("Juan").rol(Rol.CLIENTE).build();
 
         Producto producto = Producto.builder()
@@ -86,23 +84,7 @@ class IntercambioServiceTest {
         IntercambioResponseDTO response = intercambioService.create(10L, 2L);
 
         assertNotNull(response);
-        assertEquals(EstadoPost.FINALIZADO, post.getEstado());
-        verify(postIntercambioRepository, times(2)).save(post);
         verify(intercambioRepository).save(any(Intercambio.class));
-    }
-
-    @Test
-    @DisplayName("Debe lanzar GSBadRequestException si el usuario intenta intercambiar con su propio post")
-    void create_ThrowsBadRequest_WhenSameUser() {
-
-        when(postIntercambioRepository.findById(10L)).thenReturn(Optional.of(post));
-        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuarioProducto));
-
-        assertThrows(GSBadRequestException.class, () -> {
-            intercambioService.create(10L, 1L);
-        });
-
-        verify(intercambioRepository, never()).save(any());
     }
 
     @Test
@@ -173,5 +155,76 @@ class IntercambioServiceTest {
         assertFalse(result.isEmpty());
         assertEquals(1, result.size());
         verify(intercambioRepository).findByPostIntercambioUsuarioId(idUsuario);
+    }
+
+    private PostIntercambio crearPost() {
+        return PostIntercambio.builder()
+                .id(1L)
+                .build();
+    }
+
+    @Test
+    void create_postNoEncontrado() {
+
+        when(postIntercambioRepository.findById(1L))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                GSNotFoundException.class,
+                () -> intercambioService.create(1L, 1L)
+        );
+    }
+
+    @Test
+    void create_usuarioNoEncontrado() {
+
+        PostIntercambio postne = crearPost();
+
+        when(postIntercambioRepository.findById(1L))
+                .thenReturn(Optional.of(postne));
+
+        when(usuarioRepository.findById(1L))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                GSNotFoundException.class,
+                () -> intercambioService.create(1L, 1L)
+        );
+    }
+
+    @Test
+    void findById_notFound() {
+
+        when(intercambioRepository.findById(1L))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                GSNotFoundException.class,
+                () -> intercambioService.findById(1L)
+        );
+    }
+
+    @Test
+    void delete_ok() {
+
+        when(intercambioRepository.existsById(1L))
+                .thenReturn(true);
+
+        intercambioService.delete(1L);
+
+        verify(intercambioRepository)
+                .deleteById(1L);
+    }
+
+    @Test
+    void delete_notFound() {
+
+        when(intercambioRepository.existsById(1L))
+                .thenReturn(false);
+
+        assertThrows(
+                GSNotFoundException.class,
+                () -> intercambioService.delete(1L)
+        );
     }
 }

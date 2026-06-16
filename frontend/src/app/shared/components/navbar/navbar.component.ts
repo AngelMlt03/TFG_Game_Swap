@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { ThemeService } from '../../../core/services/theme.service';
@@ -50,6 +50,7 @@ export class NavbarComponent implements OnInit {
     public theme: ThemeService,
     private usuarioService: UsuarioService,
     private igdbService: IgdbService,
+    private elRef: ElementRef,
   ) {
     this.saldo$ = this.usuarioService.saldo$;
   }
@@ -90,6 +91,17 @@ export class NavbarComponent implements OnInit {
     this.scrolled = window.scrollY > 10;
   }
 
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const clickedInside = this.elRef.nativeElement
+      .querySelector('.dropdown')
+      ?.contains(event.target);
+
+    if (!clickedInside) {
+      this.dropdownOpen = false;
+    }
+  }
+
   avatar() {
     return `https:ui-avatars.com/api/?name=${this.usuario.nombre}&background=random`;
   }
@@ -127,32 +139,32 @@ export class NavbarComponent implements OnInit {
 
   abrirModalVenta() {
     this.modalVenta = true;
-     this.toggleBodyScroll(true);
+    this.toggleBodyScroll(true);
   }
 
   abrirModalIntercambio() {
     this.modalIntercambio = true;
-     this.toggleBodyScroll(true);
+    this.toggleBodyScroll(true);
   }
 
   abrirModalCarrito() {
     this.modalCarrito = true;
-     this.toggleBodyScroll(true);
+    this.toggleBodyScroll(true);
   }
 
   cerrarModalVenta() {
     this.modalVenta = false;
-     this.toggleBodyScroll(false);
+    this.toggleBodyScroll(false);
   }
 
   cerrarModalIntercambio() {
     this.modalIntercambio = false;
-     this.toggleBodyScroll(false);
+    this.toggleBodyScroll(false);
   }
 
   cerrarModalCarrito() {
     this.modalCarrito = false;
-     this.toggleBodyScroll(false);
+    this.toggleBodyScroll(false);
   }
 
   buscarAutocomplete() {

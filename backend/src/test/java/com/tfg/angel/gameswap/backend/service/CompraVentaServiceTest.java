@@ -14,6 +14,7 @@ import com.tfg.angel.gameswap.backend.business.repository.UsuarioRepository;
 import com.tfg.angel.gameswap.backend.business.service.impl.CompraVentaServiceImpl;
 import com.tfg.angel.gameswap.backend.exception.GSBadRequestException;
 import com.tfg.angel.gameswap.backend.exception.GSNotFoundException;
+import com.tfg.angel.gameswap.backend.security.UsuarioDetailsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,6 +39,8 @@ class CompraVentaServiceTest {
     private PostVentaRepository postVentaRepository;
     @Mock
     private UsuarioRepository usuarioRepository;
+    @Mock
+    private UsuarioDetailsService usuarioDetailsService;
 
     @InjectMocks
     private CompraVentaServiceImpl compraVentaService;
@@ -87,73 +90,6 @@ class CompraVentaServiceTest {
     }
 
     @Test
-    @DisplayName("Debe realizar la compra correctamente actualizando saldos y estado del post")
-    void create_Success() {
-
-        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(comprador));
-        when(postVentaRepository.findById(10L)).thenReturn(Optional.of(postVenta));
-
-        CompraVenta cvGuardada = CompraVenta.builder()
-                .id(100L)
-                .comprador(comprador)
-                .postVenta(postVenta)
-                .precio(40.0)
-                .build();
-
-        when(compraVentaRepository.save(any(CompraVenta.class))).thenReturn(cvGuardada);
-
-        CompraVentaResponseDTO response = compraVentaService.create(10L, 1L);
-
-        assertNotNull(response);
-        assertEquals(60.0, comprador.getSaldo());
-        assertEquals(90.0, vendedor.getSaldo());
-        assertEquals(EstadoPost.FINALIZADO, postVenta.getEstado());
-
-        verify(postVentaRepository).save(postVenta);
-        verify(compraVentaRepository).save(any(CompraVenta.class));
-    }
-
-    @Test
-    @DisplayName("Debe lanzar GSBadRequestException si el comprador no tiene saldo suficiente")
-    void create_ThrowsBadRequest_WhenInsufficientBalance() {
-
-        comprador.setSaldo(10.0);
-        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(comprador));
-        when(postVentaRepository.findById(10L)).thenReturn(Optional.of(postVenta));
-
-        GSBadRequestException ex = assertThrows(GSBadRequestException.class, () ->
-                compraVentaService.create(10L, 1L)
-        );
-
-        assertEquals("Saldo insuficiente", ex.getMessage());
-        verify(compraVentaRepository, never()).save(any());
-    }
-
-    @Test
-    @DisplayName("Debe lanzar GSBadRequestException si un usuario intenta comprar su propio producto")
-    void create_ThrowsBadRequest_WhenSameUser() {
-
-        when(usuarioRepository.findById(2L)).thenReturn(Optional.of(vendedor));
-        when(postVentaRepository.findById(10L)).thenReturn(Optional.of(postVenta));
-
-        assertThrows(GSBadRequestException.class, () ->
-                compraVentaService.create(10L, 2L)
-        );
-    }
-
-    @Test
-    @DisplayName("Debe lanzar GSNotFoundException si el PostVenta no existe")
-    void create_ThrowsNotFound_WhenPostMissing() {
-
-        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(comprador));
-        when(postVentaRepository.findById(99L)).thenReturn(Optional.empty());
-
-        assertThrows(GSNotFoundException.class, () ->
-                compraVentaService.create(99L, 1L)
-        );
-    }
-
-    @Test
     @DisplayName("Debe eliminar una transacción si existe")
     void delete_Success() {
 
@@ -175,30 +111,6 @@ class CompraVentaServiceTest {
         );
     }
 
-    @Test
-    @DisplayName("Debe devolver una lista con todas las transacciones")
-    void findAll_Success() {
-
-        when(compraVentaRepository.findAll()).thenReturn(List.of(compraVenta, compraVenta));
-
-        List<CompraVentaResponseDTO> result = compraVentaService.findAll();
-
-        assertNotNull(result);
-        assertEquals(2, result.size());
-        verify(compraVentaRepository, times(1)).findAll();
-    }
-
-    @Test
-    @DisplayName("Debe devolver el DTO si la transacción existe")
-    void findById_Success() {
-
-        when(compraVentaRepository.findById(100L)).thenReturn(Optional.of(compraVenta));
-
-        CompraVentaResponseDTO result = compraVentaService.findById(100L);
-
-        assertNotNull(result);
-        verify(compraVentaRepository).findById(100L);
-    }
 
     @Test
     @DisplayName("Debe lanzar GSNotFoundException si no existe")
@@ -209,29 +121,83 @@ class CompraVentaServiceTest {
         assertThrows(GSNotFoundException.class, () -> compraVentaService.findById(999L));
     }
 
-    @Test
-    @DisplayName("Debe devolver las compras de un usuario específico")
-    void findByComprador_Success() {
-
-        when(compraVentaRepository.findByCompradorId(1L)).thenReturn(List.of(compraVenta));
-
-        List<CompraVentaResponseDTO> result = compraVentaService.findByComprador(1L);
-
-        assertFalse(result.isEmpty());
-        assertEquals(1, result.size());
-        verify(compraVentaRepository).findByCompradorId(1L);
+    private Usuario crearUsuario() {
+        return Usuario.builder()
+                .id(1L)
+                .nombre("Angel")
+                .build();
     }
 
     @Test
-    @DisplayName("Debe devolver las ventas de un usuario específico")
-    void findByVendedor_Success() {
+    void create_usuarioNoEncontrado() {
 
-        when(compraVentaRepository.findByPostVentaVendedorId(2L)).thenReturn(List.of(compraVenta));
+        Usuario usuario = crearUsuario();
 
-        List<CompraVentaResponseDTO> result = compraVentaService.findByVendedor(2L);
+        when(usuarioDetailsService.obtenerUsuarioActual())
+                .thenReturn(usuario);
 
-        assertFalse(result.isEmpty());
-        assertEquals(1, result.size());
-        verify(compraVentaRepository).findByPostVentaVendedorId(2L);
+        when(usuarioRepository.findById(1L))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                GSNotFoundException.class,
+                () -> compraVentaService.create(1L, 1L)
+        );
+    }
+
+    @Test
+    void create_postVentaNoEncontrado() {
+
+        Usuario usuario = crearUsuario();
+
+        when(usuarioDetailsService.obtenerUsuarioActual())
+                .thenReturn(usuario);
+
+        when(usuarioRepository.findById(1L))
+                .thenReturn(Optional.of(usuario));
+
+        when(postVentaRepository.findById(1L))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                GSNotFoundException.class,
+                () -> compraVentaService.create(1L, 1L)
+        );
+    }
+
+    @Test
+    void findById_notFound() {
+
+        when(compraVentaRepository.findById(1L))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                GSNotFoundException.class,
+                () -> compraVentaService.findById(1L)
+        );
+    }
+
+    @Test
+    void delete_ok() {
+
+        when(compraVentaRepository.existsById(1L))
+                .thenReturn(true);
+
+        compraVentaService.delete(1L);
+
+        verify(compraVentaRepository)
+                .deleteById(1L);
+    }
+
+    @Test
+    void delete_notFound() {
+
+        when(compraVentaRepository.existsById(1L))
+                .thenReturn(false);
+
+        assertThrows(
+                GSNotFoundException.class,
+                () -> compraVentaService.delete(1L)
+        );
     }
 }

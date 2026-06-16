@@ -11,7 +11,7 @@ public class PostVentaResponseDTO {
 
     private Long id;
     private Long idVendedor;
-    private String nombreVendedor;
+    private String nombreUsuario;
     private Long idProducto;
     private Long idApi;
     private String nombreProducto;

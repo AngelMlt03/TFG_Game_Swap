@@ -1,0 +1,57 @@
+<app-modal [isOpen]="true" (close)="onCancelar()">
+  <div class="direccion-container">
+    <h2>Dirección de envío</h2>
+
+    <div class="form-group">
+      <label>Dirección</label>
+
+      <input
+        type="text"
+        [(ngModel)]="direccion"
+        placeholder="Calle, número, piso..."
+      />
+
+      <span class="error" *ngIf="submitted && !direccion.trim()">
+        La dirección es obligatoria
+      </span>
+    </div>
+
+    <div class="form-group">
+      <label>Ciudad</label>
+
+      <input type="text" [(ngModel)]="ciudad" />
+
+      <span class="error" *ngIf="submitted && !ciudad.trim()">
+        La ciudad es obligatoria
+      </span>
+    </div>
+
+    <div class="form-group">
+      <label>Provincia</label>
+
+      <input type="text" [(ngModel)]="provincia" />
+
+      <span class="error" *ngIf="submitted && !provincia.trim()">
+        La provincia es obligatoria
+      </span>
+    </div>
+
+    <div class="form-group">
+      <label>Código Postal</label>
+
+      <input type="text" [(ngModel)]="codigoPostal" />
+
+      <span class="error" *ngIf="submitted && !codigoPostal.trim()">
+        El código postal es obligatorio
+      </span>
+    </div>
+
+    <div class="acciones">
+      <button class="btn-cancelar" (click)="onCancelar()">Cancelar</button>
+
+      <button class="btn-confirmar" (click)="onConfirmar()">
+        Confirmar compra
+      </button>
+    </div>
+  </div>
+</app-modal>

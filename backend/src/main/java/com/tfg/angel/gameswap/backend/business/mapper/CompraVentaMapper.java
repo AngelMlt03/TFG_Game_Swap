@@ -12,10 +12,10 @@ public class CompraVentaMapper {
                 .id(c.getId())
 
                 .idComprador(c.getComprador().getId())
-                .nombreComprador(c.getComprador().getNombre())
+                .nombreComprador(c.getComprador().getNombreUsuario())
 
                 .idVendedor(c.getPostVenta().getVendedor().getId())
-                .nombreVendedor(c.getPostVenta().getVendedor().getNombre())
+                .nombreVendedor(c.getPostVenta().getVendedor().getNombreUsuario())
 
                 .idProducto(c.getPostVenta().getProducto().getId())
                 .idApiProducto(c.getPostVenta().getProducto().getIdAPI().longValue())

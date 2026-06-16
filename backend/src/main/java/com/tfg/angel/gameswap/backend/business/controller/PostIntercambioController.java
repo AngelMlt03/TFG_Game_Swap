@@ -1,6 +1,7 @@
 package com.tfg.angel.gameswap.backend.business.controller;
 
 import com.tfg.angel.gameswap.backend.business.dto.request.PostIntercambioRequestDTO;
+import com.tfg.angel.gameswap.backend.business.dto.request.PostVentaRequestDTO;
 import com.tfg.angel.gameswap.backend.business.dto.response.PostIntercambioResponseDTO;
 import com.tfg.angel.gameswap.backend.business.service.PostIntercambioService;
 import lombok.RequiredArgsConstructor;
@@ -43,5 +44,15 @@ public class PostIntercambioController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         postIntercambioService.delete(id);
+    }
+
+    @PostMapping("/{id}/convertir")
+    public void convertirIntercambioAVenta(@PathVariable Long id, @RequestBody PostVentaRequestDTO dto) {
+        postIntercambioService.convertirIntercambioAVenta(id, dto);
+    }
+
+    @GetMapping("/intercambio-sugerido")
+    public boolean existeIntercambioSugerido(@RequestParam String tuJuego, @RequestParam String juegoBuscado) {
+        return postIntercambioService.existeIntercambioInverso(tuJuego, juegoBuscado);
     }
 }

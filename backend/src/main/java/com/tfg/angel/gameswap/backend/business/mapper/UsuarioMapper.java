@@ -10,7 +10,7 @@ public class UsuarioMapper {
     public static Usuario toEntity(UsuarioRequestDTO dto) {
         return Usuario.builder()
                 .nombre(dto.getNombre())
-                .nombreUsuario(dto.getNUsuario())
+                .nombreUsuario(dto.getNombreUsuario())
                 .fechaNacimiento(dto.getFechaNacimiento())
                 .correo(dto.getCorreo())
                 .saldo(0.0)
@@ -23,7 +23,7 @@ public class UsuarioMapper {
         return UsuarioResponseDTO.builder()
                 .id(usuario.getId())
                 .nombre(usuario.getNombre())
-                .nUsuario(usuario.getNombreUsuario())
+                .nombreUsuario(usuario.getNombreUsuario())
                 .fechaNacimiento(usuario.getFechaNacimiento())
                 .saldo(usuario.getSaldo())
                 .correo(usuario.getCorreo())

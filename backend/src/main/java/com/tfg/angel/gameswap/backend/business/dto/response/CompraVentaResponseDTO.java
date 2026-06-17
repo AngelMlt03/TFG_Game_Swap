@@ -20,10 +20,13 @@ public class CompraVentaResponseDTO {
     private String nombreVendedor;
 
     private Long idProducto;
+    private Long idApiProducto;
     private String nombreProducto;
-
-    private Long idPostVenta;
+    private String plataformaProducto;
+    private String estadoProducto;
     private Double precio;
+
+    private String descripcion;
 
     private LocalDate fecha;
 }

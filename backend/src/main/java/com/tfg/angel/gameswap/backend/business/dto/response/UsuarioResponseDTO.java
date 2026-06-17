@@ -14,7 +14,7 @@ public class UsuarioResponseDTO {
 
     private Long id;
     private String nombre;
-    private String nUsuario;
+    private String nombreUsuario;
     private LocalDate fechaNacimiento;
     private Double saldo;
     private String correo;

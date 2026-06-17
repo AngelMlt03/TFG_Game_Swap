@@ -1,0 +1,59 @@
+<app-modal [isOpen]="isOpen" title="Mi carrito" (close)="close.emit()">
+  <div class="carrito">
+    <!-- VACÍO -->
+
+    <div *ngIf="!productos.length" class="empty">Tu carrito está vacío</div>
+
+    <!-- PRODUCTOS -->
+
+    <div *ngFor="let p of productos" class="card venta">
+      <img [src]="getImagen(p.idApi)" />
+
+      <div class="info">
+        <p class="titulo">
+          {{ p.nombreProducto }}
+        </p>
+
+        <p>{{ p.plataforma }}</p>
+
+        <p>{{ p.estado }}</p>
+
+        <p class="precio">{{ p.precio }}€</p>
+      </div>
+
+      <div class="acciones">
+        <button [disabled]="loading" (click)="comprar(p)">
+          {{ tieneSaldo(p.precio) ? "Comprar" : "Añadir saldo" }}
+        </button>
+
+        <button class="danger" (click)="eliminar(p)">Eliminar</button>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+
+    <div class="footer" *ngIf="productos.length">
+      <div class="total">
+        <span>Total</span>
+
+        <strong> {{ precioTotal }}€ </strong>
+      </div>
+
+      <div class="acciones-footer">
+        <button [disabled]="loading" (click)="comprarTodo()">
+          {{
+            loading
+              ? "Procesando..."
+              : tieneSaldoTotal()
+                ? "Comprar todo"
+                : "Añadir saldo"
+          }}
+        </button>
+
+        <button class="danger" (click)="vaciarCarrito()">
+          Eliminar carrito
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

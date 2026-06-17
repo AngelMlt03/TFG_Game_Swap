@@ -1,32 +1,32 @@
 -- V2: Cambios sobre el modelo inicial
 
 -- 1. PostVenta -> añadir estado
-ALTER TABLE PostVenta
+ALTER TABLE Post_Venta
 ADD COLUMN estado VARCHAR(50) DEFAULT 'ACTIVO';
 
-ALTER TABLE PostVenta
-ADD CONSTRAINT chk_postventa_estado
+ALTER TABLE Post_Venta
+ADD CONSTRAINT chk_post_venta_estado
 CHECK (estado IN ('ACTIVO', 'FINALIZADO'));
 
 
 -- 2. PostIntercambio -> añadir estado
-ALTER TABLE PostIntercambio
+ALTER TABLE Post_Intercambio
 ADD COLUMN estado VARCHAR(50) DEFAULT 'ACTIVO';
 
-ALTER TABLE PostIntercambio
-ADD CONSTRAINT chk_postintercambio_estado
+ALTER TABLE Post_Intercambio
+ADD CONSTRAINT chk_post_intercambio_estado
 CHECK (estado IN ('ACTIVO', 'FINALIZADO'));
 
 
 -- 3. CompraVenta -> cambiar estructura
 
 -- eliminar FK antigua (si existe)
-ALTER TABLE CompraVenta DROP COLUMN id_vendedor;
-ALTER TABLE CompraVenta DROP COLUMN id_producto;
+ALTER TABLE Compra_Venta DROP COLUMN id_vendedor;
+ALTER TABLE Compra_Venta DROP COLUMN id_producto;
 
 -- añadir nueva FK
-ALTER TABLE CompraVenta
-ADD COLUMN id_post_venta BIGINT REFERENCES PostVenta(id);
+ALTER TABLE Compra_Venta
+ADD COLUMN id_post_venta BIGINT REFERENCES Post_Venta(id);
 
 
 -- 4. Intercambio -> cambiar estructura
@@ -38,12 +38,12 @@ ALTER TABLE Intercambio DROP COLUMN id_usuario_producto;
 
 -- añadir nuevas columnas
 ALTER TABLE Intercambio
-ADD COLUMN id_post_intercambio BIGINT REFERENCES PostIntercambio(id);
+ADD COLUMN id_post_intercambio BIGINT REFERENCES Post_Intercambio(id);
 
 
 -- 5. ProductoCarrito -> cambiar producto por postVenta
 
-ALTER TABLE ProductoCarrito DROP COLUMN id_producto;
+ALTER TABLE Producto_Carrito DROP COLUMN id_producto;
 
-ALTER TABLE ProductoCarrito
-ADD COLUMN id_post_venta BIGINT REFERENCES PostVenta(id);
+ALTER TABLE Producto_Carrito
+ADD COLUMN id_post_venta BIGINT REFERENCES Post_Venta(id);

@@ -1,26 +1,21 @@
 package com.tfg.angel.gameswap.backend.service;
 
-import com.tfg.angel.gameswap.backend.business.dto.request.CarritoRequestDTO;
-import com.tfg.angel.gameswap.backend.business.dto.response.CarritoResponseDTO;
 import com.tfg.angel.gameswap.backend.business.model.*;
-import com.tfg.angel.gameswap.backend.business.model.enums.Rol;
 import com.tfg.angel.gameswap.backend.business.repository.*;
 import com.tfg.angel.gameswap.backend.business.service.impl.CarritoServiceImpl;
 import com.tfg.angel.gameswap.backend.exception.GSBadRequestException;
 import com.tfg.angel.gameswap.backend.exception.GSNotFoundException;
-import org.junit.jupiter.api.*;
+import com.tfg.angel.gameswap.backend.security.UsuarioDetailsService;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,151 +23,303 @@ class CarritoServiceTest {
 
     @Mock
     private CarritoRepository carritoRepository;
-    @Mock
-    private UsuarioRepository usuarioRepository;
+
     @Mock
     private PostVentaRepository postVentaRepository;
+
     @Mock
     private ProductoCarritoRepository productoCarritoRepository;
 
+    @Mock
+    private UsuarioDetailsService usuarioDetailsService;
+
+    @Spy
     @InjectMocks
-    private CarritoServiceImpl carritoService;
+    private CarritoServiceImpl service;
 
-    private Usuario usuario;
-    private Carrito carrito;
-    private PostVenta postVenta;
-
-    @BeforeEach
-    void setUp() {
-
-        SecurityContext context = SecurityContextHolder.createEmptyContext();
-        context.setAuthentication(
-                new UsernamePasswordAuthenticationToken("angelUser", null, List.of())
-        );
-        SecurityContextHolder.setContext(context);
-
-        usuario = Usuario.builder()
+    private Usuario usuario() {
+        return Usuario.builder()
                 .id(1L)
                 .nombre("Angel")
-                .nombreUsuario("angelUser")
-                .rol(Rol.CLIENTE)
                 .build();
-
-        carrito = Carrito.builder()
-                .id(10L)
-                .usuario(usuario)
-                .coste(0.0)
-                .productos(List.of())
-                .build();
-
-        postVenta = PostVenta.builder()
-                .id(100L)
-                .precio(30.0)
-                .build();
-    }
-
-    @AfterEach
-    void cleanUp() {
-        SecurityContextHolder.clearContext();
     }
 
     @Test
-    @DisplayName("Debe crear un carrito vacío para un usuario")
-    void create_Success() {
+    void create_debeCrearCarrito() {
 
-        CarritoRequestDTO dto = new CarritoRequestDTO(1L);
+        Usuario usuario = usuario();
 
-        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
-        when(carritoRepository.save(any(Carrito.class))).thenReturn(carrito);
+        when(usuarioDetailsService.obtenerUsuarioActual())
+                .thenReturn(usuario);
 
-        CarritoResponseDTO result = carritoService.create(dto);
+        service.create();
 
-        assertNotNull(result);
         verify(carritoRepository).save(any(Carrito.class));
     }
 
     @Test
-    @DisplayName("Debe añadir un producto al carrito y actualizar el coste")
-    void addProduct_Success() {
+    void findByUser_notFound() {
 
-        when(usuarioRepository.findByNombreUsuario("angelUser")).thenReturn(Optional.of(usuario));
-        when(carritoRepository.findByUsuarioId(1L)).thenReturn(Optional.of(carrito));
-        when(postVentaRepository.findById(100L)).thenReturn(Optional.of(postVenta));
-        when(productoCarritoRepository.existsByCarritoIdAndPostVentaId(10L, 100L)).thenReturn(false);
+        when(carritoRepository.findByUsuarioId(1L))
+                .thenReturn(Optional.empty());
 
-        CarritoResponseDTO result = carritoService.addProduct(100L);
-
-        assertNotNull(result);
-        assertEquals(30.0, carrito.getCoste());
-        verify(productoCarritoRepository).save(any(ProductoCarrito.class));
-        verify(carritoRepository).save(carrito);
-    }
-
-    @Test
-    @DisplayName("Debe lanzar GSBadRequestException si el producto ya está en el carrito")
-    void addProduct_ThrowsBadRequest_WhenAlreadyInCart() {
-
-        when(usuarioRepository.findByNombreUsuario("angelUser")).thenReturn(Optional.of(usuario));
-        when(carritoRepository.findByUsuarioId(1L)).thenReturn(Optional.of(carrito));
-        when(postVentaRepository.findById(100L)).thenReturn(Optional.of(postVenta));
-        when(productoCarritoRepository.existsByCarritoIdAndPostVentaId(10L, 100L)).thenReturn(true);
-
-        assertThrows(GSBadRequestException.class, () ->
-                carritoService.addProduct(100L)
+        assertThrows(
+                GSNotFoundException.class,
+                () -> service.findByUser(1L)
         );
-
-        verify(carritoRepository, never()).save(any());
     }
 
     @Test
-    @DisplayName("Debe eliminar un producto y restar su precio del coste total")
-    void removeProduct_Success() {
+    void delete_ok() {
 
-        carrito.setCoste(50.0);
+        when(carritoRepository.existsById(1L))
+                .thenReturn(true);
 
-        ProductoCarrito pc = ProductoCarrito.builder()
-                .id(500L)
-                .carrito(carrito)
-                .postVenta(postVenta)
+        service.delete(1L);
+
+        verify(carritoRepository).deleteById(1L);
+    }
+
+    @Test
+    void delete_notFound() {
+
+        when(carritoRepository.existsById(1L))
+                .thenReturn(false);
+
+        assertThrows(
+                GSNotFoundException.class,
+                () -> service.delete(1L)
+        );
+    }
+
+    @Test
+    void getPrecioCarrito() {
+
+        Usuario usuario = usuario();
+
+        Carrito carrito = Carrito.builder()
+                .coste(35.0)
                 .build();
 
-        when(productoCarritoRepository.findById(500L)).thenReturn(Optional.of(pc));
+        when(usuarioDetailsService.obtenerUsuarioActual())
+                .thenReturn(usuario);
 
-        CarritoResponseDTO result = carritoService.removeProduct(500L);
+        when(carritoRepository.findByUsuarioId(1L))
+                .thenReturn(Optional.of(carrito));
 
-        assertNotNull(result);
+        Double resultado = service.getPrecioCarrito();
+
+        assertEquals(35.0, resultado);
+    }
+
+    @Test
+    void agregarProducto_ok() {
+
+        Usuario usuario = usuario();
+
+        Carrito carrito = Carrito.builder()
+                .id(1L)
+                .coste(0.0)
+                .build();
+
+        PostVenta post = PostVenta.builder()
+                .id(10L)
+                .precio(20.0)
+                .build();
+
+        when(usuarioDetailsService.obtenerUsuarioActual())
+                .thenReturn(usuario);
+
+        when(carritoRepository.findByUsuarioId(1L))
+                .thenReturn(Optional.of(carrito));
+
+        when(postVentaRepository.findById(10L))
+                .thenReturn(Optional.of(post));
+
+        when(productoCarritoRepository
+                .existsByCarritoIdAndPostVentaId(1L, 10L))
+                .thenReturn(false);
+
+        when(productoCarritoRepository
+                .findByCarritoIdAndPostVentaId(1L, 10L))
+                .thenReturn(Optional.empty());
+
+        service.agregarProducto(10L);
+
+        verify(productoCarritoRepository)
+                .save(any(ProductoCarrito.class));
+
+        verify(carritoRepository)
+                .save(carrito);
+
         assertEquals(20.0, carrito.getCoste());
-        verify(productoCarritoRepository).delete(pc);
-        verify(carritoRepository).save(carrito);
     }
 
     @Test
-    @DisplayName("El coste del carrito nunca debe ser inferior a 0")
-    void removeProduct_CostNotNegative() {
+    void agregarProducto_creaCarritoSiNoExiste() {
 
-        carrito.setCoste(10.0);
+        Usuario usuario = usuario();
 
-        ProductoCarrito pc = ProductoCarrito.builder()
-                .id(500L)
-                .carrito(carrito)
-                .postVenta(postVenta)
+        Carrito carrito = Carrito.builder()
+                .id(1L)
+                .coste(0.0)
                 .build();
 
-        when(productoCarritoRepository.findById(500L)).thenReturn(Optional.of(pc));
+        PostVenta post = PostVenta.builder()
+                .id(10L)
+                .precio(10.0)
+                .build();
 
-        carritoService.removeProduct(500L);
+        when(usuarioDetailsService.obtenerUsuarioActual())
+                .thenReturn(usuario);
 
-        assertEquals(0.0, carrito.getCoste());
+        when(carritoRepository.findByUsuarioId(1L))
+                .thenReturn(Optional.empty())
+                .thenReturn(Optional.of(carrito));
+
+        when(postVentaRepository.findById(10L))
+                .thenReturn(Optional.of(post));
+
+        when(productoCarritoRepository
+                .existsByCarritoIdAndPostVentaId(anyLong(), anyLong()))
+                .thenReturn(false);
+
+        when(productoCarritoRepository
+                .findByCarritoIdAndPostVentaId(anyLong(), anyLong()))
+                .thenReturn(Optional.empty());
+
+        service.agregarProducto(10L);
+
+        verify(service).create();
     }
 
     @Test
-    @DisplayName("Debe lanzar GSNotFoundException si el carrito no existe para el usuario")
-    void findByUser_ThrowsNotFound() {
+    void agregarProducto_productoYaExiste_exception() {
 
-        when(carritoRepository.findByUsuarioId(1L)).thenReturn(Optional.empty());
+        Usuario usuario = usuario();
 
-        assertThrows(GSNotFoundException.class, () ->
-                carritoService.findByUser(1L)
+        Carrito carrito = Carrito.builder()
+                .id(1L)
+                .build();
+
+        PostVenta post = PostVenta.builder()
+                .id(10L)
+                .precio(10.0)
+                .build();
+
+        when(usuarioDetailsService.obtenerUsuarioActual())
+                .thenReturn(usuario);
+
+        when(carritoRepository.findByUsuarioId(1L))
+                .thenReturn(Optional.of(carrito));
+
+        when(postVentaRepository.findById(10L))
+                .thenReturn(Optional.of(post));
+
+        when(productoCarritoRepository
+                .existsByCarritoIdAndPostVentaId(1L, 10L))
+                .thenReturn(true);
+
+        assertThrows(
+                GSBadRequestException.class,
+                () -> service.agregarProducto(10L)
         );
+    }
+
+    @Test
+    void eliminarProducto_ok() {
+
+        Usuario usuario = usuario();
+
+        Carrito carrito = Carrito.builder()
+                .id(1L)
+                .coste(50.0)
+                .build();
+
+        PostVenta post = PostVenta.builder()
+                .precio(20.0)
+                .build();
+
+        ProductoCarrito pc = ProductoCarrito.builder()
+                .postVenta(post)
+                .build();
+
+        when(usuarioDetailsService.obtenerUsuarioActual())
+                .thenReturn(usuario);
+
+        when(carritoRepository.findByUsuarioId(1L))
+                .thenReturn(Optional.of(carrito));
+
+        when(productoCarritoRepository
+                .findByCarritoIdAndPostVentaId(1L, 5L))
+                .thenReturn(Optional.of(pc));
+
+        service.eliminarProducto(5L);
+
+        assertEquals(30.0, carrito.getCoste());
+
+        verify(productoCarritoRepository)
+                .delete(pc);
+    }
+
+    @Test
+    void eliminarProducto_notFound() {
+
+        Usuario usuario = usuario();
+
+        Carrito carrito = Carrito.builder()
+                .id(1L)
+                .build();
+
+        when(usuarioDetailsService.obtenerUsuarioActual())
+                .thenReturn(usuario);
+
+        when(carritoRepository.findByUsuarioId(1L))
+                .thenReturn(Optional.of(carrito));
+
+        when(productoCarritoRepository
+                .findByCarritoIdAndPostVentaId(1L, 5L))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                GSNotFoundException.class,
+                () -> service.eliminarProducto(5L)
+        );
+    }
+
+    @Test
+    void vaciar_ok() {
+
+        Usuario usuario = usuario();
+
+        Carrito carrito = Carrito.builder()
+                .id(1L)
+                .build();
+
+        when(usuarioDetailsService.obtenerUsuarioActual())
+                .thenReturn(usuario);
+
+        when(carritoRepository.findByUsuarioId(1L))
+                .thenReturn(Optional.of(carrito));
+
+        service.vaciar();
+
+        verify(productoCarritoRepository)
+                .deleteAllByCarritoId(1L);
+    }
+
+    @Test
+    void estaEnCarrito() {
+
+        Usuario usuario = usuario();
+
+        when(usuarioDetailsService.obtenerUsuarioActual())
+                .thenReturn(usuario);
+
+        when(productoCarritoRepository
+                .existsByCarritoIdAndPostVentaId(1L, 5L))
+                .thenReturn(true);
+
+        assertTrue(service.estaEnCarrito(5L));
     }
 }

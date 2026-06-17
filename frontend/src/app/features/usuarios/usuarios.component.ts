@@ -29,7 +29,11 @@ export class UsuariosComponent implements OnInit {
   crearUsuario() {
     const nuevoUsuario: Usuario = {
       nombre: 'Angular Test',
-      email: 'angular@test.com'
+      correo: 'angular@test.com',
+      nombreUsuario: 'angular_test',
+      fechaNacimiento: '1990-01-01',
+      saldo: 100,
+      estrellas: 0
     };
 
     this.usuarioService.crearUsuario(nuevoUsuario).subscribe(() => {

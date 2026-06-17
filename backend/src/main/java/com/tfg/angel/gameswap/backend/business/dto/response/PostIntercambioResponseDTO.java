@@ -15,8 +15,16 @@ public class PostIntercambioResponseDTO {
     private String nombreUsuario;
 
     private Long idProducto;
+    private Long idApi;
     private String nombreProducto;
+    private String estado;
+    private String plataforma;
 
-    private Long idProductoCambio;
-    private String nombreProductoCambio;
+    private Long idProductoIntercambio;
+    private Long idApiProductoIntercambio;
+    private String nombreProductoIntercambio;
+    private String estadoIntercambio;
+    private String plataformaIntercambio;
+
+    private String descripcion;
 }

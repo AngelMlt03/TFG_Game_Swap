@@ -1,0 +1,136 @@
+<div class="mis-publicaciones">
+  <!-- VENTAS -->
+
+  <div class="section-header" (click)="ventasOpen = !ventasOpen">
+    <h2>Publicaciones de venta</h2>
+
+    <button class="collapse-btn" [class.open]="ventasOpen">❯</button>
+  </div>
+
+  <hr />
+
+  <div class="section-content" [class.closed]="!ventasOpen">
+    <div *ngIf="!ventas.length">No tienes publicaciones de venta</div>
+
+    <div *ngFor="let v of ventas" class="card venta">
+      <img [src]="getImagen(v.idApi)" />
+
+      <div class="info">
+        <p>{{ v.nombreProducto }}</p>
+        <p>{{ v.plataforma }}</p>
+        <p>{{ v.estado }}</p>
+        <p class="precio">{{ v.precio }}€</p>
+      </div>
+
+      <div class="acciones">
+        <button (click)="editarVenta(v)">
+          {{ esPerfilPublico ? "Ver" : "Editar" }}
+        </button>
+
+        <button
+          class="danger"
+          *ngIf="!esPerfilPublico"
+          (click)="eliminarVenta(v.id)"
+        >
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- INTERCAMBIOS -->
+
+  <div class="section-header" (click)="intercambiosOpen = !intercambiosOpen">
+    <h2>Publicaciones de intercambio</h2>
+
+    <button class="collapse-btn" [class.open]="intercambiosOpen">❯</button>
+  </div>
+
+  <hr />
+
+  <div class="section-content" [class.closed]="!intercambiosOpen">
+    <div *ngIf="!intercambios.length">
+      No tienes publicaciones de intercambio
+    </div>
+
+    <div *ngFor="let i of intercambios" class="card intercambio">
+      <div class="lado">
+        <img [src]="getImagen(i.idApi)" />
+
+        <p>{{ i.nombreProducto }}</p>
+        <p>{{ i.plataforma }}</p>
+        <p>{{ i.estado }}</p>
+      </div>
+
+      <span class="swap">⇄</span>
+
+      <div class="lado">
+        <img [src]="getImagen(i.idApiIntercambio)" />
+
+        <p>{{ i.nombreProductoIntercambio }}</p>
+        <p>{{ i.plataformaIntercambio }}</p>
+        <p>{{ i.estadoIntercambio }}</p>
+      </div>
+
+      <div class="acciones">
+        <button (click)="editarIntercambio(i)">
+          {{ esPerfilPublico ? "Ver" : "Editar" }}
+        </button>
+
+        <button
+          class="danger"
+          *ngIf="!esPerfilPublico"
+          (click)="eliminarIntercambio(i.id)"
+        >
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-modal-venta
+  *ngIf="!esPerfilPublico"
+  [isOpen]="modalEditarOpen"
+  [modoEdicion]="true"
+  [postEditar]="postEditar"
+  (close)="cerrarModalEditar(false)"
+  (convertirAIntercambio)="abrirConversionIntercambio($event)"
+></app-modal-venta>
+
+<app-modal-venta
+  [isOpen]="modalConversionVentaOpen"
+  [modoEdicion]="true"
+  [postEditar]="postConversionVenta"
+  (close)="cerrarModalConversionVenta($event)"
+></app-modal-venta>
+
+<app-modal-intercambio
+  *ngIf="!esPerfilPublico"
+  [isOpen]="modalEditarIntercambioOpen"
+  [postEditar]="postEditarIntercambio"
+  [modoEdicion]="true"
+  (close)="cerrarModalEditarIntercambio($event)"
+  (convertirAVenta)="abrirConversionVenta($event)"
+></app-modal-intercambio>
+
+<app-modal-intercambio
+  [isOpen]="modalConversionIntercambioOpen"
+  [postEditar]="postConversionIntercambio"
+  [modoEdicion]="true"
+  (close)="cerrarModalConversionIntercambio($event)"
+></app-modal-intercambio>
+
+<app-post-detalle
+  *ngIf="esPerfilPublico"
+  [isOpen]="modalEditarOpen"
+  [post]="postEditar"
+  (close)="cerrarModalEditar(false)"
+></app-post-detalle>
+
+<app-post-detalle
+  *ngIf="esPerfilPublico"
+  [isOpen]="modalEditarIntercambioOpen"
+  [post]="postEditarIntercambio"
+  (close)="cerrarModalEditarIntercambio(false)"
+></app-post-detalle>

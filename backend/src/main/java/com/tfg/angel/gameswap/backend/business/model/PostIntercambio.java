@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "PostInterambio")
+@Table(name = "Post_Intercambio")
 public class PostIntercambio {
 
     @Id
@@ -29,6 +29,12 @@ public class PostIntercambio {
     @JoinColumn(name = "id_producto_cambio")
     private Producto productoCambio;
 
+    private String plataforma;
+
+    private String plataformaCambio;
+
     @Enumerated(EnumType.STRING)
     private EstadoPost estado;
+
+    private String descripcion;
 }

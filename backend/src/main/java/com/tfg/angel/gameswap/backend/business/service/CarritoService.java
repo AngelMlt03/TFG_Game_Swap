@@ -1,17 +1,28 @@
 package com.tfg.angel.gameswap.backend.business.service;
 
-import com.tfg.angel.gameswap.backend.business.dto.request.CarritoRequestDTO;
-import com.tfg.angel.gameswap.backend.business.dto.response.CarritoResponseDTO;
+import com.tfg.angel.gameswap.backend.business.dto.response.ProductoCarritoResponseDTO;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 public interface CarritoService {
 
-    CarritoResponseDTO create(CarritoRequestDTO dto);
+    void create();
 
-    CarritoResponseDTO findByUser(Long idUsuario);
+    void findByUser(Long idUsuario);
 
-    CarritoResponseDTO addProduct(Long idPostVenta);
+    List<ProductoCarritoResponseDTO> getCarrito();
+    void agregarProducto(Long idPostVenta);
+    void eliminarProducto(Long idPostVenta);
 
-    CarritoResponseDTO removeProduct(Long idProductoCarrito);
+    @Modifying
+    @Transactional
+    void vaciar();
+
+    boolean estaEnCarrito(Long ventaId);
 
     void delete(Long id);
+
+    Double getPrecioCarrito();
 }

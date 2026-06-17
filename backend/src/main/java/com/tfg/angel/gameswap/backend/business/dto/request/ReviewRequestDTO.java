@@ -13,4 +13,7 @@ public class ReviewRequestDTO {
     private Long idReviewed;
     private String contenido;
     private Double estrellas;
+
+    private String tipoReview;
+    private Long idHistorial;
 }

@@ -13,4 +13,10 @@ public interface PostVentaRepository extends JpaRepository<PostVenta, Long> {
     List<PostVenta> findByProductoId(Long productoId);
 
     List<PostVenta> findByEstado(EstadoPost estado);
+
+    List<PostVenta> findByVendedorIdAndEstado(Long idUsuario, EstadoPost estadoPost);
+
+    List<PostVenta> findTop8ByEstadoOrderByIdDesc(EstadoPost estadoPost);
+
+    List<PostVenta> findTop4ByEstadoOrderByIdDesc(EstadoPost estadoPost);
 }

@@ -1,5 +1,6 @@
 package com.tfg.angel.gameswap.backend.business.controller;
 
+import com.tfg.angel.gameswap.backend.business.dto.request.PostIntercambioRequestDTO;
 import com.tfg.angel.gameswap.backend.business.dto.request.PostVentaRequestDTO;
 import com.tfg.angel.gameswap.backend.business.dto.response.PostVentaResponseDTO;
 import com.tfg.angel.gameswap.backend.business.model.enums.EstadoPost;
@@ -47,13 +48,17 @@ public class PostVentaController {
     }
 
     @PutMapping("/{id}")
-    public PostVentaResponseDTO update(@PathVariable Long id,
-                                           @RequestBody PostVentaRequestDTO dto) {
+    public PostVentaResponseDTO update(@PathVariable Long id, @RequestBody PostVentaRequestDTO dto) {
         return postVentaService.update(id, dto);
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         postVentaService.delete(id);
+    }
+
+    @PostMapping("/{idVenta}/convertir")
+    public void convertirVentaAIntercambio(@PathVariable Long idVenta, @RequestBody PostIntercambioRequestDTO dto) {
+        postVentaService.convertirVentaAIntercambio(idVenta, dto);
     }
 }

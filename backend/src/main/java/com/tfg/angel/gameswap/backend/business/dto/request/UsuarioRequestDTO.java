@@ -13,7 +13,7 @@ import java.time.LocalDate;
 public class UsuarioRequestDTO {
 
     private String nombre;
-    private String nUsuario;
+    private String nombreUsuario;
     private LocalDate fechaNacimiento;
     private String correo;
     private Rol rol;

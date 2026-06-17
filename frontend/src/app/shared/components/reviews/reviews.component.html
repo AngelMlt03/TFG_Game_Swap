@@ -1,0 +1,97 @@
+<div class="reviews">
+  <!-- RECIBIDAS -->
+
+  <div class="section-header" (click)="recibidasOpen = !recibidasOpen">
+    <h2>Reviews Recibidas</h2>
+
+    <button class="collapse-btn" [class.open]="recibidasOpen">❯</button>
+  </div>
+
+  <hr />
+
+  <div class="section-content" [class.closed]="!recibidasOpen">
+    <div *ngIf="!reviewsRecibidas.length">No tienes reviews recibidas</div>
+
+    <div *ngFor="let r of reviewsRecibidas" class="review-card">
+      <!-- TOP -->
+
+      <div class="review-top">
+        <div class="usuario">
+          <img [src]="avatar(r.nombreReviewer)" />
+
+          <span>
+            {{ r.nombreReviewer }}
+          </span>
+        </div>
+
+        <div class="estrellas">{{ r.estrellas }} ★</div>
+      </div>
+
+      <hr />
+
+      <!-- BOTTOM -->
+
+      <div class="review-bottom">
+        <p>
+          {{ r.contenido }}
+        </p>
+
+        <button (click)="verDetalles(r)">Ver detalles</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ENVIADAS -->
+
+  <div class="section-header" *ngIf="!esPerfilPublico" (click)="enviadasOpen = !enviadasOpen">
+    <h2>Reviews Enviadas</h2>
+
+    <button class="collapse-btn" [class.open]="enviadasOpen">❯</button>
+  </div>
+
+  <hr *ngIf="!esPerfilPublico" />
+
+  <div class="section-content" *ngIf="!esPerfilPublico" [class.closed]="!enviadasOpen">
+    <div *ngIf="!reviewsEnviadas.length">No tienes reviews enviadas</div>
+
+    <div *ngFor="let r of reviewsEnviadas" class="review-card">
+      <!-- TOP -->
+
+      <div class="review-top">
+        <div class="usuario">
+          <img [src]="avatar(r.nombreReviewed)" />
+
+          <span>
+            {{ r.nombreReviewed }}
+          </span>
+        </div>
+
+        <div class="estrellas">{{ r.estrellas }} ★</div>
+      </div>
+
+      <hr />
+
+      <!-- BOTTOM -->
+
+      <div class="review-bottom">
+        <p>
+          {{ r.contenido }}
+        </p>
+
+        <div class="acciones">
+          <button (click)="verDetalles(r)">Ver detalles</button>
+
+          <button class="danger" (click)="eliminarReview(r.id)">
+            Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-modal-historial-detalle
+  [isOpen]="modalDetalleOpen"
+  [post]="postDetalle"
+  (close)="cerrarDetalle()"
+></app-modal-historial-detalle>

@@ -1,58 +1,102 @@
 package com.tfg.angel.gameswap.backend.business.service.impl;
 
-import com.tfg.angel.gameswap.backend.business.dto.request.CarritoRequestDTO;
-import com.tfg.angel.gameswap.backend.business.dto.request.ProductoCarritoRequestDTO;
-import com.tfg.angel.gameswap.backend.business.dto.response.CarritoResponseDTO;
+import com.tfg.angel.gameswap.backend.business.dto.response.ProductoCarritoResponseDTO;
 import com.tfg.angel.gameswap.backend.business.mapper.CarritoMapper;
+import com.tfg.angel.gameswap.backend.business.mapper.ProductoCarritoMapper;
 import com.tfg.angel.gameswap.backend.business.model.*;
 import com.tfg.angel.gameswap.backend.business.repository.*;
 import com.tfg.angel.gameswap.backend.business.service.CarritoService;
 import com.tfg.angel.gameswap.backend.exception.GSBadRequestException;
 import com.tfg.angel.gameswap.backend.exception.GSNotFoundException;
-import com.tfg.angel.gameswap.backend.security.SecurityUtils;
+import com.tfg.angel.gameswap.backend.security.UsuarioDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class CarritoServiceImpl implements CarritoService {
 
     private final CarritoRepository carritoRepository;
-    private final UsuarioRepository usuarioRepository;
     private final PostVentaRepository postVentaRepository;
     private final ProductoCarritoRepository productoCarritoRepository;
 
-    @Override
-    public CarritoResponseDTO create(CarritoRequestDTO dto) {
+    private final UsuarioDetailsService usuarioDetailsService;
 
-        Usuario usuario = usuarioRepository.findById(dto.getIdUsuario())
-                .orElseThrow(() -> new GSNotFoundException("Usuario no encontrado"));
+    @Override
+    public void create() {
+
+        Usuario usuario = usuarioDetailsService.obtenerUsuarioActual();
 
         Carrito carrito = Carrito.builder()
                 .usuario(usuario)
                 .coste(0.0)
                 .build();
 
-        carrito = carritoRepository.save(carrito);
-
-        return CarritoMapper.toDTO(carrito);
+        carritoRepository.save(carrito);
     }
 
     @Override
-    public CarritoResponseDTO findByUser(Long idUsuario) {
+    public void findByUser(Long idUsuario) {
         Carrito carrito = carritoRepository.findByUsuarioId(idUsuario)
                 .orElseThrow(() -> new GSNotFoundException("Carrito no encontrado"));
 
-        return CarritoMapper.toDTO(carrito);
+        CarritoMapper.toDTO(carrito);
     }
 
     @Override
-    public CarritoResponseDTO addProduct(Long idPostVenta) {
+    public void delete(Long id) {
+        if (!carritoRepository.existsById(id)) {
+            throw new GSNotFoundException("Carrito no encontrado");
+        }
 
-        String username = SecurityUtils.getUsername();
+        carritoRepository.deleteById(id);
+    }
 
-        Usuario usuario = usuarioRepository.findByNombreUsuario(username)
-                .orElseThrow(() -> new GSNotFoundException("Usuario no encontrado"));
+    @Override
+    public Double getPrecioCarrito() {
+        Usuario usuario = usuarioDetailsService.obtenerUsuarioActual();
+
+        Carrito carrito = carritoRepository
+                .findByUsuarioId(usuario.getId())
+                .orElseThrow();
+
+        return carrito.getCoste();
+    }
+
+    public List<ProductoCarritoResponseDTO> getCarrito() {
+
+        Usuario usuario = usuarioDetailsService.obtenerUsuarioActual();
+
+        Carrito c = carritoRepository
+                        .findByUsuarioId(usuario.getId())
+                        .orElseThrow();
+
+        Double costeTotal = c.getProductos().stream()
+                .mapToDouble(p -> p.getPostVenta().getPrecio())
+                .sum();
+
+        c.setCoste(costeTotal);
+
+        Carrito carrito = carritoRepository.save(c);
+
+        return productoCarritoRepository
+                .findByCarritoId(carrito.getId())
+                .stream()
+                .map(ProductoCarritoMapper::toDTO)
+                .toList();
+    }
+
+    @Override
+    public void agregarProducto(Long idPostVenta) {
+
+        Usuario usuario = usuarioDetailsService.obtenerUsuarioActual();
+
+        if ( carritoRepository.findByUsuarioId(usuario.getId()).isEmpty() ) {
+            this.create();
+        }
 
         Carrito carrito = carritoRepository.findByUsuarioId(usuario.getId())
                 .orElseThrow(() -> new GSNotFoundException("Carrito no encontrado"));
@@ -64,45 +108,62 @@ public class CarritoServiceImpl implements CarritoService {
             throw new GSBadRequestException("El producto ya está en el carrito");
         }
 
-        ProductoCarrito pc = ProductoCarrito.builder()
-                .carrito(carrito)
-                .postVenta(postVenta)
-                .build();
-
-        productoCarritoRepository.save(pc);
+        if (productoCarritoRepository.findByCarritoIdAndPostVentaId(carrito.getId(),idPostVenta)
+            .isPresent()) return;
 
         carrito.setCoste(carrito.getCoste() + postVenta.getPrecio());
 
-        carritoRepository.save(carrito);
+        ProductoCarrito pc = ProductoCarrito.builder()
+                        .carrito(carrito)
+                        .postVenta(postVenta)
+                        .build();
 
-        return CarritoMapper.toDTO(carrito);
+        productoCarritoRepository.save(pc);
+        carritoRepository.save(carrito);
     }
 
     @Override
-    public CarritoResponseDTO removeProduct(Long idProductoCarrito) {
+    public void eliminarProducto(Long idPostVenta) {
 
-        ProductoCarrito pc = productoCarritoRepository.findById(idProductoCarrito)
+        Usuario usuario = usuarioDetailsService.obtenerUsuarioActual();
+
+        Carrito carrito = carritoRepository
+                        .findByUsuarioId(usuario.getId())
+                        .orElseThrow();
+
+        ProductoCarrito pc = productoCarritoRepository.findByCarritoIdAndPostVentaId(carrito.getId(), idPostVenta)
                 .orElseThrow(() -> new GSNotFoundException("ProductoCarrito no encontrado"));
 
-        Carrito carrito = pc.getCarrito();
-
         Double precio = pc.getPostVenta().getPrecio();
-
-        productoCarritoRepository.delete(pc);
-
-        carrito.setCoste(Math.max(0, carrito.getCoste() - precio));
+        Double precioActual = carrito.getCoste() != null? carrito.getCoste() : 0.0;
+        carrito.setCoste(Math.max(0, precioActual - precio));
 
         carritoRepository.save(carrito);
 
-        return CarritoMapper.toDTO(carrito);
+        productoCarritoRepository.delete(pc);
+    }
+
+    @Transactional
+    @Override
+    public void vaciar() {
+
+        Usuario usuario = usuarioDetailsService.obtenerUsuarioActual();
+
+        Carrito carrito = carritoRepository
+                        .findByUsuarioId(usuario.getId())
+                        .orElseThrow();
+        
+        productoCarritoRepository.deleteAllByCarritoId(carrito.getId());
     }
 
     @Override
-    public void delete(Long id) {
-        if (!carritoRepository.existsById(id)) {
-            throw new GSNotFoundException("Carrito no encontrado");
-        }
+    public boolean estaEnCarrito(Long ventaId) {
 
-        carritoRepository.deleteById(id);
+        Usuario usuario = usuarioDetailsService.obtenerUsuarioActual();
+
+        return productoCarritoRepository.existsByCarritoIdAndPostVentaId(
+                usuario.getId(),
+                ventaId
+        );
     }
 }

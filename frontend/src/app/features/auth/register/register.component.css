@@ -1,25 +1,149 @@
-.auth-container {
-  max-width: 400px;
-  margin: auto;
-  padding: 2rem;
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  min-height: 100vh;
+
+  padding: 20px;
+
+  box-sizing: border-box;
 }
+
+/* CONTENEDOR */
+
+.auth-container {
+  width: 100%;
+  max-width: 430px;
+
+  border-radius: 24px;
+
+  padding: 10px 40px 40px 40px;
+
+  backdrop-filter: blur(10px);
+}
+
+/* TÍTULO */
+
+.auth-container h2 {
+  text-align: center;
+
+  margin-bottom: 35px;
+
+  color: var(--text);
+
+  font-size: 34px;
+  font-weight: 700;
+}
+
+/* FORM */
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* INPUTS */
 
 input {
   width: 100%;
-  margin: 10px 0;
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+
+  padding: 16px 18px;
+
+  font-size: 15px;
+
+  box-sizing: border-box;
 }
+
+/* BOTÓN PRINCIPAL */
+
+button[type="submit"] {
+  margin-top: 10px;
+
+  padding: 15px;
+
+  border-radius: 14px;
+
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* LINK */
+
+.link {
+  width: 100%;
+
+  margin-top: 18px;
+
+  background: transparent;
+
+  border: none;
+
+  color: var(--primary);
+
+  cursor: pointer;
+
+  font-size: 14px;
+
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.link:hover {
+  opacity: 0.8;
+
+  transform: translateY(-1px);
+}
+
+.logo {
+  width: 320px;
+  max-width: 80vw;
+  height: auto;
+}
+
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  min-height: 100vh;
+
+  padding: 20px;
+
+  box-sizing: border-box;
+}
+
+.login-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.campo {
+  width: 100%;
+}
+
+.error {
+  margin-top: 6px;
+  margin-left: 4px;
+
+  font-size: 13px;
+
+  color: #ff4d4d;
+}
+
+/* RESPONSIVE */
 
 @media (max-width: 600px) {
   .auth-container {
-    padding: 1rem;
+    padding: 28px;
+    border-radius: 20px;
   }
-}
 
-.link {
-  cursor: pointer;
-  color: blue;
-  text-decoration: underline;
+  .auth-container h2 {
+    font-size: 28px;
+  }
 }

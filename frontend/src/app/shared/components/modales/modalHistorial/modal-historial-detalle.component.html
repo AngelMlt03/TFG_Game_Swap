@@ -1,0 +1,204 @@
+<app-modal
+  [isOpen]="isOpen"
+  [title]="
+    post?.tipo === 'VENTA' ? 'Detalle de venta' : 'Detalle de intercambio'
+  "
+  (close)="close.emit()"
+>
+  <ng-container *ngIf="post">
+
+    <!-- VENTA -->
+
+
+    <div *ngIf="post.tipo === 'VENTA'">
+      <!-- PREVIEW -->
+
+      <div class="preview-card">
+        <div class="preview-info">
+          <img class="modal-img" [src]="post.imagen" />
+
+          <div class="info">
+            <h4>
+              {{ post.nombreProducto }}
+            </h4>
+
+            <p>
+              {{ post.plataformaProducto }}
+            </p>
+
+            <p>
+              {{ post.estadoProducto }}
+            </p>
+
+            <p class="precio">{{ post.precio }}€</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- INFORMACION -->
+
+      <div class="bloque">
+        <div class="bloque-header" (click)="infoOpen = !infoOpen">
+          <h3>Información de compra</h3>
+
+          <span class="flecha" [class.rotada]="infoOpen"> ▼ </span>
+        </div>
+
+        <div class="section-content" [class.closed]="!infoOpen">
+          <div class="bloque-content">
+            <div class="detalle-grid">
+              <div class="detalle-item">
+                <span class="label"> Vendedor </span>
+                <a class="usuario-link" (click)="irAPerfil(post.nombreVendedor)">
+                  {{ post.nombreVendedor }}
+                </a>
+              </div>
+
+              <div class="detalle-item">
+                <span class="label"> Comprador </span>
+
+                <a class="usuario-link" (click)="irAPerfil(post.nombreComprador)">
+                  {{ post.nombreComprador }}
+                </a>
+              </div>
+
+              <div class="detalle-item">
+                <span class="label"> Fecha </span>
+
+                <span>
+                  {{ post.fecha }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DESCRIPCION -->
+
+      <div class="bloque">
+        <div class="bloque-header" (click)="descripcionOpen = !descripcionOpen">
+          <h3>Descripción</h3>
+
+          <span class="flecha" [class.rotada]="descripcionOpen"> ▼ </span>
+        </div>
+
+        <div class="section-content" [class.closed]="!descripcionOpen">
+          <div class="bloque-content">
+            <div class="descripcion-card">
+              {{ post.descripcion || "Sin descripción" }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="post.tipo === 'INTERCAMBIO'">
+      <!-- PREVIEW -->
+
+      <div class="preview-card intercambio">
+        <!-- IZQUIERDA -->
+
+        <div class="lado">
+          <img [src]="post.imagen" />
+
+          <div class="info">
+            <h4>
+              {{ post.nombreProductoOfrecido }}
+            </h4>
+
+            <p>
+              {{ post.plataformaProductoOfrecido }}
+            </p>
+
+            <p>
+              {{ post.estadoProductoOfrecido }}
+            </p>
+          </div>
+        </div>
+
+        <!-- SWAP -->
+
+        <div class="swap">⇄</div>
+
+        <!-- DERECHA -->
+
+        <div class="lado">
+          <img [src]="post.imagenIntercambio" />
+
+          <div class="info">
+            <h4>
+              {{ post.nombreProductoDeseado }}
+            </h4>
+
+            <p>
+              {{ post.plataformaProductoDeseado }}
+            </p>
+
+            <p>
+              {{ post.estadoProductoDeseado }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- INFORMACION -->
+
+      <div class="bloque">
+        <div class="bloque-header" (click)="infoOpen = !infoOpen">
+          <h3>Información del intercambio</h3>
+
+          <span class="flecha" [class.rotada]="infoOpen"> ▼ </span>
+        </div>
+
+        <div class="section-content" [class.closed]="!infoOpen">
+          <div class="bloque-content">
+            <div class="detalle-grid">
+              <div class="detalle-item">
+                <span class="label"> Publicado por </span>
+
+                <a class="usuario-link" (click)="irAPerfil(post.nombreUsuarioPublicador)">
+                  {{ post.nombreUsuarioPublicador }}
+                </a>
+              </div>
+
+              <div class="detalle-item">
+                <span class="label"> Intercambiado por </span>
+
+                <a class="usuario-link" (click)="irAPerfil(post.nombreUsuarioCambio)">
+                  {{ post.nombreUsuarioCambio }}
+                </a>
+              </div>
+
+              <div class="detalle-item">
+                <span class="label"> Fecha </span>
+
+                <span>
+                  {{ post.fecha }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DESCRIPCION -->
+
+      <div class="bloque">
+        <div class="bloque-header" (click)="descripcionOpen = !descripcionOpen">
+          <h3>Descripción</h3>
+
+          <span class="flecha" [class.rotada]="descripcionOpen"> ▼ </span>
+        </div>
+
+        <div class="section-content" [class.closed]="!descripcionOpen">
+          <div class="bloque-content">
+            <div class="descripcion-card">
+              {{ post.descripcion || "Sin descripción" }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</app-modal>

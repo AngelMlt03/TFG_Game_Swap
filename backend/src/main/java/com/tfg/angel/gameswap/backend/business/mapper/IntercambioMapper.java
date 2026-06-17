@@ -4,27 +4,36 @@ import com.tfg.angel.gameswap.backend.business.dto.response.IntercambioResponseD
 import com.tfg.angel.gameswap.backend.business.model.Intercambio;
 
 public class IntercambioMapper {
+    private IntercambioMapper() { }
 
-    public static IntercambioResponseDTO toDTO(Intercambio entity) {
+    public static IntercambioResponseDTO toDTO(Intercambio i) {
 
         return IntercambioResponseDTO.builder()
-                .id(entity.getId())
+                .id(i.getId())
 
-                .idPostIntercambio(entity.getPostIntercambio().getId())
+                .idPostIntercambio(i.getPostIntercambio().getId())
 
-                .idUsuarioPublicador(entity.getPostIntercambio().getUsuario().getId())
-                .nombreUsuarioPublicador(entity.getPostIntercambio().getUsuario().getNombre())
+                .idUsuarioPublicador(i.getPostIntercambio().getUsuario().getId())
+                .nombreUsuarioPublicador(i.getPostIntercambio().getUsuario().getNombreUsuario())
 
-                .idProductoOfrecido(entity.getPostIntercambio().getProducto().getId())
-                .nombreProductoOfrecido(entity.getPostIntercambio().getProducto().getNombre())
+                .idUsuarioCambio(i.getUsuarioCambio().getId())
+                .nombreUsuarioCambio(i.getUsuarioCambio().getNombreUsuario())
 
-                .idProductoDeseado(entity.getPostIntercambio().getProductoCambio().getId())
-                .nombreProductoDeseado(entity.getPostIntercambio().getProductoCambio().getNombre())
+                .idProductoOfrecido(i.getPostIntercambio().getProducto().getId())
+                .idApiProductoOfrecido(i.getPostIntercambio().getProducto().getIdAPI().longValue())
+                .nombreProductoOfrecido(i.getPostIntercambio().getProducto().getNombre())
+                .plataformaProductoOfrecido(i.getPostIntercambio().getPlataforma())
+                .estadoProductoOfrecido(i.getPostIntercambio().getProducto().getEstado().toString())
 
-                .idUsuarioCambio(entity.getUsuarioCambio().getId())
-                .nombreUsuarioCambio(entity.getUsuarioCambio().getNombre())
+                .idProductoDeseado(i.getPostIntercambio().getProductoCambio().getId())
+                .idApiProductoDeseado(i.getPostIntercambio().getProductoCambio().getIdAPI().longValue())
+                .nombreProductoDeseado(i.getPostIntercambio().getProductoCambio().getNombre())
+                .plataformaProductoDeseado(i.getPostIntercambio().getPlataformaCambio())
+                .estadoProductoDeseado(i.getPostIntercambio().getProductoCambio().getEstado().toString())
 
-                .fecha(entity.getFecha())
+                .fecha(i.getFecha())
+
+                .descripcion(i.getPostIntercambio().getDescripcion())
                 .build();
     }
 }

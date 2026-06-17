@@ -18,7 +18,6 @@ public class IntercambioController {
     public IntercambioResponseDTO create(@PathVariable Long idPost) {
 
         Long idUsuario = 1L;
-
         return service.create(idPost, idUsuario);
     }
 

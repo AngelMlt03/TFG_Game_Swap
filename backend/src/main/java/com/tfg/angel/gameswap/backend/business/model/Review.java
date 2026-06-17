@@ -15,16 +15,25 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "id_reviewer")
     private Usuario reviewer;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "id_reviewed")
     private Usuario reviewed;
 
-    @Column(columnDefinition = "TEXT")
     private String contenido;
 
     private Double estrellas;
+
+    private String tipoReview;
+
+    @ManyToOne
+    @JoinColumn(name = "id_compra_venta")
+    private CompraVenta compraVenta;
+
+    @ManyToOne
+    @JoinColumn(name = "id_intercambio")
+    private Intercambio intercambio;
 }

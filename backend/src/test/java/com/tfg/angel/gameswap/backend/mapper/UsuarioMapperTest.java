@@ -29,7 +29,7 @@ class UsuarioMapperTest {
         assertNotNull(dto);
         assertEquals(1L, dto.getId());
         assertEquals("Angel", dto.getNombre());
-        assertEquals("angel", dto.getNUsuario());
+        assertEquals("angel", dto.getNombreUsuario());
         assertEquals("a@gmail.com", dto.getCorreo());
         assertEquals(100.0, dto.getSaldo());
         assertEquals(5.0, dto.getEstrellas());

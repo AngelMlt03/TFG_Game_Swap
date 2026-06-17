@@ -59,9 +59,6 @@
       </button>
 
       <div *ngIf="focused">
-        <div class="autocomplete" *ngIf="loading" class="loading">
-          Buscando...
-        </div>
 
         <div class="autocomplete" *ngIf="!loading && sugerencias.length">
           <div *ngFor="let j of sugerencias" (click)="seleccionarJuego(j)">

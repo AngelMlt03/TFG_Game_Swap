@@ -32,16 +32,16 @@ class PostIntercambioControllerTest {
                 .nombreUsuario("angel")
 
                 .idProducto(100L)
-                .idApiProducto(1000L)
+                .idApi(1000L)
                 .nombreProducto("Pokemon")
                 .estado("NUEVO")
                 .plataforma("Switch")
 
-                .idProductoCambio(200L)
-                .idApiProductoCambio(2000L)
-                .nombreProductoCambio("Zelda")
-                .estadoCambio("USADO")
-                .plataformaCambio("Switch")
+                .idProductoIntercambio(200L)
+                .idApiProductoIntercambio(2000L)
+                .nombreProductoIntercambio("Zelda")
+                .estadoIntercambio("USADO")
+                .plataformaIntercambio("Switch")
 
                 .descripcion("Intercambio de prueba")
                 .build();

@@ -169,7 +169,7 @@ public class UsuarioServiceImpl implements UsuarioService {
                 .filter(p -> p.getIdUsuario().equals(usuarioActual.getId()))
                 .forEach(p -> {
                             ProductoResponseDTO producto = productoService.findById(p.getIdProducto());
-                            ProductoResponseDTO productoIntercambio = productoService.findById(p.getIdProductoCambio());
+                            ProductoResponseDTO productoIntercambio = productoService.findById(p.getIdProductoIntercambio());
                             resultado.add( getIntercambio(p, producto, productoIntercambio) );
                         }
                 );
@@ -206,8 +206,8 @@ public class UsuarioServiceImpl implements UsuarioService {
                 .estado(String.valueOf(producto.getEstado()))
 
                 .idApiIntercambio(productoIntercambio.getIdAPI().longValue())
-                .nombreProductoIntercambio(p.getNombreProductoCambio())
-                .plataformaIntercambio(p.getPlataformaCambio())
+                .nombreProductoIntercambio(p.getNombreProductoIntercambio())
+                .plataformaIntercambio(p.getPlataformaIntercambio())
                 .estadoIntercambio(String.valueOf(productoIntercambio.getEstado()))
 
                 .nombreUsuario(p.getNombreUsuario())

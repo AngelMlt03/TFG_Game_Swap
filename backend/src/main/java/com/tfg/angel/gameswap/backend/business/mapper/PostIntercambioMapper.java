@@ -14,16 +14,16 @@ public class PostIntercambioMapper {
                 .nombreUsuario(post.getUsuario().getNombreUsuario())
 
                 .idProducto(post.getProducto().getId())
-                .idApiProducto(post.getProducto().getIdAPI().longValue())
+                .idApi(post.getProducto().getIdAPI().longValue())
                 .nombreProducto(post.getProducto().getNombre())
                 .plataforma(post.getPlataforma())
                 .estado(post.getProducto().getEstado().toString())
 
-                .idProductoCambio(post.getProductoCambio().getId())
-                .idApiProductoCambio(post.getProductoCambio().getIdAPI().longValue())
-                .nombreProductoCambio(post.getProductoCambio().getNombre())
-                .plataformaCambio(post.getPlataformaCambio())
-                .estadoCambio(post.getProductoCambio().getEstado().toString())
+                .idProductoIntercambio(post.getProductoCambio().getId())
+                .idApiProductoIntercambio(post.getProductoCambio().getIdAPI().longValue())
+                .nombreProductoIntercambio(post.getProductoCambio().getNombre())
+                .plataformaIntercambio(post.getPlataformaCambio())
+                .estadoIntercambio(post.getProductoCambio().getEstado().toString())
 
                 .descripcion(post.getDescripcion())
 

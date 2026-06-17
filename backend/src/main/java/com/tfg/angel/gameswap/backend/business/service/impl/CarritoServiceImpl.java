@@ -70,9 +70,17 @@ public class CarritoServiceImpl implements CarritoService {
 
         Usuario usuario = usuarioDetailsService.obtenerUsuarioActual();
 
-        Carrito carrito = carritoRepository
+        Carrito c = carritoRepository
                         .findByUsuarioId(usuario.getId())
                         .orElseThrow();
+
+        Double costeTotal = c.getProductos().stream()
+                .mapToDouble(p -> p.getPostVenta().getPrecio())
+                .sum();
+
+        c.setCoste(costeTotal);
+
+        Carrito carrito = carritoRepository.save(c);
 
         return productoCarritoRepository
                 .findByCarritoId(carrito.getId())

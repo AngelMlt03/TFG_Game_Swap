@@ -51,8 +51,8 @@ export class GuardadosComponent implements OnInit {
       }));
 
       this.intercambios.forEach((i) => {
-        this.cargarImagen(i.idApiProducto);
-        this.cargarImagen(i.idApiProductoCambio);
+        this.cargarImagen(i.idApi);
+        this.cargarImagen(i.idApiProductoIntercambio);
       });
     });
   }
@@ -73,8 +73,8 @@ export class GuardadosComponent implements OnInit {
     if (post.tipo === 'VENTA') {
       post.imagen = this.getImagen(post.idApi);
     } else {
-      post.imagen = this.getImagen(post.idApiProducto);
-      post.imagenIntercambio = this.getImagen(post.idApiProductoCambio);
+      post.imagen = this.getImagen(post.idApi);
+      post.imagenIntercambio = this.getImagen(post.idApiProductoIntercambio);
     }
 
     this.postSeleccionado = post;

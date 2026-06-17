@@ -13,11 +13,11 @@ public class IgdbService {
 
     private final WebClient webClient = WebClient.builder().build();
 
-    //@Value("${IGDB_CLIENT_ID}")
-    private String clientId = "f8sdpojhgri88j6znw5bok254zkvgp";
+    @Value("${IGDB_CLIENT_ID}")
+    private String clientId;
 
-    //@Value("${IGDB_CLIENT_SECRET}")
-    private String clientSecret = "7ig74rk148dw6d2m5019eenyk39y1k";
+    @Value("${IGDB_CLIENT_SECRET}")
+    private String clientSecret;
 
     private String accessToken;
     private long expiresAt;
@@ -57,7 +57,7 @@ public class IgdbService {
         search "%s";
         fields name, cover.image_id;
         limit 8;
-    """.formatted(query);
+        """.formatted(query);
 
         return webClient.post()
                 .uri("https://api.igdb.com/v4/games")
@@ -120,18 +120,14 @@ public class IgdbService {
                 .block();
     }
 
-    public String searchFranchises(String query) {
+    public String getGameCover(Long igdbId) {
 
         String token = getToken();
 
-        String body = """
-        search "%s";
-        fields id, name;
-        limit 8;
-    """.formatted(query);
+        String body = "fields cover.image_id; where id = " + igdbId + ";";
 
         return webClient.post()
-                .uri("https://api.igdb.com/v4/collections")
+                .uri("https://api.igdb.com/v4/games")
                 .header("Client-ID", clientId)
                 .header("Authorization", "Bearer " + token)
                 .bodyValue(body)
@@ -140,11 +136,25 @@ public class IgdbService {
                 .block();
     }
 
-    public String getGameCover(Long igdbId) {
+    public String getGameDetails(Long id) {
 
         String token = getToken();
 
-        String body = "fields cover.image_id; where id = " + igdbId + ";";
+        String body = """
+        fields
+        name,
+        summary,
+        total_rating,
+        first_release_date,
+        genres.name,
+        themes.name,
+        game_modes.name,
+        cover.image_id,
+        screenshots.image_id,
+        videos.video_id;
+
+        where id = %d;
+        """.formatted(id);
 
         return webClient.post()
                 .uri("https://api.igdb.com/v4/games")

@@ -201,6 +201,7 @@ export class NavbarComponent implements OnInit {
     });
 
     this.focused = false;
+    this.search = '';
   }
 
   onFocus() {

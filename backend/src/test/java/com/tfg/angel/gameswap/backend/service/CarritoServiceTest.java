@@ -13,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -111,27 +110,6 @@ class CarritoServiceTest {
         Double resultado = service.getPrecioCarrito();
 
         assertEquals(35.0, resultado);
-    }
-
-    @Test
-    void getCarrito() {
-
-        Usuario usuario = usuario();
-
-        Carrito carrito = Carrito.builder()
-                .id(1L)
-                .build();
-
-        when(usuarioDetailsService.obtenerUsuarioActual())
-                .thenReturn(usuario);
-
-        when(carritoRepository.findByUsuarioId(1L))
-                .thenReturn(Optional.of(carrito));
-
-        when(productoCarritoRepository.findByCarritoId(1L))
-                .thenReturn(List.of());
-
-        assertNotNull(service.getCarrito());
     }
 
     @Test

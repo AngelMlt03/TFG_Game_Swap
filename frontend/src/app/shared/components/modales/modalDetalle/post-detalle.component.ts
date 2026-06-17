@@ -64,6 +64,8 @@ export class PostDetalleComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    console.log('ON CHANGES', changes);
+    console.log('POST', this.post);
     this.infoOpen = false;
     this.descripcionOpen = false;
     if (changes['post'] && this.post?.id && this.post?.tipo) {
@@ -79,6 +81,7 @@ export class PostDetalleComponent implements OnInit, OnChanges {
       });
     }
     if (this.post?.idApi) {
+      console.log('Cargando detalles del juego con idApi:', this.post);
       this.igdbService.getGameDetails(this.post.idApi).subscribe((res) => {
         this.gameDetails = res[0];
       });

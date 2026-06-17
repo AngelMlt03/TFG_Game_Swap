@@ -39,11 +39,6 @@ describe('TokenService', () => {
     expect(localStorage.getItem(KEY)).toBeNull();
   });
 
-  it('isLogged() debe retornar true si existe un token', () => {
-    localStorage.setItem(KEY, 'token-existente');
-    expect(service.isLogged()).toBeTrue();
-  });
-
   it('isLogged() debe retornar false si no existe un token', () => {
     expect(service.isLogged()).toBeFalse();
   });

@@ -9,13 +9,13 @@ import com.tfg.angel.gameswap.backend.business.model.Producto;
 import com.tfg.angel.gameswap.backend.business.model.Usuario;
 import com.tfg.angel.gameswap.backend.business.model.enums.EstadoPost;
 import com.tfg.angel.gameswap.backend.business.model.enums.EstadoProducto;
-import com.tfg.angel.gameswap.backend.business.model.enums.Rol;
+import com.tfg.angel.gameswap.backend.business.repository.PostIntercambioRepository;
 import com.tfg.angel.gameswap.backend.business.repository.PostVentaRepository;
 import com.tfg.angel.gameswap.backend.business.repository.ProductoRepository;
 import com.tfg.angel.gameswap.backend.business.repository.UsuarioRepository;
 import com.tfg.angel.gameswap.backend.business.service.impl.PostVentaServiceImpl;
 import com.tfg.angel.gameswap.backend.exception.GSNotFoundException;
-import org.junit.jupiter.api.BeforeEach;
+import com.tfg.angel.gameswap.backend.security.UsuarioDetailsService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +24,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,40 +39,13 @@ class PostVentaServiceTest {
     private UsuarioRepository usuarioRepository;
     @Mock
     private ProductoRepository productoRepository;
+    @Mock
+    private PostIntercambioRepository postIntercambioRepository;
+    @Mock
+    private UsuarioDetailsService usuarioDetailsService;
 
     @InjectMocks
     private PostVentaServiceImpl postVentaService;
-
-    private Usuario vendedor;
-    private Producto producto;
-    private PostVentaRequestDTO requestDTO;
-    private PostVenta postVenta;
-
-    @BeforeEach
-    void setUp() {
-
-        vendedor = Usuario.builder().id(1L).nombre("Angel").rol(Rol.CLIENTE).build();
-
-        producto = Producto.builder()
-                .id(1L)
-                .nombre("Elden Ring")
-                .estado(EstadoProducto.NUEVO)
-                .build();
-
-        requestDTO = PostVentaRequestDTO.builder()
-                .idApi(1L)
-                .nombreProducto("Elden Ring")
-                .precio(50.0)
-                .build();
-
-        postVenta = PostVenta.builder()
-                .id(100L)
-                .vendedor(vendedor)
-                .producto(producto)
-                .precio(50.0)
-                .estado(EstadoPost.ACTIVO)
-                .build();
-    }
 
     @Test
     @DisplayName("Debe lanzar GSNotFoundException al intentar borrar un post que no existe")
@@ -239,6 +211,187 @@ class PostVentaServiceTest {
                 GSNotFoundException.class,
                 () -> postVentaService.delete(1L)
         );
+    }
+
+    private Usuario crearUsuario() {
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        usuario.setNombre("Angel");
+        usuario.setNombreUsuario("angel");
+        return usuario;
+    }
+
+    private Producto crearProducto() {
+        Producto productoc = new Producto();
+        productoc.setId(1L);
+        productoc.setIdAPI(100);
+        productoc.setNombre("FIFA");
+        productoc.setEstado(EstadoProducto.NUEVO);
+        return productoc;
+    }
+
+    private PostVenta crearPostVenta() {
+
+        PostVenta post = new PostVenta();
+
+        post.setId(1L);
+        post.setVendedor(crearUsuario());
+        post.setProducto(crearProducto());
+        post.setPrecio(20.0);
+        post.setPlataforma("PS5");
+        post.setEstado(EstadoPost.ACTIVO);
+        post.setDescripcion("Descripcion");
+
+        return post;
+    }
+
+    private PostVentaRequestDTO crearDtoVenta() {
+
+        PostVentaRequestDTO dto = new PostVentaRequestDTO();
+
+        dto.setNombreProducto("FIFA");
+        dto.setIdApi(100L);
+        dto.setEstadoProducto("NUEVO");
+        dto.setPlataforma("PS5");
+        dto.setPrecio(20.0);
+        dto.setDescripcion("Descripcion");
+
+        return dto;
+    }
+
+    private PostIntercambioRequestDTO crearDtoIntercambio() {
+
+        PostIntercambioRequestDTO dto = new PostIntercambioRequestDTO();
+
+        dto.setNombreProducto("COD");
+        dto.setIdApi(200L);
+        dto.setEstadoProducto("USADO");
+        dto.setDescripcion("Cambio");
+
+        return dto;
+    }
+
+    @Test
+    void create() {
+
+        Usuario usuario = crearUsuario();
+
+        when(usuarioDetailsService.obtenerUsuarioActual())
+                .thenReturn(usuario);
+
+        when(productoRepository.save(any()))
+                .thenAnswer(i -> i.getArgument(0));
+
+        when(postVentaRepository.save(any()))
+                .thenAnswer(i -> i.getArgument(0));
+
+        PostVentaResponseDTO dto =
+                postVentaService.create(crearDtoVenta());
+
+        assertNotNull(dto);
+
+        verify(productoRepository).save(any(Producto.class));
+        verify(postVentaRepository).save(any(PostVenta.class));
+    }
+
+    @Test
+    void findById() {
+
+        when(postVentaRepository.findById(1L))
+                .thenReturn(Optional.of(crearPostVenta()));
+
+        PostVentaResponseDTO dto =
+                postVentaService.findById(1L);
+
+        assertNotNull(dto);
+    }
+
+    @Test
+    void findAll() {
+
+        when(postVentaRepository.findAll())
+                .thenReturn(List.of(crearPostVenta()));
+
+        assertEquals(
+                1,
+                postVentaService.findAll().size()
+        );
+    }
+
+    @Test
+    void findBySeller() {
+
+        when(postVentaRepository.findByVendedorId(1L))
+                .thenReturn(List.of(crearPostVenta()));
+
+        assertEquals(
+                1,
+                postVentaService.findBySeller(1L).size()
+        );
+    }
+
+    @Test
+    void findByProduct() {
+
+        when(postVentaRepository.findByProductoId(1L))
+                .thenReturn(List.of(crearPostVenta()));
+
+        assertEquals(
+                1,
+                postVentaService.findByProduct(1L).size()
+        );
+    }
+
+    @Test
+    void findByEstado() {
+
+        when(postVentaRepository.findByEstado(EstadoPost.ACTIVO))
+                .thenReturn(List.of(crearPostVenta()));
+
+        assertEquals(
+                1,
+                postVentaService.findByEstado(EstadoPost.ACTIVO).size()
+        );
+    }
+
+    @Test
+    void update() {
+
+        PostVenta post = crearPostVenta();
+
+        when(postVentaRepository.findById(1L))
+                .thenReturn(Optional.of(post));
+
+        PostVentaResponseDTO dto =
+                postVentaService.update(1L, crearDtoVenta());
+
+        assertNotNull(dto);
+
+        verify(productoRepository).save(any(Producto.class));
+        verify(postVentaRepository).save(post);
+    }
+
+    @Test
+    void convertirVentaAIntercambio() {
+
+        PostVenta venta = crearPostVenta();
+
+        when(postVentaRepository.findById(1L))
+                .thenReturn(Optional.of(venta));
+
+        PostIntercambioRequestDTO dto =
+                crearDtoIntercambio();
+
+        postVentaService.convertirVentaAIntercambio(1L, dto);
+
+        verify(productoRepository)
+                .save(any(Producto.class));
+
+        verify(postIntercambioRepository)
+                .save(any(PostIntercambio.class));
+
+        verify(postVentaRepository)
+                .delete(venta);
     }
 
 }

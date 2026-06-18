@@ -4,17 +4,18 @@ import com.tfg.angel.gameswap.backend.business.dto.request.PostIntercambioReques
 import com.tfg.angel.gameswap.backend.business.dto.request.PostVentaRequestDTO;
 import com.tfg.angel.gameswap.backend.business.dto.response.PostIntercambioResponseDTO;
 import com.tfg.angel.gameswap.backend.business.model.PostIntercambio;
-import com.tfg.angel.gameswap.backend.business.model.PostVenta;
 import com.tfg.angel.gameswap.backend.business.model.Producto;
 import com.tfg.angel.gameswap.backend.business.model.Usuario;
 import com.tfg.angel.gameswap.backend.business.model.enums.EstadoPost;
 import com.tfg.angel.gameswap.backend.business.model.enums.EstadoProducto;
 import com.tfg.angel.gameswap.backend.business.model.enums.Rol;
 import com.tfg.angel.gameswap.backend.business.repository.PostIntercambioRepository;
+import com.tfg.angel.gameswap.backend.business.repository.PostVentaRepository;
 import com.tfg.angel.gameswap.backend.business.repository.ProductoRepository;
 import com.tfg.angel.gameswap.backend.business.repository.UsuarioRepository;
 import com.tfg.angel.gameswap.backend.business.service.impl.PostIntercambioServiceImpl;
 import com.tfg.angel.gameswap.backend.exception.GSNotFoundException;
+import com.tfg.angel.gameswap.backend.security.UsuarioDetailsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,6 +40,10 @@ class PostIntercambioServiceTest {
     private UsuarioRepository usuarioRepository;
     @Mock
     private ProductoRepository productoRepository;
+    @Mock
+    private PostVentaRepository postVentaRepository;
+    @Mock
+    private UsuarioDetailsService usuarioDetailsService;
 
     @InjectMocks
     private PostIntercambioServiceImpl postIntercambioService;
@@ -295,6 +300,186 @@ class PostIntercambioServiceTest {
                 postIntercambioService.existeIntercambioInverso(
                         "Zelda",
                         "Mario")
+        );
+    }
+
+    private Usuario crearUsuario() {
+        Usuario u = new Usuario();
+        u.setId(1L);
+        u.setNombre("Angel");
+        u.setNombreUsuario("angel");
+        return u;
+    }
+
+    private Producto crearProducto(Long id) {
+        Producto p = new Producto();
+        p.setId(id);
+        p.setIdAPI(id.intValue());
+        p.setNombre("Juego" + id);
+        p.setEstado(EstadoProducto.NUEVO);
+        return p;
+    }
+
+    private PostIntercambio crearPost() {
+
+        Usuario usuario = crearUsuario();
+
+        Producto producto = crearProducto(1L);
+        Producto productoCambio = crearProducto(2L);
+
+        PostIntercambio post = new PostIntercambio();
+
+        post.setId(1L);
+        post.setUsuario(usuario);
+        post.setProducto(producto);
+        post.setProductoCambio(productoCambio);
+        post.setPlataforma("PS5");
+        post.setPlataformaCambio("Switch");
+        post.setDescripcion("Descripcion");
+        post.setEstado(EstadoPost.ACTIVO);
+
+        return post;
+    }
+
+    private PostIntercambioRequestDTO crearDto() {
+
+        PostIntercambioRequestDTO dto = new PostIntercambioRequestDTO();
+
+        dto.setNombreProducto("FIFA");
+        dto.setIdApi(100L);
+        dto.setEstadoProducto("NUEVO");
+
+        dto.setNombreProductoIntercambio("COD");
+        dto.setIdApiIntercambio(200L);
+        dto.setEstadoProductoIntercambio("USADO");
+
+        dto.setPlataforma("PS5");
+        dto.setPlataformaIntercambio("Xbox");
+
+        dto.setDescripcion("Descripcion");
+
+        return dto;
+    }
+
+    @Test
+    void findByUsuarioActivo() {
+
+        Usuario usuario = crearUsuario();
+
+        when(usuarioDetailsService.obtenerUsuarioActual())
+                .thenReturn(usuario);
+
+        when(postIntercambioRepository.findByUsuarioIdAndEstado(
+                usuario.getId(),
+                EstadoPost.ACTIVO))
+                .thenReturn(List.of(crearPost()));
+
+        List<PostIntercambioResponseDTO> resultado =
+                postIntercambioService.findByUsuarioActivo();
+
+        assertEquals(1, resultado.size());
+    }
+
+    @Test
+    void findById() {
+
+        when(postIntercambioRepository.findById(1L))
+                .thenReturn(Optional.of(crearPost()));
+
+        PostIntercambioResponseDTO dto =
+                postIntercambioService.findById(1L);
+
+        assertNotNull(dto);
+    }
+
+    @Test
+    void findAll() {
+
+        when(postIntercambioRepository.findAll())
+                .thenReturn(List.of(crearPost()));
+
+        assertEquals(1, postIntercambioService.findAll().size());
+    }
+
+    @Test
+    void findByUser() {
+
+        when(postIntercambioRepository.findByUsuarioId(1L))
+                .thenReturn(List.of(crearPost()));
+
+        assertEquals(1, postIntercambioService.findByUser(1L).size());
+    }
+
+    @Test
+    void findByProduct() {
+
+        when(postIntercambioRepository.findByProductoId(1L))
+                .thenReturn(List.of(crearPost()));
+
+        assertEquals(1, postIntercambioService.findByProduct(1L).size());
+    }
+
+    @Test
+    void findByEstado() {
+
+        when(postIntercambioRepository.findByEstado(EstadoPost.ACTIVO))
+                .thenReturn(List.of(crearPost()));
+
+        assertEquals(1,
+                postIntercambioService.findByEstado(EstadoPost.ACTIVO).size());
+    }
+
+    @Test
+    void update() {
+
+        PostIntercambio post = crearPost();
+
+        when(postIntercambioRepository.findById(1L))
+                .thenReturn(Optional.of(post));
+
+        PostIntercambioResponseDTO dto =
+                postIntercambioService.update(1L, crearDto());
+
+        assertNotNull(dto);
+
+        verify(productoRepository, times(2))
+                .save(any(Producto.class));
+
+        verify(postIntercambioRepository)
+                .save(post);
+    }
+
+    @Test
+    void convertirIntercambioAVenta() {
+
+        PostIntercambio intercambio = crearPost();
+
+        when(postIntercambioRepository.findById(1L))
+                .thenReturn(Optional.of(intercambio));
+
+        PostVentaRequestDTO dto = new PostVentaRequestDTO();
+        dto.setPrecio(20.0);
+        dto.setDescripcion("Venta");
+
+        postIntercambioService.convertirIntercambioAVenta(1L, dto);
+
+        verify(postIntercambioRepository)
+                .delete(intercambio);
+    }
+
+    @Test
+    void existeIntercambioInverso() {
+
+        when(postIntercambioRepository.existeIntercambioInverso(
+                "FIFA",
+                "COD"))
+                .thenReturn(true);
+
+        assertTrue(
+                postIntercambioService.existeIntercambioInverso(
+                        "FIFA",
+                        "COD"
+                )
         );
     }
 }

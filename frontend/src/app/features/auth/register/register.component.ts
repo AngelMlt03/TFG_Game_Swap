@@ -50,9 +50,26 @@ export class RegisterComponent {
   }
 
   esEmailValido(): boolean {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email);
-  }
+    if (!this.email) {
+      return false;
+    }
 
+    const partes = this.email.split('@');
+
+    if (partes.length !== 2) {
+      return false;
+    }
+
+    const [usuario, dominio] = partes;
+
+    return (
+      usuario.length > 0 &&
+      dominio.length > 0 &&
+      dominio.includes('.') &&
+      !this.email.includes(' ')
+    );
+  }
+  
   formularioValido(): boolean {
     return (
       this.name.trim().length > 0 &&

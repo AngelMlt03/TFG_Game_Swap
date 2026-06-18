@@ -1,13 +1,19 @@
 package com.tfg.angel.gameswap.backend.service;
 
 import com.tfg.angel.gameswap.backend.business.dto.response.ReviewResponseDTO;
+import com.tfg.angel.gameswap.backend.business.dto.response.UsuarioResponseDTO;
 import com.tfg.angel.gameswap.backend.business.model.Review;
 import com.tfg.angel.gameswap.backend.business.model.Usuario;
 import com.tfg.angel.gameswap.backend.business.model.enums.Rol;
+import com.tfg.angel.gameswap.backend.business.repository.CompraVentaRepository;
+import com.tfg.angel.gameswap.backend.business.repository.IntercambioRepository;
 import com.tfg.angel.gameswap.backend.business.repository.ReviewRepository;
 import com.tfg.angel.gameswap.backend.business.repository.UsuarioRepository;
+import com.tfg.angel.gameswap.backend.business.service.UsuarioService;
 import com.tfg.angel.gameswap.backend.business.service.impl.ReviewServiceImpl;
+import com.tfg.angel.gameswap.backend.exception.GSBadRequestException;
 import com.tfg.angel.gameswap.backend.exception.GSNotFoundException;
+import com.tfg.angel.gameswap.backend.security.UsuarioDetailsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,6 +36,14 @@ class ReviewServiceTest {
     private ReviewRepository reviewRepository;
     @Mock
     private UsuarioRepository usuarioRepository;
+    @Mock
+    private UsuarioService usuarioService;
+    @Mock
+    private UsuarioDetailsService usuarioDetailsService;
+    @Mock
+    private CompraVentaRepository compraVentaRepository;
+    @Mock
+    private IntercambioRepository intercambioRepository;
 
     @InjectMocks
     private ReviewServiceImpl reviewService;
@@ -247,6 +261,170 @@ class ReviewServiceTest {
 
         assertThrows(
                 GSNotFoundException.class,
+                () -> reviewService.delete(1L)
+        );
+    }
+
+    private Usuario crearUsuario(Long id) {
+
+        Usuario u = new Usuario();
+
+        u.setId(id);
+        u.setNombre("Usuario");
+        u.setNombreUsuario("usuario" + id);
+        u.setCorreo("test@test.com");
+        u.setEstrellas(4.0);
+
+        return u;
+    }
+
+    private Review crearReview() {
+
+        Usuario reviewer = crearUsuario(1L);
+        Usuario reviewed = crearUsuario(2L);
+
+        Review reviewc = new Review();
+
+        reviewc.setId(1L);
+        reviewc.setReviewer(reviewer);
+        reviewc.setReviewed(reviewed);
+        reviewc.setContenido("Buen trato");
+        reviewc.setEstrellas(5.0);
+        reviewc.setTipoReview("VENTA");
+
+        return reviewc;
+    }
+
+    @Test
+    void getReviewsRecibidasToUsuario() {
+
+        UsuarioResponseDTO usuario = new UsuarioResponseDTO();
+        usuario.setId(2L);
+
+        when(usuarioService.findByUsername("angel"))
+                .thenReturn(usuario);
+
+        when(reviewRepository.findByReviewedId(2L))
+                .thenReturn(List.of(crearReview()));
+
+        List<ReviewResponseDTO> resultado =
+                reviewService.getReviewsRecibidasToUsuario("angel");
+
+        assertEquals(1, resultado.size());
+    }
+
+    @Test
+    void getReviewsEnviadas() {
+
+        Usuario usuario = crearUsuario(1L);
+
+        when(usuarioDetailsService.obtenerUsuarioActual())
+                .thenReturn(usuario);
+
+        when(reviewRepository.findByReviewerId(1L))
+                .thenReturn(List.of(crearReview()));
+
+        List<ReviewResponseDTO> resultado =
+                reviewService.getReviewsEnviadas();
+
+        assertEquals(1, resultado.size());
+    }
+
+    @Test
+    void getByUsuario() {
+
+        Usuario usuario = crearUsuario(2L);
+
+        when(usuarioRepository.findById(2L))
+                .thenReturn(Optional.of(usuario));
+
+        when(reviewRepository.findByReviewedId(2L))
+                .thenReturn(List.of(crearReview()));
+
+        List<ReviewResponseDTO> resultado =
+                reviewService.getByUsuario(2L);
+
+        assertEquals(1, resultado.size());
+    }
+
+    @Test
+    void actualizarMediaReviews() {
+
+        Usuario usuario = crearUsuario(2L);
+
+        Review r1 = crearReview();
+        r1.setEstrellas(4.0);
+
+        Review r2 = crearReview();
+        r2.setEstrellas(2.0);
+
+        when(reviewRepository.findByReviewedId(2L))
+                .thenReturn(List.of(r1, r2));
+
+        reviewService.actualizarMediaReviews(usuario);
+
+        assertEquals(3.0, usuario.getEstrellas());
+
+        verify(usuarioRepository).save(usuario);
+    }
+
+    @Test
+    void actualizarMediaReviewsSinReviews() {
+
+        Usuario usuario = crearUsuario(2L);
+
+        when(reviewRepository.findByReviewedId(2L))
+                .thenReturn(List.of());
+
+        reviewService.actualizarMediaReviews(usuario);
+
+        assertEquals(0.0, usuario.getEstrellas());
+
+        verify(usuarioRepository).save(usuario);
+    }
+
+    @Test
+    void delete() {
+
+        Usuario reviewer = crearUsuario(1L);
+
+        Review reviewc = crearReview();
+
+        when(reviewRepository.existsById(1L))
+                .thenReturn(true);
+
+        when(usuarioDetailsService.obtenerUsuarioActual())
+                .thenReturn(reviewer);
+
+        when(reviewRepository.findById(1L))
+                .thenReturn(Optional.of(reviewc));
+
+        when(reviewRepository.findByReviewedId(2L))
+                .thenReturn(List.of());
+
+        reviewService.delete(1L);
+
+        verify(reviewRepository).delete(reviewc);
+    }
+
+    @Test
+    void deleteUsuarioIncorrecto() {
+
+        Usuario usuarioActual = crearUsuario(99L);
+
+        Review reviewc = crearReview();
+
+        when(reviewRepository.existsById(1L))
+                .thenReturn(true);
+
+        when(usuarioDetailsService.obtenerUsuarioActual())
+                .thenReturn(usuarioActual);
+
+        when(reviewRepository.findById(1L))
+                .thenReturn(Optional.of(reviewc));
+
+        assertThrows(
+                GSBadRequestException.class,
                 () -> reviewService.delete(1L)
         );
     }

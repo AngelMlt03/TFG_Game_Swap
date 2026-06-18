@@ -1,7 +1,9 @@
 package com.tfg.angel.gameswap.backend.service;
 
+import com.tfg.angel.gameswap.backend.business.dto.request.ReviewRequestDTO;
 import com.tfg.angel.gameswap.backend.business.dto.response.ReviewResponseDTO;
 import com.tfg.angel.gameswap.backend.business.dto.response.UsuarioResponseDTO;
+import com.tfg.angel.gameswap.backend.business.model.CompraVenta;
 import com.tfg.angel.gameswap.backend.business.model.Review;
 import com.tfg.angel.gameswap.backend.business.model.Usuario;
 import com.tfg.angel.gameswap.backend.business.model.enums.Rol;
@@ -427,6 +429,53 @@ class ReviewServiceTest {
                 GSBadRequestException.class,
                 () -> reviewService.delete(1L)
         );
+    }
+
+    @Test
+    void createVentaReview() {
+
+        Usuario reviewer = new Usuario();
+        reviewer.setId(1L);
+        reviewer.setNombreUsuario("reviewer");
+
+        Usuario reviewed = new Usuario();
+        reviewed.setId(2L);
+        reviewed.setNombreUsuario("reviewed");
+
+        CompraVenta compra = new CompraVenta();
+        compra.setId(10L);
+
+        ReviewRequestDTO dto = new ReviewRequestDTO();
+        dto.setIdReviewed(2L);
+        dto.setContenido("Muy bien");
+        dto.setEstrellas(5.0);
+        dto.setTipoReview("VENTA");
+        dto.setIdHistorial(10L);
+
+        when(usuarioDetailsService.obtenerUsuarioActual())
+                .thenReturn(reviewer);
+
+        when(usuarioRepository.findById(2L))
+                .thenReturn(Optional.of(reviewed));
+
+        when(compraVentaRepository.findById(10L))
+                .thenReturn(Optional.of(compra));
+
+        when(reviewRepository.findByReviewedId(2L))
+                .thenReturn(List.of());
+
+        when(reviewRepository.save(any(Review.class)))
+                .thenAnswer(i -> {
+                    Review r = i.getArgument(0);
+                    r.setId(1L);
+                    return r;
+                });
+
+        ReviewResponseDTO resultado = reviewService.create(dto);
+
+        assertNotNull(resultado);
+
+        verify(compraVentaRepository).findById(10L);
     }
 
 }

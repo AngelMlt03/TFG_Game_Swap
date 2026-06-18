@@ -1,6 +1,8 @@
 package com.tfg.angel.gameswap.backend.service;
 
+import com.tfg.angel.gameswap.backend.business.dto.response.ProductoCarritoResponseDTO;
 import com.tfg.angel.gameswap.backend.business.model.*;
+import com.tfg.angel.gameswap.backend.business.model.enums.EstadoProducto;
 import com.tfg.angel.gameswap.backend.business.repository.*;
 import com.tfg.angel.gameswap.backend.business.service.impl.CarritoServiceImpl;
 import com.tfg.angel.gameswap.backend.exception.GSBadRequestException;
@@ -13,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -321,5 +324,80 @@ class CarritoServiceTest {
                 .thenReturn(true);
 
         assertTrue(service.estaEnCarrito(5L));
+    }
+
+    @Test
+    void getPrecioCarrito2() {
+
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+
+        Carrito carrito = new Carrito();
+        carrito.setId(1L);
+        carrito.setCoste(50.0);
+
+        when(usuarioDetailsService.obtenerUsuarioActual())
+                .thenReturn(usuario);
+
+        when(carritoRepository.findByUsuarioId(1L))
+                .thenReturn(Optional.of(carrito));
+
+        Double resultado = service.getPrecioCarrito();
+
+        assertEquals(50.0, resultado);
+    }
+
+    @Test
+    void getCarrito() {
+
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+
+        Producto producto = new Producto();
+        producto.setId(1L);
+        producto.setIdAPI(100);
+        producto.setNombre("FIFA");
+        producto.setEstado(EstadoProducto.NUEVO);
+
+        Usuario vendedor = new Usuario();
+        vendedor.setId(2L);
+        vendedor.setNombreUsuario("angel");
+
+        PostVenta venta = new PostVenta();
+        venta.setId(10L);
+        venta.setProducto(producto);
+        venta.setVendedor(vendedor);
+        venta.setPrecio(25.0);
+        venta.setDescripcion("desc");
+        venta.setPlataforma("PS5");
+
+        Carrito carrito = new Carrito();
+        carrito.setId(1L);
+
+        ProductoCarrito pc = new ProductoCarrito();
+        pc.setId(1L);
+        pc.setCarrito(carrito);
+        pc.setPostVenta(venta);
+
+        carrito.setProductos(List.of(pc));
+
+        when(usuarioDetailsService.obtenerUsuarioActual())
+                .thenReturn(usuario);
+
+        when(carritoRepository.findByUsuarioId(1L))
+                .thenReturn(Optional.of(carrito));
+
+        when(carritoRepository.save(any(Carrito.class)))
+                .thenAnswer(i -> i.getArgument(0));
+
+        when(productoCarritoRepository.findByCarritoId(1L))
+                .thenReturn(List.of(pc));
+
+        List<ProductoCarritoResponseDTO> resultado =
+                service.getCarrito();
+
+        assertEquals(1, resultado.size());
+
+        verify(carritoRepository).save(any(Carrito.class));
     }
 }

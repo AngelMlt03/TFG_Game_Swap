@@ -482,4 +482,56 @@ class PostIntercambioServiceTest {
                 )
         );
     }
+
+    @Test
+    void create() {
+
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        usuario.setNombreUsuario("angel");
+
+        PostIntercambioRequestDTO dto = new PostIntercambioRequestDTO();
+
+        dto.setNombreProducto("FIFA");
+        dto.setIdApi(100L);
+        dto.setEstadoProducto("NUEVO");
+
+        dto.setNombreProductoIntercambio("COD");
+        dto.setIdApiIntercambio(200L);
+        dto.setEstadoProductoIntercambio("USADO");
+
+        dto.setPlataforma("PS5");
+        dto.setPlataformaIntercambio("XBOX");
+        dto.setDescripcion("Intercambio");
+
+        when(usuarioDetailsService.obtenerUsuarioActual())
+                .thenReturn(usuario);
+
+        when(productoRepository.save(any(Producto.class)))
+                .thenAnswer(invocation -> {
+                    Producto p = invocation.getArgument(0);
+                    if (p.getId() == null) {
+                        p.setId((long) (Math.random() * 1000));
+                    }
+                    return p;
+                });
+
+        when(postIntercambioRepository.save(any(PostIntercambio.class)))
+                .thenAnswer(invocation -> {
+                    PostIntercambio p = invocation.getArgument(0);
+                    p.setId(1L);
+                    return p;
+                });
+
+        PostIntercambioResponseDTO resultado =
+                postIntercambioService.create(dto);
+
+        assertNotNull(resultado);
+
+        verify(productoRepository, times(2))
+                .save(any(Producto.class));
+
+        verify(postIntercambioRepository)
+                .save(any(PostIntercambio.class));
+    }
 }

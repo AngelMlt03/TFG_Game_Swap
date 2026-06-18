@@ -34,6 +34,7 @@
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<sonar.projectKey>AngelMlt03_TFG_Game_Swap</sonar.projectKey>
 		<sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+		<sonar.coverage.exclusions>**/igdb/**,**/IgdbService.java</sonar.coverage.exclusions>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -158,6 +159,11 @@
 						</goals>
 					</execution>
 				</executions>
+				<configuration>
+					<excludes>
+						<exclude>com/tfg/angel/gameswap/backend/igdb/**</exclude>
+					</excludes>
+				</configuration>
 			</plugin>
 
 		</plugins>

@@ -1,21 +1,141 @@
 <div class="home">
-  <h1>Bienvenido a GameSwap 🎮</h1>
-  <p>Compra, vende e intercambia videojuegos fácilmente.</p>
+  <!-- HERO -->
 
-  <div class="cards">
-    <div class="card">
-      <h3>Explorar juegos</h3>
-      <p>Descubre lo que otros usuarios ofrecen</p>
+  <section class="hero">
+    <h1>🎮 Compra, vende e intercambia videojuegos</h1>
+
+    <p>Encuentra ofertas únicas o intercambia los juegos que ya no utilizas.</p>
+
+    <div class="hero-actions">
+      <button class="primary" routerLink="/busqueda">Explorar juegos</button>
+
+      <a
+        class="button"
+        [routerLink]="['/perfil']"
+        [queryParams]="{ tab: 'misPublicaciones' }"
+      >
+        Mis publicaciones
+      </a>
+    </div>
+  </section>
+
+  <!-- STATS -->
+
+  <section class="stats">
+    <div class="stat-card">
+      <h2>{{ stats.ventas }}</h2>
+      <span>Videjuegos en venta</span>
     </div>
 
-    <div class="card">
-      <h3>Publicar</h3>
-      <p>Vende o intercambia tus juegos</p>
+    <div class="stat-card">
+      <h2>{{ stats.intercambios }}</h2>
+      <span>Intercambios disponibles</span>
     </div>
 
-    <div class="card">
-      <h3>Intercambios</h3>
-      <p>Gestiona tus propuestas</p>
+    <div class="stat-card">
+      <h2>{{ stats.usuarios }}</h2>
+      <span>Usuarios registrados</span>
     </div>
-  </div>
+
+    <div class="stat-card">
+      <h2>{{ stats.reviews }}</h2>
+      <span>Reviews enviadas</span>
+    </div>
+  </section>
+
+  <!-- TOP USUARIOS -->
+
+  <section>
+    <h2 class="section-title">Usuarios mejor valorados</h2>
+
+    <div class="users-grid">
+      <div
+        *ngFor="let usuario of topUsuarios"
+        class="user-card"
+        (click)="abrirPerfil(usuario.nombreUsuario)"
+      >
+        <img
+          [src]="
+            'https://ui-avatars.com/api/?name=' +
+            usuario.nombreUsuario +
+            '&background=random'
+          "
+        />
+
+        <h4>
+          {{ usuario.nombreUsuario }}
+        </h4>
+
+        <span class="rating"> ★ {{ usuario.estrellas }} </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLATAFORMAS -->
+
+  <section>
+    <h2 class="section-title">Plataformas populares</h2>
+
+    <div class="platforms">
+      <div
+        *ngFor="let plataforma of plataformas"
+        class="platform-card"
+        (click)="buscarPorPlataforma(plataforma)"
+      >
+        {{ plataforma }}
+      </div>
+    </div>
+  </section>
+
+  <!-- ULTIMAS VENTAS -->
+
+  <section>
+    <h2 class="section-title">Últimos videjuegos en venta</h2>
+
+    <div class="cards-grid">
+      <div
+        *ngFor="let venta of ventas"
+        class="game-card"
+        (click)="abrirPost(venta)"
+      >
+        <img [src]="getImagen(venta.idApi)" />
+
+        <h4>{{ venta.nombreProducto }}</h4>
+
+        <p>{{ venta.plataforma }}</p>
+
+        <span> {{ venta.precio }}€ </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ULTIMOS INTERCAMBIOS -->
+
+  <section>
+    <h2 class="section-title">Intercambios más recientes</h2>
+
+    <div class="cards-grid">
+      <div
+        *ngFor="let intercambio of intercambios"
+        class="game-card"
+        (click)="abrirPost(intercambio)"
+      >
+        <img [src]="getImagen(intercambio.idApi)" />
+
+        <h4>{{ intercambio.nombreProducto }}</h4>
+
+        <span class="swap-badge">⇄ Intercambio</span>
+
+        <h4>{{ intercambio.nombreProductoIntercambio }}</h4>
+      </div>
+    </div>
+  </section>
 </div>
+
+<app-post-detalle
+  [isOpen]="modalOpen"
+  [post]="postSeleccionado"
+  (close)="cerrarModal()"
+  [externPostImg]="imagenes[postSeleccionado?.idApi]"
+  [externPostIntercambioImg]="imagenes[postSeleccionado?.idApiIntercambio]"
+></app-post-detalle>

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { ActivatedRoute, RouterOutlet } from '@angular/router';
 import { FooterComponent } from '../shared/components/footer/footer.component';
 import { NavbarComponent } from '../shared/components/navbar/navbar.component';
 

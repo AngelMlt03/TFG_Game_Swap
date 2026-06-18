@@ -23,9 +23,9 @@ describe('ThemeService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('initTheme() debe establecer "light" por defecto si el localStorage está vacío', () => {
+  it('initTheme() debe establecer "dark" por defecto si el localStorage está vacío', () => {
     service.initTheme();
-    expect(document.body.className).toBe('light');
+    expect(document.body.className).toBe('dark');
   });
 
   it('initTheme() debe establecer el tema desde el localStorage si existe', () => {

@@ -1,0 +1,114 @@
+/* OVERLAY */
+
+.modal {
+  display: flex;
+  margin: auto;
+
+  position: fixed;
+  inset: 0;
+
+  width: 100vw;
+  height: 100vh;
+
+  background: rgba(0, 0, 0, 0.72);
+  background: rgba(0, 0, 0, 0.72);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 24px;
+
+  z-index: 9999;
+
+  animation: fadeIn 0.22s ease;
+}
+
+/* CONTENIDO */
+
+.modal-content {
+  width: 100%;
+  max-width: 900px;
+  max-height: 80vh;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding: 28px;
+
+  border-radius: 24px;
+
+  background: linear-gradient(
+    145deg,
+    rgba(22, 22, 22, 0.98),
+    rgba(10, 10, 10, 0.99)
+  );
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+
+  position: relative;
+
+  animation: modalIn 0.24s ease;
+}
+
+/* TITULO */
+
+#title {
+  margin: 0 0 26px;
+
+  text-align: center;
+
+  font-size: 30px;
+  font-weight: 700;
+
+  color: white;
+}
+
+/* BOTON CERRAR */
+
+.modal-content > button:last-child {
+  margin-top: 24px;
+}
+
+/* ANIMACIONES */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalIn {
+  from {
+    transform: translateY(10px) scale(0.96);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+  .modal {
+    padding: 14px;
+  }
+
+  .modal-content {
+    padding: 20px;
+    border-radius: 20px;
+  }
+
+  #title {
+    font-size: 24px;
+  }
+}

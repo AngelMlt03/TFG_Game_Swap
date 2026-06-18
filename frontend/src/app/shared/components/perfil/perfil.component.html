@@ -1,0 +1,196 @@
+<div class="perfil-wrapper">
+  <!-- HEADER -->
+
+  <div class="perfil-header">
+    <div class="perfil-top">
+      <!-- AVATAR -->
+
+      <div class="avatar-section">
+        <img
+          class="avatar"
+          [src]="
+            'https://ui-avatars.com/api/?name=' +
+            usuario.nombreUsuario +
+            '&background=random&size=256'
+          "
+        />
+      </div>
+
+      <!-- INFO -->
+
+      <div class="perfil-info">
+        <div class="perfil-title-row">
+          <div>
+            <h1>{{ usuario.nombre }}</h1>
+
+            <p class="username">
+              {{ usuario.nombreUsuario }}
+            </p>
+          </div>
+
+          <a class="close-btn" routerLink="/"> ✕ </a>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="label"> Email </span>
+
+            <span class="value">
+              {{ usuario.correo }}
+            </span>
+          </div>
+
+          <div class="stat-card" *ngIf="!esPerfilPublico">
+            <span class="label"> Fecha de nacimiento </span>
+
+            <span class="value">
+              {{ usuario.fechaNacimiento }}
+            </span>
+          </div>
+
+          <div class="stat-card" *ngIf="!esPerfilPublico">
+            <span class="label"> Saldo </span>
+
+            <span class="value saldo"> {{ usuario.saldo }} € </span>
+          </div>
+
+          <div class="stat-card">
+            <span class="label"> Valoración </span>
+
+            <span class="value estrellas"> {{ usuario.estrellas }} ★ </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FORMULARIO -->
+
+    <div class="edit-section" *ngIf="editMode || editPassword">
+      <!-- EDITAR PERFIL -->
+
+      <div *ngIf="editMode">
+        <div class="field">
+          <label>Nombre</label>
+
+          <input [(ngModel)]="usuario.nombre" />
+        </div>
+
+        <div class="field">
+          <label>Email</label>
+
+          <input [(ngModel)]="usuario.correo" />
+        </div>
+
+        <div class="field">
+          <label>Fecha de nacimiento</label>
+
+          <input type="date" [(ngModel)]="usuario.fechaNacimiento" />
+        </div>
+      </div>
+
+      <!-- CAMBIAR PASSWORD -->
+
+      <div *ngIf="editPassword">
+        <div class="field">
+          <label>Contraseña actual</label>
+
+          <input type="password" [(ngModel)]="currentPassword" />
+        </div>
+
+        <div class="field">
+          <label>Nueva contraseña</label>
+
+          <input type="password" [(ngModel)]="newPassword" />
+        </div>
+      </div>
+    </div>
+
+    <!-- ACCIONES -->
+
+    <div class="actions" *ngIf="!esPerfilPublico">
+      <button
+        *ngIf="!editMode"
+        [ngClass]="editPassword ? 'oculto' : ''"
+        (click)="toggleEdit()"
+      >
+        Editar perfil
+      </button>
+
+      <button *ngIf="editMode" (click)="guardar()">Guardar cambios</button>
+
+      <button
+        *ngIf="!editPassword"
+        [ngClass]="editMode ? 'oculto' : ''"
+        (click)="togglePassword()"
+      >
+        Cambiar contraseña
+      </button>
+
+      <button *ngIf="editPassword" (click)="guardarPassword()">
+        Guardar contraseña
+      </button>
+
+      <button *ngIf="editPassword" class="danger" (click)="togglePassword()">
+        Cancelar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- LOADING -->
+
+<ng-template #cargando>
+  <p class="loading">Cargando perfil...</p>
+</ng-template>
+
+<!-- TABS -->
+
+<div class="tabs-container" #tabsSection>
+  <div class="tabs">
+    <button *ngIf="!esPerfilPublico"
+      [class.active]="activeTab === 'guardados'"
+      (click)="setTab('guardados')"
+    >
+      Guardados
+    </button>
+
+    <button 
+      [class.active]="activeTab === 'misPublicaciones'"
+      (click)="setTab('misPublicaciones')"
+    >
+      {{esPerfilPublico ? '' : 'Mis'}} Publicaciones
+    </button>
+
+    <button *ngIf="!esPerfilPublico"
+      [class.active]="activeTab === 'historial'"
+      (click)="setTab('historial')"
+    >
+      Historial
+    </button>
+
+    <button
+      [class.active]="activeTab === 'reviews'"
+      (click)="setTab('reviews')"
+    >
+      Reviews
+    </button>
+  </div>
+
+  <div class="tab-content">
+    <div *ngIf="activeTab === 'guardados'">
+      <app-guardados></app-guardados>
+    </div>
+
+    <div *ngIf="activeTab === 'misPublicaciones'">
+      <app-mis-publicaciones [nombreUsuario]="usuario.nombreUsuario" [esPerfilPublico]="esPerfilPublico"></app-mis-publicaciones>
+    </div>
+
+    <div *ngIf="activeTab === 'historial'">
+      <app-historial></app-historial>
+    </div>
+
+    <div *ngIf="activeTab === 'reviews'">
+      <app-reviews [nombreUsuario]="usuario.nombreUsuario" [esPerfilPublico]="esPerfilPublico"></app-reviews>
+    </div>
+  </div>
+</div>

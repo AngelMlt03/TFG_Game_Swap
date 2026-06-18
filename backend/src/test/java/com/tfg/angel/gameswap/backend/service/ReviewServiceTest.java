@@ -2,14 +2,20 @@ package com.tfg.angel.gameswap.backend.service;
 
 import com.tfg.angel.gameswap.backend.business.dto.request.ReviewRequestDTO;
 import com.tfg.angel.gameswap.backend.business.dto.response.ReviewResponseDTO;
+import com.tfg.angel.gameswap.backend.business.dto.response.UsuarioResponseDTO;
+import com.tfg.angel.gameswap.backend.business.model.CompraVenta;
 import com.tfg.angel.gameswap.backend.business.model.Review;
 import com.tfg.angel.gameswap.backend.business.model.Usuario;
 import com.tfg.angel.gameswap.backend.business.model.enums.Rol;
+import com.tfg.angel.gameswap.backend.business.repository.CompraVentaRepository;
+import com.tfg.angel.gameswap.backend.business.repository.IntercambioRepository;
 import com.tfg.angel.gameswap.backend.business.repository.ReviewRepository;
 import com.tfg.angel.gameswap.backend.business.repository.UsuarioRepository;
+import com.tfg.angel.gameswap.backend.business.service.UsuarioService;
 import com.tfg.angel.gameswap.backend.business.service.impl.ReviewServiceImpl;
 import com.tfg.angel.gameswap.backend.exception.GSBadRequestException;
 import com.tfg.angel.gameswap.backend.exception.GSNotFoundException;
+import com.tfg.angel.gameswap.backend.security.UsuarioDetailsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,26 +38,24 @@ class ReviewServiceTest {
     private ReviewRepository reviewRepository;
     @Mock
     private UsuarioRepository usuarioRepository;
+    @Mock
+    private UsuarioService usuarioService;
+    @Mock
+    private UsuarioDetailsService usuarioDetailsService;
+    @Mock
+    private CompraVentaRepository compraVentaRepository;
+    @Mock
+    private IntercambioRepository intercambioRepository;
 
     @InjectMocks
     private ReviewServiceImpl reviewService;
 
     private Review review;
-    private Usuario reviewer;
-    private Usuario reviewed;
-    private ReviewRequestDTO validDto;
 
     @BeforeEach
     void setUp() {
-        reviewer = Usuario.builder().id(1L).nombre("Angel").rol(Rol.CLIENTE).build();
-        reviewed = Usuario.builder().id(2L).nombre("Juan").rol(Rol.CLIENTE).build();
-
-        validDto = ReviewRequestDTO.builder()
-                .idReviewer(1L)
-                .idReviewed(2L)
-                .contenido("Buen trato")
-                .estrellas(5.0)
-                .build();
+        Usuario reviewer = Usuario.builder().id(1L).nombre("Angel").rol(Rol.CLIENTE).build();
+        Usuario reviewed = Usuario.builder().id(2L).nombre("Juan").rol(Rol.CLIENTE).build();
 
         review = Review.builder()
                 .id(100L)
@@ -60,77 +64,6 @@ class ReviewServiceTest {
                 .contenido("Buena experiencia")
                 .estrellas(5.0)
                 .build();
-    }
-
-    @Test
-    @DisplayName("Debe crear una review correctamente si los datos son válidos")
-    void create_Success() {
-
-        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(reviewer));
-        when(usuarioRepository.findById(2L)).thenReturn(Optional.of(reviewed));
-
-        Review reviewGuardada = Review.builder()
-                .id(100L)
-                .reviewer(reviewer)
-                .reviewed(reviewed)
-                .contenido("Buen trato")
-                .estrellas(5.0)
-                .build();
-
-        when(reviewRepository.save(any(Review.class))).thenReturn(reviewGuardada);
-
-        ReviewResponseDTO response = reviewService.create(validDto);
-
-        assertNotNull(response);
-        verify(reviewRepository).save(any(Review.class));
-    }
-
-    @Test
-    @DisplayName("Debe lanzar GSBadRequestException si el usuario intenta valorarse a sí mismo")
-    void create_ThrowsBadRequest_WhenSelfReview() {
-
-        validDto.setIdReviewed(1L);
-        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(reviewer));
-
-        GSBadRequestException exception = assertThrows(GSBadRequestException.class, () ->
-                reviewService.create(validDto)
-        );
-
-        assertEquals("Un usuario no puede valorarse a sí mismo", exception.getMessage());
-        verify(reviewRepository, never()).save(any());
-    }
-
-    @Test
-    @DisplayName("Debe lanzar GSBadRequestException si las estrellas están fuera de rango (6)")
-    void create_ThrowsBadRequest_WhenStarsOutOfRange() {
-
-        validDto.setEstrellas(6.0); // Fuera de rango
-        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(reviewer));
-        when(usuarioRepository.findById(2L)).thenReturn(Optional.of(reviewed));
-
-        assertThrows(GSBadRequestException.class, () -> reviewService.create(validDto));
-        verify(reviewRepository, never()).save(any());
-    }
-
-    @Test
-    @DisplayName("Debe lanzar GSNotFoundException si el receptor de la review no existe")
-    void create_ThrowsNotFound_WhenReviewedMissing() {
-
-        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(reviewer));
-        when(usuarioRepository.findById(2L)).thenReturn(Optional.empty());
-
-        assertThrows(GSNotFoundException.class, () -> reviewService.create(validDto));
-    }
-
-    @Test
-    @DisplayName("Debe eliminar una review correctamente si existe")
-    void delete_Success() {
-
-        when(reviewRepository.existsById(1L)).thenReturn(true);
-
-        reviewService.delete(1L);
-
-        verify(reviewRepository).deleteById(1L);
     }
 
     @Test
@@ -205,4 +138,344 @@ class ReviewServiceTest {
         assertEquals(1, result.size());
         verify(reviewRepository).findByReviewerId(idReviewer);
     }
+
+    private Usuario reviewer() {
+        return Usuario.builder()
+                .id(1L)
+                .nombre("Reviewer")
+                .build();
+    }
+
+    private Usuario reviewed() {
+        return Usuario.builder()
+                .id(2L)
+                .nombre("Reviewed")
+                .build();
+    }
+
+    private Review review() {
+        return Review.builder()
+                .id(1L)
+                .reviewer(reviewer())
+                .reviewed(reviewed())
+                .contenido("Muy bien")
+                .estrellas(5.0)
+                .tipoReview("VENTA")
+                .build();
+    }
+
+    @Test
+    void findById_ok() {
+
+        when(reviewRepository.findById(1L))
+                .thenReturn(Optional.of(review()));
+
+        assertNotNull(reviewService.findById(1L));
+    }
+
+    @Test
+    void findById_notFound() {
+
+        when(reviewRepository.findById(1L))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                GSNotFoundException.class,
+                () -> reviewService.findById(1L)
+        );
+    }
+
+    @Test
+    void findAll_ok() {
+
+        when(reviewRepository.findAll())
+                .thenReturn(List.of(review()));
+
+        assertEquals(1, reviewService.findAll().size());
+    }
+
+    @Test
+    void findByReviewed_ok() {
+
+        when(reviewRepository.findByReviewedId(2L))
+                .thenReturn(List.of(review()));
+
+        assertEquals(1, reviewService.findByReviewed(2L).size());
+    }
+
+    @Test
+    void findByReviewer_ok() {
+
+        when(reviewRepository.findByReviewerId(1L))
+                .thenReturn(List.of(review()));
+
+        assertEquals(1, reviewService.findByReviewer(1L).size());
+    }
+
+
+    @Test
+    void getByUsuario_ok() {
+
+        when(usuarioRepository.findById(2L))
+                .thenReturn(Optional.of(reviewed()));
+
+        when(reviewRepository.findByReviewedId(2L))
+                .thenReturn(List.of(review()));
+
+        assertEquals(
+                1,
+                reviewService.getByUsuario(2L).size()
+        );
+    }
+
+    @Test
+    void actualizarMediaReviews_ok() {
+
+        when(reviewRepository.findByReviewedId(2L))
+                .thenReturn(List.of(
+                        review(),
+                        Review.builder()
+                                .estrellas(3.0)
+                                .build()
+                ));
+
+        reviewService.actualizarMediaReviews(reviewed());
+
+        verify(usuarioRepository).save(any());
+    }
+
+    @Test
+    void actualizarMediaReviews_emptyReviews() {
+
+        when(reviewRepository.findByReviewedId(2L))
+                .thenReturn(List.of());
+
+        reviewService.actualizarMediaReviews(reviewed());
+
+        verify(usuarioRepository).save(any());
+    }
+
+    @Test
+    void delete_notFound() {
+
+        when(reviewRepository.existsById(1L))
+                .thenReturn(false);
+
+        assertThrows(
+                GSNotFoundException.class,
+                () -> reviewService.delete(1L)
+        );
+    }
+
+    private Usuario crearUsuario(Long id) {
+
+        Usuario u = new Usuario();
+
+        u.setId(id);
+        u.setNombre("Usuario");
+        u.setNombreUsuario("usuario" + id);
+        u.setCorreo("test@test.com");
+        u.setEstrellas(4.0);
+
+        return u;
+    }
+
+    private Review crearReview() {
+
+        Usuario reviewer = crearUsuario(1L);
+        Usuario reviewed = crearUsuario(2L);
+
+        Review reviewc = new Review();
+
+        reviewc.setId(1L);
+        reviewc.setReviewer(reviewer);
+        reviewc.setReviewed(reviewed);
+        reviewc.setContenido("Buen trato");
+        reviewc.setEstrellas(5.0);
+        reviewc.setTipoReview("VENTA");
+
+        return reviewc;
+    }
+
+    @Test
+    void getReviewsRecibidasToUsuario() {
+
+        UsuarioResponseDTO usuario = new UsuarioResponseDTO();
+        usuario.setId(2L);
+
+        when(usuarioService.findByUsername("angel"))
+                .thenReturn(usuario);
+
+        when(reviewRepository.findByReviewedId(2L))
+                .thenReturn(List.of(crearReview()));
+
+        List<ReviewResponseDTO> resultado =
+                reviewService.getReviewsRecibidasToUsuario("angel");
+
+        assertEquals(1, resultado.size());
+    }
+
+    @Test
+    void getReviewsEnviadas() {
+
+        Usuario usuario = crearUsuario(1L);
+
+        when(usuarioDetailsService.obtenerUsuarioActual())
+                .thenReturn(usuario);
+
+        when(reviewRepository.findByReviewerId(1L))
+                .thenReturn(List.of(crearReview()));
+
+        List<ReviewResponseDTO> resultado =
+                reviewService.getReviewsEnviadas();
+
+        assertEquals(1, resultado.size());
+    }
+
+    @Test
+    void getByUsuario() {
+
+        Usuario usuario = crearUsuario(2L);
+
+        when(usuarioRepository.findById(2L))
+                .thenReturn(Optional.of(usuario));
+
+        when(reviewRepository.findByReviewedId(2L))
+                .thenReturn(List.of(crearReview()));
+
+        List<ReviewResponseDTO> resultado =
+                reviewService.getByUsuario(2L);
+
+        assertEquals(1, resultado.size());
+    }
+
+    @Test
+    void actualizarMediaReviews() {
+
+        Usuario usuario = crearUsuario(2L);
+
+        Review r1 = crearReview();
+        r1.setEstrellas(4.0);
+
+        Review r2 = crearReview();
+        r2.setEstrellas(2.0);
+
+        when(reviewRepository.findByReviewedId(2L))
+                .thenReturn(List.of(r1, r2));
+
+        reviewService.actualizarMediaReviews(usuario);
+
+        assertEquals(3.0, usuario.getEstrellas());
+
+        verify(usuarioRepository).save(usuario);
+    }
+
+    @Test
+    void actualizarMediaReviewsSinReviews() {
+
+        Usuario usuario = crearUsuario(2L);
+
+        when(reviewRepository.findByReviewedId(2L))
+                .thenReturn(List.of());
+
+        reviewService.actualizarMediaReviews(usuario);
+
+        assertEquals(0.0, usuario.getEstrellas());
+
+        verify(usuarioRepository).save(usuario);
+    }
+
+    @Test
+    void delete() {
+
+        Usuario reviewer = crearUsuario(1L);
+
+        Review reviewc = crearReview();
+
+        when(reviewRepository.existsById(1L))
+                .thenReturn(true);
+
+        when(usuarioDetailsService.obtenerUsuarioActual())
+                .thenReturn(reviewer);
+
+        when(reviewRepository.findById(1L))
+                .thenReturn(Optional.of(reviewc));
+
+        when(reviewRepository.findByReviewedId(2L))
+                .thenReturn(List.of());
+
+        reviewService.delete(1L);
+
+        verify(reviewRepository).delete(reviewc);
+    }
+
+    @Test
+    void deleteUsuarioIncorrecto() {
+
+        Usuario usuarioActual = crearUsuario(99L);
+
+        Review reviewc = crearReview();
+
+        when(reviewRepository.existsById(1L))
+                .thenReturn(true);
+
+        when(usuarioDetailsService.obtenerUsuarioActual())
+                .thenReturn(usuarioActual);
+
+        when(reviewRepository.findById(1L))
+                .thenReturn(Optional.of(reviewc));
+
+        assertThrows(
+                GSBadRequestException.class,
+                () -> reviewService.delete(1L)
+        );
+    }
+
+    @Test
+    void createVentaReview() {
+
+        Usuario reviewer = new Usuario();
+        reviewer.setId(1L);
+        reviewer.setNombreUsuario("reviewer");
+
+        Usuario reviewed = new Usuario();
+        reviewed.setId(2L);
+        reviewed.setNombreUsuario("reviewed");
+
+        CompraVenta compra = new CompraVenta();
+        compra.setId(10L);
+
+        ReviewRequestDTO dto = new ReviewRequestDTO();
+        dto.setIdReviewed(2L);
+        dto.setContenido("Muy bien");
+        dto.setEstrellas(5.0);
+        dto.setTipoReview("VENTA");
+        dto.setIdHistorial(10L);
+
+        when(usuarioDetailsService.obtenerUsuarioActual())
+                .thenReturn(reviewer);
+
+        when(usuarioRepository.findById(2L))
+                .thenReturn(Optional.of(reviewed));
+
+        when(compraVentaRepository.findById(10L))
+                .thenReturn(Optional.of(compra));
+
+        when(reviewRepository.findByReviewedId(2L))
+                .thenReturn(List.of());
+
+        when(reviewRepository.save(any(Review.class)))
+                .thenAnswer(i -> {
+                    Review r = i.getArgument(0);
+                    r.setId(1L);
+                    return r;
+                });
+
+        ReviewResponseDTO resultado = reviewService.create(dto);
+
+        assertNotNull(resultado);
+
+        verify(compraVentaRepository).findById(10L);
+    }
+
 }

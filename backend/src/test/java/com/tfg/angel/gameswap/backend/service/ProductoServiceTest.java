@@ -130,4 +130,140 @@ class ProductoServiceTest {
         assertThrows(GSNotFoundException.class, () -> productoService.delete(1L));
         verify(productoRepository, never()).deleteById(anyLong());
     }
+
+    private Producto producto() {
+        return Producto.builder()
+                .id(1L)
+                .idAPI(100)
+                .nombre("Zelda")
+                .estado(EstadoProducto.NUEVO)
+                .build();
+    }
+
+    private ProductoRequestDTO dto() {
+        ProductoRequestDTO dto = new ProductoRequestDTO();
+
+        dto.setIdAPI(100);
+        dto.setNombre("Zelda");
+        dto.setEstado(EstadoProducto.NUEVO);
+
+        return dto;
+    }
+
+    @Test
+    void create_ok() {
+
+        when(productoRepository.save(any(Producto.class)))
+                .thenAnswer(i -> i.getArgument(0));
+
+        ProductoResponseDTO resultado =
+                productoService.create(dto());
+
+        assertNotNull(resultado);
+
+        verify(productoRepository)
+                .save(any(Producto.class));
+    }
+
+    @Test
+    void findById_ok() {
+
+        when(productoRepository.findById(1L))
+                .thenReturn(Optional.of(producto()));
+
+        ProductoResponseDTO resultado =
+                productoService.findById(1L);
+
+        assertNotNull(resultado);
+        assertEquals("Zelda", resultado.getNombre());
+    }
+
+    @Test
+    void findById_notFound() {
+
+        when(productoRepository.findById(1L))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                GSNotFoundException.class,
+                () -> productoService.findById(1L)
+        );
+    }
+
+    @Test
+    void findAll_ok() {
+
+        when(productoRepository.findAll())
+                .thenReturn(List.of(producto()));
+
+        List<ProductoResponseDTO> resultado =
+                productoService.findAll();
+
+        assertEquals(1, resultado.size());
+    }
+
+    @Test
+    void findByName_ok() {
+
+        when(productoRepository.findByNombreContainingIgnoreCase("zel"))
+                .thenReturn(List.of(producto()));
+
+        List<ProductoResponseDTO> resultado =
+                productoService.findByName("zel");
+
+        assertEquals(1, resultado.size());
+    }
+
+    @Test
+    void findByState_ok() {
+
+        when(productoRepository.findByEstado(EstadoProducto.NUEVO))
+                .thenReturn(List.of(producto()));
+
+        List<ProductoResponseDTO> resultado =
+                productoService.findByState("nuevo");
+
+        assertEquals(1, resultado.size());
+    }
+
+    @Test
+    void findByState_invalidState() {
+
+        assertThrows(
+                GSBadRequestException.class,
+                () -> productoService.findByState("ESTADO_INVENTADO")
+        );
+    }
+
+    @Test
+    void update_ok() {
+
+        Producto productou = producto();
+
+        when(productoRepository.findById(1L))
+                .thenReturn(Optional.of(productou));
+
+        when(productoRepository.save(any(Producto.class)))
+                .thenAnswer(i -> i.getArgument(0));
+
+        ProductoResponseDTO resultado =
+                productoService.update(1L, dto());
+
+        assertNotNull(resultado);
+
+        verify(productoRepository)
+                .save(productou);
+    }
+
+    @Test
+    void delete_notFound() {
+
+        when(productoRepository.existsById(1L))
+                .thenReturn(false);
+
+        assertThrows(
+                GSNotFoundException.class,
+                () -> productoService.delete(1L)
+        );
+    }
 }

@@ -4,25 +4,29 @@ import com.tfg.angel.gameswap.backend.business.dto.response.CompraVentaResponseD
 import com.tfg.angel.gameswap.backend.business.model.CompraVenta;
 
 public class CompraVentaMapper {
+    private CompraVentaMapper() { }
 
-    public static CompraVentaResponseDTO toDTO(CompraVenta entity) {
 
+    public static CompraVentaResponseDTO toDTO(CompraVenta c) {
         return CompraVentaResponseDTO.builder()
-                .id(entity.getId())
+                .id(c.getId())
 
-                .idComprador(entity.getComprador().getId())
-                .nombreComprador(entity.getComprador().getNombre())
+                .idComprador(c.getComprador().getId())
+                .nombreComprador(c.getComprador().getNombreUsuario())
 
-                .idVendedor(entity.getPostVenta().getVendedor().getId())
-                .nombreVendedor(entity.getPostVenta().getVendedor().getNombre())
+                .idVendedor(c.getPostVenta().getVendedor().getId())
+                .nombreVendedor(c.getPostVenta().getVendedor().getNombreUsuario())
 
-                .idProducto(entity.getPostVenta().getProducto().getId())
-                .nombreProducto(entity.getPostVenta().getProducto().getNombre())
+                .idProducto(c.getPostVenta().getProducto().getId())
+                .idApiProducto(c.getPostVenta().getProducto().getIdAPI().longValue())
+                .nombreProducto(c.getPostVenta().getProducto().getNombre())
+                .plataformaProducto(c.getPostVenta().getPlataforma())
+                .estadoProducto(c.getPostVenta().getProducto().getEstado().toString())
+                .precio(c.getPrecio())
 
-                .idPostVenta(entity.getPostVenta().getId())
-                .precio(entity.getPrecio())
+                .descripcion(c.getPostVenta().getDescripcion())
 
-                .fecha(entity.getFecha())
+                .fecha(c.getFecha())
                 .build();
     }
 }

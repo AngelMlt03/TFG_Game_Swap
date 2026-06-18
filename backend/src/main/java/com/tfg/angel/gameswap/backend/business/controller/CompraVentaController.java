@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/compras")
+@RequestMapping("/api/compraventas")
 @RequiredArgsConstructor
 public class CompraVentaController {
 
@@ -16,9 +16,7 @@ public class CompraVentaController {
 
     @PostMapping("/{idPostVenta}")
     public CompraVentaResponseDTO create(@PathVariable Long idPostVenta) {
-
         Long idUsuario = 1L;
-
         return service.create(idPostVenta, idUsuario);
     }
 

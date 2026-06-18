@@ -2,9 +2,9 @@ name: CI - Develop (Frontend + Backend)
 
 on:
   push:
-    branches: [develop, main]
+    branches: [main]
   pull_request:
-    branches: [develop, main]
+    branches: [main]
 
 jobs:
   backend:

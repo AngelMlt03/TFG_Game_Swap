@@ -16,3 +16,6 @@ spring:
 
 server:
   port: ${PORT:8080}
+
+frontend:
+  url: https://tfg-game-swap-frontend.onrender.com

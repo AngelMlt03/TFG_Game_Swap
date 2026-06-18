@@ -45,6 +45,6 @@ class PostIntercambioMapperTest {
         assertEquals(1L, dto.getId());
         assertEquals(usuario.getId(), dto.getIdUsuario());
         assertEquals(producto1.getId(), dto.getIdProducto());
-        assertEquals(producto2.getId(), dto.getIdProductoCambio());
+        assertEquals(producto2.getId(), dto.getIdProductoIntercambio());
     }
 }

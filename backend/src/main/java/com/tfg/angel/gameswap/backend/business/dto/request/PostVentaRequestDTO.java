@@ -9,7 +9,12 @@ import lombok.*;
 @Builder
 public class PostVentaRequestDTO {
 
-    private Long idVendedor;
     private Long idProducto;
+    private Long idApi;
+    private String nombreProducto;
+    private String plataforma;
+    private String estadoProducto;
+
     private Double precio;
+    private String descripcion;
 }

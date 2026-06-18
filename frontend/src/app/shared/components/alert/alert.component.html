@@ -1,0 +1,15 @@
+<div
+  class="custom-alert"
+  *ngIf="visible"
+  [class.success]="tipo === 'success'"
+  [class.error]="tipo === 'error'"
+  [class.info]="tipo === 'info'"
+>
+  <span class="mensaje">
+    {{ mensaje }}
+  </span>
+
+  <button class="cerrar-btn" (click)="cerrar()">
+    <span>✕</span>
+  </button>
+</div>

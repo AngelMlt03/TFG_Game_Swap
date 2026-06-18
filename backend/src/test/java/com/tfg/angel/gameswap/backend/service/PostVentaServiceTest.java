@@ -1,19 +1,21 @@
 package com.tfg.angel.gameswap.backend.service;
 
+import com.tfg.angel.gameswap.backend.business.dto.request.PostIntercambioRequestDTO;
 import com.tfg.angel.gameswap.backend.business.dto.request.PostVentaRequestDTO;
 import com.tfg.angel.gameswap.backend.business.dto.response.PostVentaResponseDTO;
+import com.tfg.angel.gameswap.backend.business.model.PostIntercambio;
 import com.tfg.angel.gameswap.backend.business.model.PostVenta;
 import com.tfg.angel.gameswap.backend.business.model.Producto;
 import com.tfg.angel.gameswap.backend.business.model.Usuario;
 import com.tfg.angel.gameswap.backend.business.model.enums.EstadoPost;
 import com.tfg.angel.gameswap.backend.business.model.enums.EstadoProducto;
-import com.tfg.angel.gameswap.backend.business.model.enums.Rol;
+import com.tfg.angel.gameswap.backend.business.repository.PostIntercambioRepository;
 import com.tfg.angel.gameswap.backend.business.repository.PostVentaRepository;
 import com.tfg.angel.gameswap.backend.business.repository.ProductoRepository;
 import com.tfg.angel.gameswap.backend.business.repository.UsuarioRepository;
 import com.tfg.angel.gameswap.backend.business.service.impl.PostVentaServiceImpl;
 import com.tfg.angel.gameswap.backend.exception.GSNotFoundException;
-import org.junit.jupiter.api.BeforeEach;
+import com.tfg.angel.gameswap.backend.security.UsuarioDetailsService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,92 +39,13 @@ class PostVentaServiceTest {
     private UsuarioRepository usuarioRepository;
     @Mock
     private ProductoRepository productoRepository;
+    @Mock
+    private PostIntercambioRepository postIntercambioRepository;
+    @Mock
+    private UsuarioDetailsService usuarioDetailsService;
 
     @InjectMocks
     private PostVentaServiceImpl postVentaService;
-
-    private Usuario vendedor;
-    private Producto producto;
-    private PostVentaRequestDTO requestDTO;
-    private PostVenta postVenta;
-
-    @BeforeEach
-    void setUp() {
-
-        vendedor = Usuario.builder().id(1L).nombre("Angel").rol(Rol.CLIENTE).build();
-
-        producto = Producto.builder()
-                .id(1L)
-                .nombre("Elden Ring")
-                .estado(EstadoProducto.NUEVO)
-                .build();
-
-        requestDTO = PostVentaRequestDTO.builder()
-                .idVendedor(1L)
-                .idProducto(1L)
-                .precio(50.0)
-                .build();
-
-        postVenta = PostVenta.builder()
-                .id(100L)
-                .vendedor(vendedor)
-                .producto(producto)
-                .precio(50.0)
-                .estado(EstadoPost.ACTIVO)
-                .build();
-    }
-
-    @Test
-    @DisplayName("Debe crear un post de venta correctamente")
-    void create_Success() {
-
-        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(vendedor));
-        when(productoRepository.findById(1L)).thenReturn(Optional.of(producto));
-        when(postVentaRepository.save(any(PostVenta.class))).thenReturn(postVenta);
-
-        PostVentaResponseDTO response = postVentaService.create(requestDTO);
-
-        assertNotNull(response);
-        verify(postVentaRepository).save(any(PostVenta.class));
-        verify(usuarioRepository).findById(1L);
-    }
-
-    @Test
-    @DisplayName("Debe lanzar GSNotFoundException si el vendedor no existe al crear")
-    void create_ThrowsNotFound_WhenVendedorMissing() {
-
-        when(usuarioRepository.findById(1L)).thenReturn(Optional.empty());
-
-        assertThrows(GSNotFoundException.class, () -> postVentaService.create(requestDTO));
-        verify(postVentaRepository, never()).save(any());
-    }
-
-    @Test
-    @DisplayName("Debe buscar un post de venta por ID")
-    void findById_Success() {
-
-        when(postVentaRepository.findById(100L)).thenReturn(Optional.of(postVenta));
-
-        PostVentaResponseDTO response = postVentaService.findById(100L);
-
-        assertNotNull(response);
-        verify(postVentaRepository).findById(100L);
-    }
-
-    @Test
-    @DisplayName("Debe actualizar un post de venta correctamente")
-    void update_Success() {
-
-        when(postVentaRepository.findById(100L)).thenReturn(Optional.of(postVenta));
-        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(vendedor));
-        when(productoRepository.findById(1L)).thenReturn(Optional.of(producto));
-        when(postVentaRepository.save(any(PostVenta.class))).thenReturn(postVenta);
-
-        PostVentaResponseDTO response = postVentaService.update(100L, requestDTO);
-
-        assertNotNull(response);
-        verify(postVentaRepository).save(postVenta);
-    }
 
     @Test
     @DisplayName("Debe lanzar GSNotFoundException al intentar borrar un post que no existe")
@@ -145,54 +68,330 @@ class PostVentaServiceTest {
         verify(postVentaRepository).deleteById(100L);
     }
 
-    @Test
-    @DisplayName("Debe retornar la lista completa de posts")
-    void findAll_Success() {
+    private Usuario usuario() {
+        return Usuario.builder()
+                .id(1L)
+                .nombre("Angel")
+                .build();
+    }
 
-        when(postVentaRepository.findAll()).thenReturn(List.of(postVenta, postVenta));
+    private Producto producto() {
+        return Producto.builder()
+                .id(1L)
+                .nombre("Zelda")
+                .idAPI(100)
+                .estado(EstadoProducto.NUEVO)
+                .build();
+    }
 
-        List<PostVentaResponseDTO> result = postVentaService.findAll();
+    private PostVenta postVenta() {
+        return PostVenta.builder()
+                .id(1L)
+                .vendedor(usuario())
+                .producto(producto())
+                .plataforma("Switch")
+                .precio(50.0)
+                .descripcion("Descripcion")
+                .estado(EstadoPost.ACTIVO)
+                .build();
+    }
 
-        assertNotNull(result);
-        assertEquals(2, result.size());
-        verify(postVentaRepository).findAll();
+    private PostVentaRequestDTO ventaDTO() {
+        PostVentaRequestDTO dto = new PostVentaRequestDTO();
+
+        dto.setIdApi(100L);
+        dto.setNombreProducto("Zelda");
+        dto.setEstadoProducto("NUEVO");
+        dto.setPlataforma("Switch");
+        dto.setPrecio(50.0);
+        dto.setDescripcion("Descripcion");
+
+        return dto;
     }
 
     @Test
-    @DisplayName("Debe retornar posts filtrados por ID de vendedor")
-    void findBySeller_Success() {
+    void findById_notFound() {
 
-        when(postVentaRepository.findByVendedorId(1L)).thenReturn(List.of(postVenta));
+        when(postVentaRepository.findById(1L))
+                .thenReturn(Optional.empty());
 
-        List<PostVentaResponseDTO> result = postVentaService.findBySeller(1L);
-
-        assertFalse(result.isEmpty());
-        assertEquals(1, result.size());
-        verify(postVentaRepository).findByVendedorId(1L);
+        assertThrows(
+                GSNotFoundException.class,
+                () -> postVentaService.findById(1L)
+        );
     }
 
     @Test
-    @DisplayName("Debe retornar posts filtrados por ID de producto")
-    void findByProduct_Success() {
+    void findAll_ok() {
 
-        when(postVentaRepository.findByProductoId(1L)).thenReturn(List.of(postVenta));
+        when(postVentaRepository.findAll())
+                .thenReturn(List.of(postVenta()));
 
-        List<PostVentaResponseDTO> result = postVentaService.findByProduct(1L);
+        List<PostVentaResponseDTO> resultado =
+                postVentaService.findAll();
 
-        assertFalse(result.isEmpty());
-        verify(postVentaRepository).findByProductoId(1L);
+        assertEquals(1, resultado.size());
     }
 
     @Test
-    @DisplayName("Debe retornar posts filtrados por estado (Enum)")
-    void findByEstado_Success() {
+    void findBySeller_ok() {
 
-        when(postVentaRepository.findByEstado(EstadoPost.ACTIVO)).thenReturn(List.of(postVenta));
+        when(postVentaRepository.findByVendedorId(1L))
+                .thenReturn(List.of(postVenta()));
 
-        List<PostVentaResponseDTO> result = postVentaService.findByEstado(EstadoPost.ACTIVO);
+        List<PostVentaResponseDTO> resultado =
+                postVentaService.findBySeller(1L);
 
-        assertFalse(result.isEmpty());
-        verify(postVentaRepository).findByEstado(EstadoPost.ACTIVO);
+        assertEquals(1, resultado.size());
+    }
+
+    @Test
+    void findByProduct_ok() {
+
+        when(postVentaRepository.findByProductoId(1L))
+                .thenReturn(List.of(postVenta()));
+
+        List<PostVentaResponseDTO> resultado =
+                postVentaService.findByProduct(1L);
+
+        assertEquals(1, resultado.size());
+    }
+
+    @Test
+    void findByEstado_ok() {
+
+        when(postVentaRepository.findByEstado(EstadoPost.ACTIVO))
+                .thenReturn(List.of(postVenta()));
+
+        List<PostVentaResponseDTO> resultado =
+                postVentaService.findByEstado(EstadoPost.ACTIVO);
+
+        assertEquals(1, resultado.size());
+    }
+
+    @Test
+    void update_ok() {
+
+        PostVenta existente = postVenta();
+
+        when(postVentaRepository.findById(1L))
+                .thenReturn(Optional.of(existente));
+
+        PostVentaResponseDTO resultado =
+                postVentaService.update(1L, ventaDTO());
+
+        assertNotNull(resultado);
+
+        verify(productoRepository)
+                .save(any(Producto.class));
+
+        verify(postVentaRepository)
+                .save(existente);
+    }
+
+    @Test
+    void delete_ok() {
+
+        when(postVentaRepository.existsById(1L))
+                .thenReturn(true);
+
+        postVentaService.delete(1L);
+
+        verify(postVentaRepository)
+                .deleteById(1L);
+    }
+
+    @Test
+    void delete_notFound() {
+
+        when(postVentaRepository.existsById(1L))
+                .thenReturn(false);
+
+        assertThrows(
+                GSNotFoundException.class,
+                () -> postVentaService.delete(1L)
+        );
+    }
+
+    private Usuario crearUsuario() {
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        usuario.setNombre("Angel");
+        usuario.setNombreUsuario("angel");
+        return usuario;
+    }
+
+    private Producto crearProducto() {
+        Producto productoc = new Producto();
+        productoc.setId(1L);
+        productoc.setIdAPI(100);
+        productoc.setNombre("FIFA");
+        productoc.setEstado(EstadoProducto.NUEVO);
+        return productoc;
+    }
+
+    private PostVenta crearPostVenta() {
+
+        PostVenta post = new PostVenta();
+
+        post.setId(1L);
+        post.setVendedor(crearUsuario());
+        post.setProducto(crearProducto());
+        post.setPrecio(20.0);
+        post.setPlataforma("PS5");
+        post.setEstado(EstadoPost.ACTIVO);
+        post.setDescripcion("Descripcion");
+
+        return post;
+    }
+
+    private PostVentaRequestDTO crearDtoVenta() {
+
+        PostVentaRequestDTO dto = new PostVentaRequestDTO();
+
+        dto.setNombreProducto("FIFA");
+        dto.setIdApi(100L);
+        dto.setEstadoProducto("NUEVO");
+        dto.setPlataforma("PS5");
+        dto.setPrecio(20.0);
+        dto.setDescripcion("Descripcion");
+
+        return dto;
+    }
+
+    private PostIntercambioRequestDTO crearDtoIntercambio() {
+
+        PostIntercambioRequestDTO dto = new PostIntercambioRequestDTO();
+
+        dto.setNombreProducto("COD");
+        dto.setIdApi(200L);
+        dto.setEstadoProducto("USADO");
+        dto.setDescripcion("Cambio");
+
+        return dto;
+    }
+
+    @Test
+    void create() {
+
+        Usuario usuario = crearUsuario();
+
+        when(usuarioDetailsService.obtenerUsuarioActual())
+                .thenReturn(usuario);
+
+        when(productoRepository.save(any()))
+                .thenAnswer(i -> i.getArgument(0));
+
+        when(postVentaRepository.save(any()))
+                .thenAnswer(i -> i.getArgument(0));
+
+        PostVentaResponseDTO dto =
+                postVentaService.create(crearDtoVenta());
+
+        assertNotNull(dto);
+
+        verify(productoRepository).save(any(Producto.class));
+        verify(postVentaRepository).save(any(PostVenta.class));
+    }
+
+    @Test
+    void findById() {
+
+        when(postVentaRepository.findById(1L))
+                .thenReturn(Optional.of(crearPostVenta()));
+
+        PostVentaResponseDTO dto =
+                postVentaService.findById(1L);
+
+        assertNotNull(dto);
+    }
+
+    @Test
+    void findAll() {
+
+        when(postVentaRepository.findAll())
+                .thenReturn(List.of(crearPostVenta()));
+
+        assertEquals(
+                1,
+                postVentaService.findAll().size()
+        );
+    }
+
+    @Test
+    void findBySeller() {
+
+        when(postVentaRepository.findByVendedorId(1L))
+                .thenReturn(List.of(crearPostVenta()));
+
+        assertEquals(
+                1,
+                postVentaService.findBySeller(1L).size()
+        );
+    }
+
+    @Test
+    void findByProduct() {
+
+        when(postVentaRepository.findByProductoId(1L))
+                .thenReturn(List.of(crearPostVenta()));
+
+        assertEquals(
+                1,
+                postVentaService.findByProduct(1L).size()
+        );
+    }
+
+    @Test
+    void findByEstado() {
+
+        when(postVentaRepository.findByEstado(EstadoPost.ACTIVO))
+                .thenReturn(List.of(crearPostVenta()));
+
+        assertEquals(
+                1,
+                postVentaService.findByEstado(EstadoPost.ACTIVO).size()
+        );
+    }
+
+    @Test
+    void update() {
+
+        PostVenta post = crearPostVenta();
+
+        when(postVentaRepository.findById(1L))
+                .thenReturn(Optional.of(post));
+
+        PostVentaResponseDTO dto =
+                postVentaService.update(1L, crearDtoVenta());
+
+        assertNotNull(dto);
+
+        verify(productoRepository).save(any(Producto.class));
+        verify(postVentaRepository).save(post);
+    }
+
+    @Test
+    void convertirVentaAIntercambio() {
+
+        PostVenta venta = crearPostVenta();
+
+        when(postVentaRepository.findById(1L))
+                .thenReturn(Optional.of(venta));
+
+        PostIntercambioRequestDTO dto =
+                crearDtoIntercambio();
+
+        postVentaService.convertirVentaAIntercambio(1L, dto);
+
+        verify(productoRepository)
+                .save(any(Producto.class));
+
+        verify(postIntercambioRepository)
+                .save(any(PostIntercambio.class));
+
+        verify(postVentaRepository)
+                .delete(venta);
     }
 
 }

@@ -1,0 +1,327 @@
+:host {
+  display: block;
+  color: var(--text);
+  font-family: "Inter", "Segoe UI", sans-serif;
+}
+
+.reviews {
+  width: 100%;
+}
+
+/* HEADER SECCIONES */
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 10px 6px;
+
+  margin-top: 10px;
+}
+
+.section-header h2 {
+  margin: 0;
+
+  font-size: 30px;
+  font-weight: 700;
+
+  letter-spacing: -0.5px;
+
+  color: var(--text);
+}
+
+hr {
+  border: none;
+  border-bottom: 1px solid var(--border);
+
+  margin: 12px 0 28px 0;
+}
+
+/* VACÍO */
+
+.section-content > div[ng-reflect-ng-if] {
+  color: var(--muted-text);
+
+  font-size: 15px;
+
+  padding: 10px 4px 30px 4px;
+}
+
+/* CARD REVIEW */
+
+.review-card {
+  position: relative;
+
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.03),
+    rgba(255, 255, 255, 0.015)
+  );
+
+  border: 1px solid var(--border);
+
+  border-radius: 22px;
+
+  padding: 22px;
+
+  margin-bottom: 24px;
+
+  overflow: hidden;
+
+  transition:
+    transform 0.28s ease,
+    border-color 0.28s ease,
+    box-shadow 0.28s ease,
+    background 0.28s ease;
+}
+
+/* EFECTO */
+
+.review-card::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  background: radial-gradient(
+    circle at top left,
+    rgba(99, 102, 241, 0.18),
+    transparent 40%
+  );
+
+  opacity: 0;
+
+  transition: opacity 0.3s ease;
+
+  pointer-events: none;
+}
+
+.review-card:hover::before {
+  opacity: 1;
+}
+
+/* HOVER */
+
+.review-card:hover {
+  transform: translateY(-4px);
+
+  border-color: rgba(99, 102, 241, 0.45);
+
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0.02)
+  );
+
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.4),
+    0 0 18px rgba(99, 102, 241, 0.12);
+}
+
+/* TOP */
+
+.review-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+}
+
+/* USUARIO */
+
+.usuario {
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+}
+
+.usuario img {
+  width: 54px;
+  height: 54px;
+
+  border-radius: 50%;
+
+  border: 2px solid rgba(255, 255, 255, 0.08);
+
+  object-fit: cover;
+
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.review-card:hover .usuario img {
+  transform: scale(1.05);
+
+  border-color: rgba(99, 102, 241, 0.35);
+}
+
+.usuario span {
+  font-size: 18px;
+  font-weight: 700;
+
+  color: var(--text);
+}
+
+/* ESTRELLAS */
+
+.estrellas {
+  font-size: 24px;
+  font-weight: 800;
+
+  color: #ffd54a;
+
+  text-shadow: 0 0 10px rgba(255, 213, 74, 0.25);
+}
+
+/* SEPARADOR INTERNO */
+
+.review-card hr {
+  margin: 18px 0 20px 0;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* BOTTOM */
+
+.review-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+}
+
+/* TEXTO */
+
+.review-bottom p {
+  flex: 1;
+
+  margin: 0;
+
+  color: var(--text);
+
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+/* ACCIONES */
+
+.acciones {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+}
+
+/* BOTONES */
+
+button {
+  padding: 10px 18px;
+
+  border-radius: 14px;
+
+  border: 1px solid var(--border);
+
+  background: rgba(255, 255, 255, 0.03);
+
+  color: var(--text);
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+
+  background: rgba(255, 255, 255, 0.06);
+
+  border-color: rgba(99, 102, 241, 0.45);
+
+  box-shadow: 0 0 14px rgba(99, 102, 241, 0.12);
+}
+
+/* BOTÓN ELIMINAR */
+
+.danger {
+  border-color: rgba(255, 77, 77, 0.5);
+
+  color: #ff6b6b;
+}
+
+.danger:hover {
+  background: rgba(255, 77, 77, 0.08);
+
+  border-color: rgba(255, 77, 77, 0.8);
+
+  box-shadow: 0 0 16px rgba(255, 77, 77, 0.18);
+}
+
+/* MOBILE */
+
+@media (max-width: 900px) {
+  .review-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .acciones {
+    width: 100%;
+
+    justify-content: flex-end;
+
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 768px) {
+  .section-header h2 {
+    font-size: 24px;
+  }
+
+  .review-card {
+    padding: 18px;
+    border-radius: 18px;
+  }
+
+  .review-top {
+    flex-direction: column;
+    align-items: flex-start;
+
+    gap: 14px;
+  }
+
+  .usuario img {
+    width: 48px;
+    height: 48px;
+  }
+
+  .usuario span {
+    font-size: 16px;
+  }
+
+  .estrellas {
+    font-size: 21px;
+  }
+
+  .acciones {
+    width: 100%;
+  }
+
+  .acciones button,
+  .review-bottom > button {
+    width: 100%;
+  }
+}

@@ -9,9 +9,9 @@ describe('UsuariosComponent', () => {
   let fixture: ComponentFixture<UsuariosComponent>;
   let usuarioServiceMock: any;
 
-  const mockUsuarios: Usuario[] = [
-    { nombre: 'Usuario 1', email: 'u1@test.com' },
-    { nombre: 'Usuario 2', email: 'u2@test.com' }
+  const mockUsuarios: any[] = [
+    { nombre: 'Usuario 1', correo: 'u1@test.com' },
+    { nombre: 'Usuario 2', correo: 'u2@test.com' }
   ];
 
   beforeEach(async () => {

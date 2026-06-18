@@ -9,7 +9,17 @@ import lombok.*;
 @Builder
 public class PostIntercambioRequestDTO {
 
-    private Long idUsuario;
-    private Long idProducto;
-    private Long idProductoCambio;
+    // PRODUCTO PROPIO
+    private String nombreProducto;
+    private String plataforma;
+    private String estadoProducto;
+    private Long idApi;
+
+    // PRODUCTO BUSCADO
+    private String nombreProductoIntercambio;
+    private String plataformaIntercambio;
+    private String estadoProductoIntercambio;
+    private Long idApiIntercambio;
+
+    private String descripcion;
 }

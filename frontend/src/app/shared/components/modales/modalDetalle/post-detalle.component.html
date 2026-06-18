@@ -1,0 +1,407 @@
+<app-modal
+  [isOpen]="isOpen"
+  [title]="post?.tipo === 'VENTA' ? 'Post de venta' : 'Post de intercambio'"
+  (close)="close.emit()"
+>
+  <ng-container *ngIf="post">
+    <!-- VENTA -->
+
+    <div *ngIf="post.tipo === 'VENTA'">
+      <!-- PREVIEW -->
+
+      <div class="preview-card">
+        <div class="preview-info">
+          <img class="modal-img" [src]="post.imagen" />
+
+          <div class="info">
+            <h4>
+              {{ post.nombreProducto }}
+            </h4>
+
+            <p>
+              {{ post.plataforma }}
+            </p>
+
+            <p>
+              {{ post.estado }}
+            </p>
+
+            <p class="precio">{{ post.precio }}€</p>
+          </div>
+        </div>
+
+        <div class="acciones-top">
+          <button
+            class="guardar-btn"
+            [class.guardado]="guardado"
+            (click)="guardarPost()"
+          >
+            {{ guardado ? "★" : "☆" }}
+          </button>
+
+          <button *ngIf="tieneSaldo()" (click)="comprar()" [disabled]="loading">
+            {{ loading ? "Procesando..." : "Comprar" }}
+          </button>
+
+          <button *ngIf="!tieneSaldo()" (click)="irASaldo()">
+            Añadir saldo
+          </button>
+
+          <button
+            class="carrito-btn"
+            [class.en-carrito]="enCarrito"
+            (click)="toggleCarrito()"
+          >
+            {{ enCarrito ? "Eliminar del carrito" : "Añadir al carrito" }}
+          </button>
+        </div>
+      </div>
+
+      <!-- INFORMACION -->
+
+      <div class="bloque">
+        <div class="bloque-header" (click)="infoOpen = !infoOpen">
+          <h3>Información de {{ post.nombreProducto }}</h3>
+
+          <span class="flecha" [class.rotada]="infoOpen"> ▼ </span>
+        </div>
+
+        <div class="section-content" [class.closed]="!infoOpen">
+          <div class="bloque-content">
+            <!-- RATING -->
+
+            <div class="detalle-linea" *ngIf="gameDetails?.total_rating">
+              <span class="label"> Rating IGDB </span>
+
+              <span>
+                ⭐ {{ gameDetails.total_rating | number: "1.0-0" }}/100
+              </span>
+            </div>
+
+            <!-- FECHA -->
+
+            <div class="detalle-linea" *ngIf="gameDetails?.first_release_date">
+              <span class="label"> Lanzamiento </span>
+
+              <span>
+                {{ gameDetails.first_release_date * 1000 | date: "dd/MM/yyyy" }}
+              </span>
+            </div>
+
+            <!-- GENEROS -->
+
+            <div class="info-tags" *ngIf="gameDetails?.genres?.length">
+              <span class="tag" *ngFor="let g of gameDetails.genres">
+                {{ g.name }}
+              </span>
+            </div>
+
+            <!-- TEMAS -->
+
+            <div class="info-tags" *ngIf="gameDetails?.themes?.length">
+              <span class="tag tema" *ngFor="let t of gameDetails.themes">
+                {{ t.name }}
+              </span>
+            </div>
+
+            <!-- MODOS -->
+
+            <div class="info-tags" *ngIf="gameDetails?.game_modes?.length">
+              <span class="tag modo" *ngFor="let m of gameDetails.game_modes">
+                {{ m.name }}
+              </span>
+            </div>
+
+            <!-- RESUMEN -->
+
+            <div class="game-summary" *ngIf="gameDetails?.summary">
+              {{ gameDetails.summary }}
+            </div>
+
+            <!-- TRAILER -->
+
+            <a
+              *ngIf="gameDetails?.videos?.length"
+              class="trailer-btn"
+              target="_blank"
+              [href]="
+                'https://www.youtube.com/watch?v=' +
+                gameDetails.videos[0].video_id
+              "
+            >
+              ▶ Ver trailer
+            </a>
+
+            <!-- SCREENSHOTS -->
+
+            <div class="screenshots" *ngIf="gameDetails?.screenshots?.length">
+              <img
+                *ngFor="let s of gameDetails.screenshots | slice: 0 : 4"
+                [src]="
+                  'https://images.igdb.com/igdb/image/upload/t_screenshot_big/' +
+                  $any(s).image_id +
+                  '.jpg'
+                "
+                (click)="
+                  abrirImagen(
+                    'https://images.igdb.com/igdb/image/upload/t_1080p/' +
+                      $any(s).image_id +
+                      '.jpg'
+                  )
+                "
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DESCRIPCION -->
+
+      <div class="bloque">
+        <div class="bloque-header" (click)="descripcionOpen = !descripcionOpen">
+          <h3>Descripción del usuario</h3>
+
+          <span class="flecha" [class.rotada]="descripcionOpen"> ▼ </span>
+        </div>
+
+        <div class="section-content" [class.closed]="!descripcionOpen">
+          <div class="bloque-content">
+            <!-- VENDEDOR -->
+
+            <div class="detalle-linea">
+              <span class="label"> Vendedor </span>
+
+              <a
+                class="usuario-link"
+                [attr.href]="'/usuario/' + post.nombreUsuario"
+                (click)="cerrar()"
+              >
+                {{ post.nombreUsuario }}
+              </a>
+            </div>
+
+            <div class="descripcion-box">
+              {{ post.descripcion || "Sin descripción" }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INTERCAMBIO -->
+
+    <div *ngIf="post.tipo === 'INTERCAMBIO'">
+      <!-- PREVIEW -->
+
+      <div class="preview-card intercambio">
+        <!-- IZQUIERDA -->
+
+        <div class="lado">
+          
+          <img [src]="post.imagen" />
+
+          <div class="info">
+            <h4>
+              {{ post.nombreProducto }}
+            </h4>
+
+            <p>
+              {{ post.plataforma }}
+            </p>
+
+            <p>
+              {{ post.estado }}
+            </p>
+          </div>
+        </div>
+
+        <!-- SWAP -->
+
+        <div class="swap">⇄</div>
+
+        <!-- DERECHA -->
+
+        <div class="lado">
+          <img [src]="post.imagenIntercambio" />
+
+          <div class="info">
+            <h4>
+              {{ post.nombreProductoIntercambio }}
+            </h4>
+
+            <p>
+              {{ post.plataformaIntercambio }}
+            </p>
+
+            <p>
+              {{ post.estadoIntercambio }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTONES -->
+
+      <div class="acciones-intercambio">
+        <button
+          class="guardar-btn"
+          [class.guardado]="guardado"
+          (click)="guardarPost()"
+        >
+          {{ guardado ? "★" : "☆" }}
+        </button>
+
+        <button (click)="intercambiar()" [disabled]="loading">
+          {{ loading ? "Procesando..." : "Aceptar intercambio" }}
+        </button>
+      </div>
+
+      <!-- INFORMACION -->
+
+      <div class="bloque">
+        <div class="bloque-header" (click)="infoOpen = !infoOpen">
+          <h3>Información de {{ post.nombreProducto }}</h3>
+
+          <span class="flecha" [class.rotada]="infoOpen"> ▼ </span>
+        </div>
+
+        <div class="section-content" [class.closed]="!infoOpen">
+          <div class="bloque-content">
+            <!-- RATING -->
+
+            <div class="detalle-linea" *ngIf="gameDetails?.total_rating">
+              <span class="label"> Rating IGDB </span>
+
+              <span>
+                ⭐ {{ gameDetails.total_rating | number: "1.0-0" }}/100
+              </span>
+            </div>
+
+            <!-- FECHA -->
+
+            <div class="detalle-linea" *ngIf="gameDetails?.first_release_date">
+              <span class="label"> Lanzamiento </span>
+
+              <span>
+                {{ gameDetails.first_release_date * 1000 | date: "dd/MM/yyyy" }}
+              </span>
+            </div>
+
+            <!-- GENEROS -->
+
+            <div class="info-tags" *ngIf="gameDetails?.genres?.length">
+              <span class="tag" *ngFor="let g of gameDetails.genres">
+                {{ g.name }}
+              </span>
+            </div>
+
+            <!-- TEMAS -->
+
+            <div class="info-tags" *ngIf="gameDetails?.themes?.length">
+              <span class="tag tema" *ngFor="let t of gameDetails.themes">
+                {{ t.name }}
+              </span>
+            </div>
+
+            <!-- MODOS -->
+
+            <div class="info-tags" *ngIf="gameDetails?.game_modes?.length">
+              <span class="tag modo" *ngFor="let m of gameDetails.game_modes">
+                {{ m.name }}
+              </span>
+            </div>
+
+            <!-- RESUMEN -->
+
+            <div class="game-summary" *ngIf="gameDetails?.summary">
+              {{ gameDetails.summary }}
+            </div>
+
+            <!-- TRAILER -->
+
+            <a
+              *ngIf="gameDetails?.videos?.length"
+              class="trailer-btn"
+              target="_blank"
+              [href]="
+                'https://www.youtube.com/watch?v=' +
+                gameDetails.videos[0].video_id
+              "
+            >
+              ▶ Ver trailer
+            </a>
+
+            <!-- SCREENSHOTS -->
+
+            <div class="screenshots" *ngIf="gameDetails?.screenshots?.length">
+              <img
+                *ngFor="let s of gameDetails.screenshots | slice: 0 : 4"
+                [src]="
+                  'https://images.igdb.com/igdb/image/upload/t_screenshot_big/' +
+                  $any(s).image_id +
+                  '.jpg'
+                "
+                (click)="
+                  abrirImagen(
+                    'https://images.igdb.com/igdb/image/upload/t_1080p/' +
+                      $any(s).image_id +
+                      '.jpg'
+                  )
+                "
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DESCRIPCION -->
+
+      <div class="bloque">
+        <div class="bloque-header" (click)="descripcionOpen = !descripcionOpen">
+          <h3>Descripción del usuario</h3>
+
+          <span class="flecha" [class.rotada]="descripcionOpen"> ▼ </span>
+        </div>
+
+        <div class="section-content" [class.closed]="!descripcionOpen">
+          <div class="bloque-content">
+            <!-- PROPIETARIO -->
+
+            <div class="detalle-linea">
+              <span class="label"> Propietario </span>
+
+              <a
+                class="usuario-link"
+                [attr.href]="'/usuario/' + post.nombreUsuario"
+                (click)="cerrar()"
+              >
+                {{ post.nombreUsuario }}
+              </a>
+            </div>
+
+            <div class="descripcion-box">
+              {{ post.descripcion || "Sin descripción" }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</app-modal>
+
+<div class="image-overlay" *ngIf="imagenExpandida" (click)="cerrarImagen()">
+  <img [src]="imagenExpandida" (click)="$event.stopPropagation()" />
+</div>
+
+<app-modal-direccion
+  *ngIf="mostrarModalDireccion"
+  (confirmar)="
+    tipoAccionDireccion === 'COMPRA'
+      ? confirmarCompra()
+      : confirmarIntercambio()
+  "
+  (cancelar)="
+    tipoAccionDireccion === 'COMPRA' ? cancelarCompra() : cancelarIntercambio()
+  "
+>
+</app-modal-direccion>

@@ -1,0 +1,27 @@
+<div class="saldo-page">
+  <div class="saldo-card">
+    <h1>Añadir saldo</h1>
+
+    <p>Selecciona cuánto dinero quieres añadir a tu cuenta</p>
+
+    <div class="cantidades">
+      <button (click)="cantidad = 5">5€</button>
+
+      <button (click)="cantidad = 10">10€</button>
+
+      <button (click)="cantidad = 20">20€</button>
+
+      <button (click)="cantidad = 50">50€</button>
+    </div>
+
+    <div class="custom">
+      <input type="number" [(ngModel)]="cantidad" min="1" />
+
+      <span>€</span>
+    </div>
+
+    <button class="pagar-btn" [disabled]="loading" (click)="pagar()">
+      {{ loading ? "Procesando..." : "Pagar con Stripe" }}
+    </button>
+  </div>
+</div>

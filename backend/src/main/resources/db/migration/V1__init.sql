@@ -18,7 +18,7 @@ CREATE TABLE Producto (
 );
 
 -- 3. Historial: Compras / Ventas
-CREATE TABLE CompraVenta (
+CREATE TABLE Compra_Venta (
     id BIGSERIAL PRIMARY KEY,
     id_comprador BIGINT REFERENCES Usuario(id),
     id_vendedor BIGINT REFERENCES Usuario(id),
@@ -38,19 +38,24 @@ CREATE TABLE Intercambio (
 );
 
 -- 5. Posts: Post Ventas
-CREATE TABLE PostVenta (
+CREATE TABLE Post_Venta (
     id BIGSERIAL PRIMARY KEY,
     id_vendedor BIGINT REFERENCES Usuario(id),
     id_producto BIGINT REFERENCES Producto(id),
-    precio DOUBLE PRECISION NOT NULL
+    plataforma VARCHAR(50),
+    precio DOUBLE PRECISION NOT NULL,
+    descripcion TEXT
 );
 
 -- 6. Posts: Post Intercambio
-CREATE TABLE PostIntercambio (
+CREATE TABLE Post_Intercambio (
     id BIGSERIAL PRIMARY KEY,
     id_usuario BIGINT REFERENCES Usuario(id),
     id_producto BIGINT REFERENCES Producto(id),
-    id_producto_cambio BIGINT REFERENCES Producto(id)
+    id_producto_cambio BIGINT REFERENCES Producto(id),
+    plataforma VARCHAR(50),
+    plataforma_cambio VARCHAR(50),
+    descripcion TEXT
 );
 
 -- 7. Review
@@ -70,7 +75,7 @@ CREATE TABLE Carrito (
 );
 
 -- 9. Productos en el Carrito (Tabla intermedia)
-CREATE TABLE ProductoCarrito (
+CREATE TABLE Producto_Carrito (
     id BIGSERIAL PRIMARY KEY,
     id_producto BIGINT REFERENCES Producto(id),
     id_carrito BIGINT REFERENCES Carrito(id)

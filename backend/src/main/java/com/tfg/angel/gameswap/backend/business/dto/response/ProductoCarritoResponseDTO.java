@@ -12,11 +12,14 @@ public class ProductoCarritoResponseDTO {
     private Long id;
 
     private Long idPostVenta;
-    private Double precio;
 
-    private Long idProducto;
     private String nombreProducto;
 
-    private Long idVendedor;
-    private String nombreVendedor;
+    private String plataforma;
+
+    private String estado;
+
+    private Double precio;
+
+    private Long idApi;
 }

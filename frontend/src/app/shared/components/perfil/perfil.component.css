@@ -1,0 +1,367 @@
+/* ========================= */
+/* WRAPPER */
+/* ========================= */
+
+.perfil-wrapper {
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+
+  padding: 40px 20px 10px 20px;
+
+  box-sizing: border-box;
+}
+
+/* ========================= */
+/* HEADER PERFIL */
+/* ========================= */
+
+.perfil-header {
+  width: 100%;
+  max-width: 950px;
+
+  background: var(--card);
+
+  border: 1px solid var(--border);
+
+  border-radius: 28px;
+
+  padding: 35px;
+
+  box-sizing: border-box;
+
+  box-shadow: var(--shadow);
+
+  backdrop-filter: blur(10px);
+}
+
+/* ========================= */
+/* TOP */
+/* ========================= */
+
+.perfil-top {
+  display: flex;
+
+  gap: 35px;
+
+  align-items: center;
+}
+
+/* ========================= */
+/* AVATAR */
+/* ========================= */
+
+.avatar-section {
+  flex-shrink: 0;
+}
+
+.avatar {
+  width: 150px;
+  height: 150px;
+
+  border-radius: 50%;
+
+  object-fit: cover;
+
+  border: 4px solid var(--primary);
+
+  box-shadow: 0 0 25px rgba(91, 91, 255, 0.3);
+}
+
+/* ========================= */
+/* INFO */
+/* ========================= */
+
+.perfil-info {
+  flex: 1;
+}
+
+/* ========================= */
+/* HEADER ROW */
+/* ========================= */
+
+.perfil-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  margin-bottom: 25px;
+}
+
+.perfil-title-row h1 {
+  margin: 0;
+
+  font-size: 38px;
+  font-weight: 700;
+
+  color: var(--text);
+}
+
+.username {
+  margin-top: 6px;
+
+  color: var(--muted);
+
+  font-size: 16px;
+}
+
+/* ========================= */
+/* CLOSE BTN */
+/* ========================= */
+
+.close-btn {
+  color: var(--muted);
+
+  text-decoration: none;
+
+  font-size: 22px;
+
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease;
+}
+
+.close-btn:hover {
+  color: var(--primary);
+
+  transform: rotate(90deg);
+}
+
+/* ========================= */
+/* STATS */
+/* ========================= */
+
+.stats-grid {
+  display: grid;
+
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+
+  gap: 16px;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.03);
+
+  border: 1px solid var(--border);
+
+  border-radius: 18px;
+
+  padding: 10px 18px;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.label {
+  font-size: 13px;
+
+  color: var(--muted);
+
+  text-transform: uppercase;
+
+  letter-spacing: 1px;
+}
+
+.value {
+  font-size: 17px;
+  font-weight: 600;
+
+  color: var(--text);
+}
+
+.saldo {
+  color: #42d392;
+}
+
+.estrellas {
+  color: gold;
+}
+
+/* ========================= */
+/* EDIT SECTION */
+/* ========================= */
+
+.edit-section {
+  margin-top: 35px;
+
+  padding-top: 30px;
+
+  border-top: 1px solid var(--border);
+
+  display: grid;
+
+  gap: 18px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.field label {
+  font-size: 14px;
+  font-weight: 600;
+
+  color: var(--muted);
+}
+
+.field input {
+  padding: 14px 16px;
+
+  font-size: 15px;
+}
+
+/* ========================= */
+/* ACTIONS */
+/* ========================= */
+
+.actions {
+  display: flex;
+
+  justify-content: flex-end;
+
+  gap: 12px;
+
+  margin-top: 30px;
+
+  flex-wrap: wrap;
+}
+
+/* ========================= */
+/* TABS */
+/* ========================= */
+
+.tabs-container {
+  width: 100%;
+  max-width: 950px;
+
+  margin: 30px auto 50px auto;
+
+  padding: 0 20px;
+
+  box-sizing: border-box;
+}
+
+.tabs {
+  display: flex;
+
+  gap: 10px;
+
+  flex-wrap: wrap;
+
+  margin-bottom: 20px;
+}
+
+.tabs button {
+  background: transparent;
+
+  border: 1px solid transparent;
+
+  color: var(--muted);
+
+  padding: 12px 20px;
+
+  border-radius: 14px;
+
+  transition: all 0.25s ease;
+}
+
+.tabs button:hover {
+  background: rgba(255, 255, 255, 0.05);
+
+  color: var(--text);
+}
+
+.tabs button.active {
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+
+  color: white;
+
+  box-shadow: 0 8px 20px rgba(91, 91, 255, 0.3);
+}
+
+/* ========================= */
+/* TAB CONTENT */
+/* ========================= */
+
+.tab-content {
+  background: var(--card);
+
+  border: 1px solid var(--border);
+
+  border-radius: 24px;
+
+  padding: 30px;
+
+  box-shadow: var(--shadow);
+}
+
+/* ========================= */
+/* LOADING */
+/* ========================= */
+
+.loading {
+  text-align: center;
+
+  margin-top: 80px;
+
+  color: var(--muted);
+}
+
+/* ========================= */
+/* RESPONSIVE */
+/* ========================= */
+
+@media (max-width: 900px) {
+  .perfil-top {
+    flex-direction: column;
+
+    align-items: center;
+
+    text-align: center;
+  }
+
+  .perfil-title-row {
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 15px;
+  }
+
+  .actions {
+    justify-content: center;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .perfil-header {
+    padding: 22px;
+  }
+
+  .avatar {
+    width: 110px;
+    height: 110px;
+  }
+
+  .perfil-title-row h1 {
+    font-size: 30px;
+  }
+
+  .tabs {
+    justify-content: center;
+  }
+
+  .tab-content {
+    padding: 20px;
+  }
+}

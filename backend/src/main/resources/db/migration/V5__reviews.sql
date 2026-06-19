@@ -20,13 +20,3 @@ ALTER TABLE Review
 ADD CONSTRAINT fk_review_intercambio
 FOREIGN KEY (id_intercambio)
 REFERENCES Intercambio(id);
-
--- INSERTS DE PRUEBA
-
-INSERT INTO Review (id_reviewer,id_reviewed,contenido,estrellas,tipo_review,id_compra_venta)
-VALUES
-(2,1,'Todo perfecto, envío rápido y producto impecable.',5,'VENTA',1);
-
-INSERT INTO Review (id_reviewer,id_reviewed,contenido,estrellas,tipo_review,id_intercambio)
-VALUES
-(3,1,'Intercambio muy fácil y buena comunicación.',4.5,'INTERCAMBIO',1);

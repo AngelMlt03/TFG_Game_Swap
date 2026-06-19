@@ -154,6 +154,9 @@ public class CarritoServiceImpl implements CarritoService {
                         .orElseThrow();
         
         productoCarritoRepository.deleteAllByCarritoId(carrito.getId());
+
+        carrito.setCoste(0.0);
+        carritoRepository.save(carrito);
     }
 
     @Override

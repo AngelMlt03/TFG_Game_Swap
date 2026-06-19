@@ -147,6 +147,8 @@ public class ReviewServiceImpl implements ReviewService {
                 .average()
                 .orElse(0);
 
+        media = Math.round(media * 10.0) / 10.0;
+
         usuario.setEstrellas(media);
 
         usuarioRepository.save(usuario);

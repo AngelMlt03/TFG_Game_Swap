@@ -71,10 +71,9 @@ public class TransaccionService {
 
         compraVentaRepository.save(entity);
 
-        Carrito carrito = carritoRepository.findByUsuarioId(usuarioActual.getId())
-                .orElseThrow(() -> new GSNotFoundException("Carrito no encontrado"));
+        Optional<Carrito> carrito = carritoRepository.findByUsuarioId(usuarioActual.getId());
 
-        if (productoCarritoRepository.existsByCarritoIdAndPostVentaId(carrito.getId(), idPostVenta)) {
+        if (carrito.isPresent() && productoCarritoRepository.existsByCarritoIdAndPostVentaId(carrito.get().getId(), idPostVenta)) {
             carritoService.eliminarProducto(idPostVenta);
         }
 

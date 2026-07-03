@@ -103,7 +103,7 @@ export class NavbarComponent implements OnInit {
   }
 
   avatar() {
-    return `https:ui-avatars.com/api/?name=${this.usuario.nombre}&background=random`;
+    return `https:ui-avatars.com/api/?name=${this.usuario.nombreUsuario}&background=random`;
   }
 
   getColorFromUsername(name: string): string {

@@ -90,7 +90,11 @@
         tabindex="0"
         (keydown.enter)="toggleDropdown()"
       >
-        <img class="avatar" [src]="avatar()" />
+        <img class="avatar" [src]="
+            'https://ui-avatars.com/api/?name=' +
+            usuario.nombreUsuario +
+            '&background=random'
+          " />
 
         <span class="username">{{ usuario.nombre || "Usuario" }}</span>
         <span class="arrow" [class.open]="dropdownOpen"> ❯ </span>
